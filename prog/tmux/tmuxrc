@@ -3,7 +3,12 @@
 
 run 'tmux setenv -g TMUX_VERSION $(tmux -V | sed -En "s/^tmux[^0-9]*([.0-9]+).*/\1/p")'
 
-set -g mouse on        # Tmux >= 2.1
+run '\
+tmux set-option -g default-shell \
+"$(command -v fish || command -v bash || command -v zsh || echo /bin/sh)"'
+
+
+set -g mouse on        # Tmux >= .1
 # set -g mode-mouse on # Tmux < 2.1
 
 set -gw mode-keys vi                                                 # copy mode bindings use bi mode
@@ -62,8 +67,8 @@ set -g silence-action   other
 
 # change leader to C-q
 unbind C-b
-set -g prefix C-q
-bind C-q send-prefix
+set -g prefix C-a
+bind C-a send-prefix
 
 bind \# set-window-option monitor-activity\; display-message "#{?monitor-activity,Monitoring,Ignoring} activity in current window"
 bind \~ run "tmux command-prompt -I #{?monitor-silence,#{monitor-silence},10} -p 'Set silence interval (seconds):' 'set monitor-silence %%'"
@@ -75,7 +80,7 @@ bind r command-prompt -I "#W" -p "Rename window:" "if-shell \"[ -n '%1' ]\" { re
 bind R command-prompt -I "#S" -p "Rename session:" "rename-session -- '%%'"
 
 bind m   select-pane -m                                                                            # toggle the marked status of the current pane
-bind M-r source "$TMUX_HOME/tmux.conf" \; display-message "Config reloaded..."                     # reload my tmux configuration from conf sources
+bind C-r source "$TMUX_HOME/tmux.conf" \; display-message "Config reloaded..."                     # reload my tmux configuration from conf sources
 bind e   new-window "$EDITOR $TMUX_HOME/tmux.conf"                                                 # open my tmux config in users EDITOR
 
 bind -r Tab last-window

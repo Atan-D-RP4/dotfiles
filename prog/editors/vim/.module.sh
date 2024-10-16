@@ -2,6 +2,7 @@ packages                                        \
   apt:vim                                       \
   msys:vim                                      \
   choco:vim                                     \
+  yay:gvim-git                                  \
   pacman:vim
 
 link                                            \

@@ -34,3 +34,6 @@
 [submodule "core/repos/walls"]
 	path = core/repos/walls
 	url = git@github.com:mohkale/dotfiles-wallpapers.git
+[submodule "prog/editors/nvim/nvim_conf"]
+	path = prog/editors/nvim/nvim_conf
+	url = https://github.com/Atan-D-RP4/nvim_conf.git
