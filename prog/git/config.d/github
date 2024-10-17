@@ -1,7 +1,7 @@
 # GitHub specific git configuration -*- gitconfig -*-
 
 [github]
-	user = mohkale
+	user = Atan-D-RP4
 [url "git@github.com:"]
     # Prefer ssh pushing since github has removed basic HTTP authentication
     pushInsteadOf = https://github.com

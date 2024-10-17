@@ -8,8 +8,8 @@
 #     changes to optimise future command invocations.
 
 [user]
-	name  = Mohsin Kaleem
-	email = mohkale@kisara.moe
+	name = Chaitanya Dubakula
+	email = chaitanyarp4@gmail.com
 
 [init]
 	defaultBranch = master
@@ -130,3 +130,5 @@
 	path = config.d/github
 	path = config.d/gitlab
 	path = config.d/local
+[user "email"]
+	com = chaitanyarp4@gmail.com
