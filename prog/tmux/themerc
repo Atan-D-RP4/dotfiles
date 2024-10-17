@@ -8,7 +8,7 @@ set -g pane-border-lines single
 set -g status on
 set -g status-interval 15
 set -g status-justify  left
-set -g status-position bottom
+set -g status-position top
 
 set -g status-left-length  32
 set -g status-right-length 150

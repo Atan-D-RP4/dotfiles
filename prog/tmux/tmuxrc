@@ -7,7 +7,6 @@ run '\
 tmux set-option -g default-shell \
 "$(command -v fish || command -v bash || command -v zsh || echo /bin/sh)"'
 
-
 set -g mouse on        # Tmux >= .1
 # set -g mode-mouse on # Tmux < 2.1
 
@@ -325,8 +324,6 @@ bind -T off F12 \
   set -p escape-time 10 \;\
   refresh-client -S
 
-bind -T root F11 set -w status #{?#{==:#{status},on},on,off}                                       # toggle whether to show the status-bar or not
-bind -T root F10 set status-position #{?#{==:#{status-position},top},bottom,top}                   # toggle the position of the status-bar
 # TODO: Find something more useful for these bindings.
 bind T set -w status #{?#{==:#{status},on},on,off}                                                 # toggle whether to show the status-bar or not
 bind t set status-position #{?#{==:#{status-position},top},bottom,top}                             # toggle the position of the status-bar
