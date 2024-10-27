@@ -37,3 +37,4 @@
 [submodule "prog/editors/nvim/nvim_conf"]
 	path = prog/editors/nvim/nvim_conf
 	url = git@github.com:Atan-D-RP4/nvim_conf.git
+	branch = master
