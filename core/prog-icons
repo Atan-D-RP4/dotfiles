@@ -58,6 +58,7 @@ stack      
 
 # Package Managers
 apt     
+paru	
 pacman  
 yay     
 brew    

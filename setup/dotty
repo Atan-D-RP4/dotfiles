@@ -818,6 +818,9 @@ _package_pacman() { _package_simple pacman pacman 'sudo' -S,--needed,--noconfirm
 PACMANS+=(yay)
 _package_yay() { _package_simple yay yay '' -S,--needed,--noconfirm -Sy "$@"; }
 
+PACMANS+=(paru)
+_package_paru() { _package_simple paru paru '' -S,--needed,--noconfirm -Sy "$@"; }
+
 PACMANS+=(msys)
 _package_msys() { _package_simple pacman pacman.exe '' -S,--needed,--noconfirm -Sy "$@"; }
 
