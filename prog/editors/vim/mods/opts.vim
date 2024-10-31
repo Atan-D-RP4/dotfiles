@@ -3,19 +3,38 @@
 " These are options believed by many Vim users to be essential.
 " For more information, see `:h vim_diff.txt` in Neovim
 " I will skip the 
-filetype on
-syntax on
-set autoindent autoread background=dark
-set backspace=indent,eol,start belloff=all
-set display=lastline encoding=utf-8 hidden
-set history=10000 incsearch
-set nojoinspaces laststatus=2 ruler
-set showcmd smarttab nostartofline showmatch
-set switchbuf=uselast wildmenu 
+set title titlestring=%t%(\ %M%)%(\ (%{substitute(getcwd(),\ $HOME,\ '~',\ '')})%)%(\ %a%) titleold=
 
+" Editor Options (Set in tokyo-night.vim)
+" --------------
+" syntax on
+" colorscheme mohkale
+
+" Change the terminals title depending on the current buffer. Format: filename [modifiers ](dirname)
+
+if has('nvim')
+  set inccommand=nosplit
+endif
+
+filetype on
+
+set autoindent 
+set autoread 
+set background=dark
+set backspace=indent,eol,start belloff=all
+set display=lastline 
+set hidden
+set history=10000 
+set nojoinspaces
+set showcmd 
+set nostartofline 
+set showmatch
+set switchbuf=uselast 
 
 " Line number defaults
-set number relativenumber ruler
+set number 
+set relativenumber 
+set ruler
 
 " Enable mouse support
 set mouse=a
@@ -48,17 +67,6 @@ set guifont=Meslo\ LG\ M\ DZ
 " [[https://vi.stackexchange.com/questions/12607/extend-visual-selection-til-the-last-character-on-the-line-excluding-the-new-li][here]]
 set selection=old
 
-" Make backup folders automatically if they don't already exist.
-if !isdirectory(expand(&undodir))
-	call mkdir(expand(&undodir), "p")
-endif
-if !isdirectory(expand(&backupdir))
-	call mkdir(expand(&backupdir), "p")
-endif
-if !isdirectory(expand(&directory))
-	call mkdir(expand(&directory), "p")
-endif
-
 " Do incremental searching when it's possible to timeout.
 if has('reltime')
 	set incsearch
@@ -88,37 +96,45 @@ endif
 set undofile 
 set undolevels=1000
 set undoreload=10000
-set undodir='/tmp/.vim/undo'
 
 " Enable swapfiles and backups
 set swapfile
 set backup
 
 " Case-insensitive search unless \C or one or more capital letters are used
-set ignorecase smartcase
+set ignorecase 
+set smartcase
 
 " Tab and indent settings
 set noexpandtab
+set softtabstop=0
 set tabstop=4
 set shiftwidth=4
 set expandtab
+set smarttab 
 
-" Wildmenu options
+" Enable Wildmenu and set its defaults
+set wildmenu 
 set wildmode=longest:full,full
 set wildoptions=pum,tagfile,fuzzy
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.pyo,*.exe,*.dll,*.obj,*.o,*.a,*.lib,*.so,*.dylib,*.class,*.jar,*.war
 set pumheight=20
 set display+=truncate
 
-set updatetime=300
-
-set timeout timeoutlen=300 ttimeoutlen=10
+" Set the default timeout for keycodes
+set updatetime=300          " Time in milliseconds to write swap file
+set encoding=utf-8          " Internal encoding
+set ttimeout                " Time out for key codes
+set ttimeoutlen=10          " Wait up to 100ms after Esc for special key
+set timeoutlen=1000         " Time out for key codes
 
 " Defaults for opening splits
-set splitbelow splitright
+set splitbelow 
+set splitright
 
 " Set how vim will display whitespace
-set list listchars=tab:▸\ ,trail:·,extends:»,precedes:«,nbsp:␣
+set list 
+set listchars=tab:▸\ ,trail:·,extends:»,precedes:«,nbsp:␣
 
 " Preview substitutions live
 "set inccommand=split
@@ -134,15 +150,6 @@ if has('unnamedplus')
 	set clipboard=unnamedplus,unnamed
 else
 	set clipboard+=unnamed
-endif
-
-" WSL yank support
-let s:clip = '/mnt/c/Windows/System32/clip.exe'  " change this path according to your mount point
-if executable(s:clip)
-	augroup WSLYank
-		autocmd!
-		autocmd TextYankPost * if v:event.operator ==# 'y' | call system(s:clip, @0) | endif
-	augroup END
 endif
 
 " Cscope settings
@@ -162,16 +169,24 @@ if has("cscope")
 endif
 
 " Set the statusline
+set laststatus=2 
 set lazyredraw
+set shortmess+=I                                                               " disable the default startup message
 
-let g:netrw_banner=0                                                           " configure netrw to be more dired like
-let g:netrw_fastbrowse=1                                                       " cache directory entries only when remote
-let g:netrw_keepdir=1
-let g:netrw_silent=1
-let g:netrw_special_syntax=1
-let g:netrw_bufsettings = "noma nomod nonu nowrap ro nobl relativenumber"      " Fix relativenumber being unset in netrw buffers
-let g:EasyMotion_startofline=0                                                 " keep cursor column when JK motion
-let g:EasyMotion_smartcase=1                                                   " makes EasyMotion work like smartcase for global searches
+set whichwrap+=<,>,h,l,[,]                                                     " move to previous or next line when moving back at eol
+set guifont=Meslo\ LG\ M\ DZ                                                   " set preffered font for graphical vim displays
+set selection=old                                                              " Fix bizarre eol behaviour in visual mode. See [[https://vi.stackexchange.com/questions/12607/extend-visual-selection-til-the-last-character-on-the-line-excluding-the-new-li][here]]
+
+set foldmethod=marker                                                          " Detect folding based on foldexpr
+
+set wildcharm=<C-z>                                                            " Use <C-z> to enter wildcharm mode
+
+" WARN: For some reason nvim and vim viminfo files are [[https://vi.stackexchange.com/q/9987][incompatible]].
+if has('nvim')
+  set viminfo='250,\"100,:20,%,n$XDG_DATA_HOME/nvim/viminfo
+else
+  set viminfo='250,\"100,:20,%,n$XDG_DATA_HOME/vim/viminfo
+endif
 
 
 " vim: ts=2 sts=2 sw=2 et

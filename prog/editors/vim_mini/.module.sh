@@ -8,10 +8,9 @@ packages                                        \
 link                                            \
   "$XDG_CONFIG_HOME/vim/init.vim"               \
   "$XDG_CONFIG_HOME/vim/plugins.vim"            \
-
+  "$XDG_CONFIG_HOME/vim/statusline.vim"
 link-to "$XDG_CONFIG_HOME/vim/colors" ./colors/*
-link-to "$XDG_CONFIG_HOME/vim/mods" ./mods/*
-link-to "$XDG_CONFIG_HOME/vim/plugs" ./plugs/*
+link-to "$XDG_CONFIG_HOME/vim/bindings" ./bindings/*
 
 if ! [ -e "$XDG_CONFIG_HOME/vim/autoload/plug.vim" ]; then
   info 'Installing VIM Plugged'
