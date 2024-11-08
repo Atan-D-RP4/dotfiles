@@ -1,0 +1,30 @@
+(defcfg
+  process-unmapped-keys yes
+)
+
+(defsrc
+  caps             w		  ]
+              a    s    d   l '	ret
+  lsft rsft
+)
+
+(defalias
+  a   (tap-hold 200 500   a lalt)
+  l   (tap-hold 200 500   l ralt)
+  '   (tap-hold-press 200 200   ' rsft)
+  ret (tap-hold-press 200 200 ret rctl)
+  cap (tap-hold-press 200 200 esc lctl)
+  ]   (tap-hold-press 200 200  	] (layer-toggle arrows))
+)
+
+(deflayer default
+  @cap              _		      @]
+              @a    _    _	@l @' @ret
+  _    _
+)
+
+(deflayer arrows
+  _                up		  	_
+              left down rght  	_   _   _
+  _    _
+)
