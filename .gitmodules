@@ -36,5 +36,9 @@
 	url = git@github.com:mohkale/dotfiles-wallpapers.git
 [submodule "prog/editors/nvim/nvim_conf"]
 	path = prog/editors/nvim/nvim_conf
-	url = git@github.com:Atan-D-RP4/nvim_conf.git
+	url = git@github.com:Atan-D-RP4/nuanced.nvim.git
+	branch = master
+[submodule "prog/editors/vim"]
+	path = prog/editors/vim
+	url = git@github.com:Atan-D-RP4/nuanced.vim.git
 	branch = master

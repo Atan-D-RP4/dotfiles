@@ -213,7 +213,7 @@ bind M-+ command-prompt -p "Expand pane height:" "resize-pane -U '%%'"
 bind M-- command-prompt -p "Shrink pane height:" "resize-pane -D '%%'"
 
 # move between windows, sessions or panes
-bind C-a select-window -t '{start}'                                                                # jump to the first window in this session
+bind C-d select-window -t '{start}'                                                                # jump to the first window in this session
 bind C-e select-window -t '{end}'                                                                  # jump to the last window in this session
 
 bind -r )   switch-client -n
@@ -411,6 +411,23 @@ bind C-x run -b 'tmux-popup -w 100% -h 100% launch'
 # bind X run -b "$TMUX_HOME/cmds/run-command"
 
 source $TMUX_HOME/theme.conf
+
+# Install tpm if it doesn't exist
+if-shell '[ ! -d "$HOME/.tmux/plugins/tpm" ]' {
+  run 'git clone https://github.com/tmux-plugins/tpm.git $HOME/.tmux/plugins/tpm'
+}
+
+# List of plugins
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-continuum'
+
+# bind -Tm-commands x to run the tmux-resurrect restore
+set -g @resurrect-restore 'o'
+set -g @resurrect-save 'O'
+
+
+run '$HOME/.tmux/plugins/tpm/tpm'
 
 if-shell '[ -e "$TMUX_HOME/tmux-local.conf" ]' {
   source $TMUX_HOME/tmux-local.conf
