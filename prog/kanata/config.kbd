@@ -3,28 +3,38 @@
 )
 
 (defsrc
-  caps             w		  ]
-              a    s    d   l '	ret
-  lsft rsft
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl lmet lalt           spc            ralt rmet rctl
 )
 
+(defvar
+	tap-time 150
+	hold-time 300
+)	
+
 (defalias
-  a   (tap-hold 200 500   a lalt)
-  l   (tap-hold 200 500   l ralt)
-  '   (tap-hold-press 200 200   ' rsft)
+  a (tap-hold $tap-time $hold-time a lmet)
+  s (tap-hold $tap-time $hold-time s lalt)
+  d (tap-hold $tap-time $hold-time d lctl)
+  f (tap-hold $tap-time $hold-time f lsft)
+
+  j (tap-hold $tap-time $hold-time j rsft)
+  k (tap-hold $tap-time $hold-time k rctl)
+  l (tap-hold $tap-time $hold-time l ralt)
+  ; (tap-hold $tap-time $hold-time ; rmet)
+
   ret (tap-hold-press 200 200 ret rctl)
   cap (tap-hold-press 200 200 esc lctl)
-  ]   (tap-hold-press 200 200  	] (layer-toggle arrows))
 )
 
 (deflayer default
-  @cap              _		      @]
-              @a    _    _	@l @' @ret
-  _    _
+  _	   _    _    w    _    _    _    _    _    _    _    _    _    _
+  _	   _    @a   @s   @d   @f   _    @j   @k   @l   @;   _    _    _
+  @cap _    _    _    _    _    _    _    _    _    _    _    @ret
+  _	   _    _    _    _    _    _    _    _    _    _    _   _
+  _	   _    _              _              _    _    _	
 )
 
-(deflayer arrows
-  _                up		  	_
-              left down rght  	_   _   _
-  _    _
-)
