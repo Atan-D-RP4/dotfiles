@@ -37,7 +37,7 @@ export TMUX_HOME=$XDG_CONFIG_HOME/tmux
 export TMUX_TMPDIR=$XDG_CACHE_HOME/tmux
 export LANG=en_GB.UTF-8 LC_MESSAGES="C"
 export MANPATH=$XDG_DATA_HOME/man:$MANPATH
-export MANPAGER='less -s -M +Gg'
+export MANPAGER="$(command -v nvim >/dev/null 2>&1 && echo 'nvim --clean +Man!' || (command -v bat >/dev/null 2>&1 && echo 'sh -c "col -bx | bat -l man -p"' || echo 'less -R --use-color -Dd+r -Du+b'))"
 export MAN_KEEP_FORMATTING=1
 export MANROFFOPT="-P -c"
 export INFOPATH=$XDG_DATA_HOME/info:$INFOPATH
