@@ -13,6 +13,7 @@ if filereadable($XDG_CONFIG_HOME.'/vim/autoload/plug.vim')
   Plug 'junegunn/fzf.vim'
   Plug 'easymotion/vim-easymotion'
   Plug 'tpope/vim-commentary'
+  Plug 'google/vim-searchindex'
 
   call plug#end()
 endif

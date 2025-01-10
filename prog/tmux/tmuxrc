@@ -51,10 +51,9 @@ setw -g aggressive-resize on                                         # Auto-resi
     set -g default-terminal "st-tmux-256color"
   %endif
 %else
-  set -g default-terminal "tmux-256color"
+  set -g default-terminal "${TERM}"
 %endif
 
-# Detect events in windows and mark appropriately. Supported events include:
 # activity - refers to any new content being written to the terminal on the window.
 # silence  - checks whether window has been inactive for the given duration
 # bell     - checks whether the terminal in that window has issued the bell
@@ -290,8 +289,8 @@ bind                 v   copy-mode
 bind                 V   copy-mode \; send-keys V
 bind                 /   copy-mode \; send-keys /
 bind                 ?   copy-mode \; send-keys ?
-bind                 C-u copy-mode \; send-keys -X halfpage-up
-bind                 C-d copy-mode \; send-keys -X halfpage-down
+bind                 C-q copy-mode \; send-keys -X halfpage-up
+bind                 C-f copy-mode \; send-keys -X halfpage-down
 bind -T copy-mode-vi C-g send-keys -X cancel
 bind -T copy-mode-vi v   if -F '#{?selection_present}' {send-keys -X clear-selection} {send-keys -X begin-selection}
 bind -T copy-mode-vi y   send-keys -X copy-pipe-and-cancel clip
@@ -423,12 +422,12 @@ if-shell '[ ! -d "$HOME/.tmux/plugins/tpm" ]' {
 
 # List of plugins
 set -g @plugin 'tmux-plugins/tpm'
-# set -g @plugin 'tmux-plugins/tmux-resurrect'
-# set -g @plugin 'tmux-plugins/tmux-continuum'
-#
-# # bind -Tm-commands x to run the tmux-resurrect restore
-# set -g @resurrect-restore 'C-o'
-# set -g @resurrect-save 'o'
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-continuum'
+
+# bind -Tm-commands x to run the tmux-resurrect restore
+set -g @resurrect-restore 'C-c'
+set -g @resurrect-save 'o'
 
 
 run '$HOME/.tmux/plugins/tpm/tpm'

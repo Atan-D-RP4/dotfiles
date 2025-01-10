@@ -8,12 +8,12 @@
   tab     q       w       e       r       t       y       u       i       o       p       [       ]       \
   caps    a       s       d       f       g       h       j       k       l       ;       '       ret
   lsft    z       x       c       v       b       n       m       ,       .       /       rsft
-  lctl                    lmet    lalt    spc     ralt rmet rctl
+  lctl                    lmet    lalt    spc     ralt    rmet    rctl
 )
 
 (defvar
-  tap-time 150
-  hold-time 300
+  tap-time  150
+  hold-time 200
 )
 
 (defalias
@@ -23,32 +23,36 @@
   f-lsh (tap-hold       $tap-time $hold-time  f              lsft)
 
   j-rmt (tap-hold       $tap-time $hold-time  j              rsft)
-  k-ral (tap-hold       $tap-time $hold-time  k              rctl)
-  l-rct (tap-hold       $tap-time $hold-time  l              ralt)
+  k-rct (tap-hold       $tap-time $hold-time  k              rctl)
+  l-ral (tap-hold       $tap-time $hold-time  l              ralt)
   ;-rsh (tap-hold       $tap-time $hold-time  ;              rmet)
 
   ret   (tap-hold-press 200       200         ret            rctl)
   cap   (tap-hold-press 200       200         esc            lctl)
   esc   (tap-hold-press 200       200         caps            esc)
 
-  t-mod (tap-hold-press 100       500         t              (layer-switch home_mod))
-  t-bas (tap-hold-press 100       500         t              (layer-switch base-layer))
+  hrw  (layer-switch homerow-kbd)
+  bas  (layer-switch base-layer)
+
+  `-mod (tap-hold       200       150         `              lrld)
+  5-mod (tap-hold       200       150         5              @hrw)
+  5-bas (tap-hold       200       150         5              @bas)
 )
 
 (deflayer base-layer
   @esc    _       _       _       _       _       _       _       _       _       _       _       _
+  @`-mod  _       _       _       _       @5-mod  _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _       _       _       @t-mod  _       _       _       _       _       _       _       _
   @cap    _       _       _       _       _       _       _       _       _       _       _       @ret
   _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _                       _                       _       _       _
+  _                       _       lalt    _       ralt    _       _
 )
 
-(deflayer home_mod
+(deflayer homerow-kbd
   @esc    _       _       _       _       _       _       _       _       _       _       _       _
+  @`-mod  _       _       _       _       @5-bas  _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _       _       _       @t-bas  _       _       _       _       _       _       _       _
-  @cap    @a-lmt  @s-lal  @d-lct  @f-lsh  _       _       @j-rmt  @k-ral  @l-rct  @;-rsh  _       @ret
+  @cap    @a-lmt  @s-lal  @d-lct  @f-lsh  _       _       @j-rmt  @k-rct  @l-ral  @;-rsh  _       @ret
   _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _                       _               _       _       _
+  _                       _       lalt    _       ralt    _       _
 )

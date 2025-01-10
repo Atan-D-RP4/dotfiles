@@ -11,7 +11,7 @@
 
 smart_term=0
 case "$TERM" in
-  xterm*|rxvt*|eterm*|screen*|tmux*|cygwin*|emacs*|st*|alacritty)
+  xterm*|rxvt*|eterm*|screen*|tmux*|cygwin*|emacs*|st*|alacritty|wezterm)
     smart_term=1
     ;;
   dumb)

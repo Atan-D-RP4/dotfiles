@@ -1,0 +1,70 @@
+
+[[Snippets]]
+  Description = "List All AUR packages"
+  Filename = "/home/atan/.config/pet/snippet.toml"
+  Output = ""
+  Tag = []
+  command = "paru -Qmq"
+
+[[Snippets]]
+  Description = "Startup SSH Agent and prompt for key to add"
+  Filename = "/home/atan/.config/pet/snippet.toml"
+  Output = ""
+  Tag = []
+  command = "eval $(ssh-agent -c) && ssh-add $(rg --files ~/.ssh | fzf)"
+
+[[Snippets]]
+  Description = "Clear pacman cache"
+  Filename = "/home/atan/.config/pet/snippet.toml"
+  Output = ""
+  Tag = []
+  command = "paccache -ruvk 0"
+
+[[Snippets]]
+  Description = "Fuzzy search dirs from $HOME and cd"
+  Filename = "/home/atan/.config/pet/snippet.toml"
+  Output = ""
+  Tag = []
+  command = "cd $(fd -td --search-path ~/ | fzf | xargs echo)"
+
+[[Snippets]]
+  Description = "Fuzzy Search a process and kill it"
+  Filename = "/home/atan/.config/pet/snippet.toml"
+  Output = ""
+  Tag = []
+  command = "kill -9 --verbose $(ps aux | fzf | awk '{ print $2 }')"
+
+[[Snippets]]
+  Description = "List Explicitly installed pacman packages"
+  Filename = "/home/atan/.config/pet/snippet.toml"
+  Output = ""
+  Tag = []
+  command = "pacman -Qent"
+
+[[Snippets]]
+  Description = "Browse pacman packages (installed and not)"
+  Filename = "/home/atan/.config/pet/snippet.toml"
+  Output = ""
+  Tag = []
+  command = "$ pacman -Slq | fzf --preview 'pacman -Si {}' --layout=reverse"
+
+[[Snippets]]
+  Description = "OS Info"
+  Filename = "/home/atan/.config/pet/snippet.toml"
+  Output = ""
+  Tag = []
+  command = "uname -a"
+
+[[Snippets]]
+  Description = "CPU Info"
+  Filename = "/home/atan/.config/pet/snippet.toml"
+  Output = ""
+  Tag = []
+  command = "lscpu --output-all"
+
+[[Snippets]]
+  Description = "List Orphaned Pacman packages"
+  Filename = "/home/atan/.config/pet/snippet.toml"
+  Output = ""
+  Tag = []
+  command = "pacman -Qtdq"
