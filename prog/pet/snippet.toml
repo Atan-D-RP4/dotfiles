@@ -68,3 +68,10 @@
   Output = ""
   Tag = []
   command = "pacman -Qtdq"
+
+[[Snippets]]
+  Description = "List and Delete all broken symlinks"
+  Filename = "/home/atan/.config/pet/snippet.toml"
+  Output = ""
+  Tag = []
+  command = "rm -v (sudo czkawka-cli symlinks -d /bin/ -d /boot/ -d /etc/ -d /home/ -d /lib/ -d /lib64/ -d /opt/ -d /root/ -d /run/ -d /sbin/ -d /srv/ -d /sys/ -d /tmp/ -d /usr/ -d /var | awk '{ print $1 }' | sed 's/\"//g')"

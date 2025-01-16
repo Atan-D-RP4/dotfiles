@@ -1,4 +1,4 @@
-link "$XDG_CONFIG_HOME/config.kbd"
+link "$XDG_CONFIG_HOME/kanata/config.kbd"
 
 packages                                        \
   yay:kanata                                    \

@@ -1,3 +1,4 @@
+set -g fish_greeting
 if status is-interactive
     # Commands to run in interactive sessions can go here
 	# Check if the fastfetch exists is available
@@ -5,4 +6,5 @@ if status is-interactive
 		fastfetch
 	end
 end
-
+abbr mkdir 'mkdir -p'
+alias ll='ls -latr'
