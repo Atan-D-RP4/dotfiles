@@ -13,5 +13,5 @@
 # to source ~/.bashrc in ~/.profile, but that conflicts with other shells
 # so instead [[file:~/.bash_profile][~/.bash_profile]] is required.
 
-. "$HOME"/.profile
-. "$HOME"/.bashrc
+. "$HOME/.bashrc"
+. "$HOME/.profile"

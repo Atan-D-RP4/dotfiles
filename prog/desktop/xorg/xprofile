@@ -2,7 +2,7 @@
 . "$HOME"/.profile
 
 # Make caps-lock work like ctrl-key
-setxkbmap -option caps:ctrl_modifier
+#setxkbmap -option caps:ctrl_modifier
 
 # You may want to swap the alt and super key because many keyboards go control,
 # super, alt but I'm more familliar with and prefer control, alt and super.

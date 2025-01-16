@@ -18,6 +18,7 @@ case "$-" in
     *) return ;;
 esac
 
+. "$HOME/.profile"
 . "$XDG_CONFIG_HOME/shenv"
 
 case "$-" in
