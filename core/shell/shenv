@@ -19,7 +19,8 @@ case "$TERM" in
     ;;
 esac
 
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"                    # Make less more friendly for non-text input files, see lesspipe(1)
+# Make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 # Generate lesskey configuration file when it's out of date.
 _less_needs_lesskey() {
@@ -37,6 +38,7 @@ _less_needs_lesskey() {
     return 0
   fi
 }
+
 if [ -n "$LESSKEY" ] &&
    [ -e "$LESSKEY.base" ] &&
    { ! [ -e "$LESSKEY" ] || [ "$LESSKEY.base" -nt "$LESSKEY" ]; }; then
@@ -76,7 +78,7 @@ if [ -z "$shell" ]; then
     case "$(ps -p $$ >/dev/null 2>&1 | awk 'END { print($NF) }')" in
       *bash) shell=bash   ;;
       *zsh)  shell=zshell ;;
-      *)     false         ;;
+      *)     false        ;;
     esac
   fi
 fi
