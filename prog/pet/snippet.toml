@@ -75,3 +75,17 @@
   Output = ""
   Tag = []
   command = "rm -v (sudo czkawka-cli symlinks -d /bin/ -d /boot/ -d /etc/ -d /home/ -d /lib/ -d /lib64/ -d /opt/ -d /root/ -d /run/ -d /sbin/ -d /srv/ -d /sys/ -d /tmp/ -d /usr/ -d /var | awk '{ print $1 }' | sed 's/\"//g')"
+
+[[Snippets]]
+  Description = "Clean journal logs older than 1 week"
+  Filename = "/home/atan/.config/pet/snippet.toml"
+  Output = ""
+  Tag = []
+  command = "sudo journalctl --vacuum-time=1weeks"
+
+[[Snippets]]
+  Description = "Fuzzy Select install PacMan packages and remove them"
+  Filename = "/home/atan/.config/pet/snippet.toml"
+  Output = ""
+  Tag = []
+  command = "sudo pacman -Rns $(pacman -Qq | fzf --preview \"pacman -Qqi {}\" --multi --bind tab:select --bind shift-tab:deselect)"
