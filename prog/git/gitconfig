@@ -32,6 +32,10 @@
 
 # --word-diff default
 [diff]
+	renames = true
+	mnemonicPrefix = true
+	colorMoved = plain
+	algorithm = histogram
 	tool = nvimdiff
 
 [diff "gpg"]
@@ -41,16 +45,34 @@
 [fetch]
 	# Automatically fetch checked-out submodules when fetching the parent repo.
 	recurseSubmodules = on-demand
+	prune = true
+	pruneTags = true
+	all = true
 
 [push]
 	# Automatically push checked-out submodules when pushing the parent repo.
 	recurseSubmodules = on-demand
+	autoSetupRemote = true
+	followTags = true
+	default = simple
 
 [pull]
 	# Prevent merge conflicts when running [[man:git-pull][git pull]], just failing the pull
 	# altogether but keeping the newly fetched changes ready for a following
 	# merge or rebase.
 	ff = only
+	rebase = true
+
+[rebase]
+	# Automatically rebase any changes when pulling from a remote repository.
+	autostash = true
+	autosquash = true
+	interactive = preserve
+	merge = true
+	autoupdate = true
+
+[merge]
+	conflictstyle = zdiff3
 
 [alias]
 	# Git aliases are shortcuts that can be invoked directly from the base git
@@ -58,12 +80,12 @@
 
 	# Shortcuts for core commands.
 	c  = commit
-	s  = status
+	s  = status -s
 	a  = add
 	b  = branch
 	cl = !dot-git-clone
 	d  = diff
-	l  = log
+	l  = log --oneline --graph --all
 	ch = checkout
 	blame = blame -w -M -C -C -C
 
@@ -87,6 +109,9 @@
 [branch]
 	# Sort git branches by most recent commit.
 	sort = -committerdate
+
+[tag]
+	sort = version:refname
 
 [sendemail]
 	# Mailing lists work through old school E-Mail :sunglasses:.
@@ -127,6 +152,7 @@
 
 [credential "mail.kisara.moe"]
 	helper = store
+
 [credential "smtp.gmail.com"]
 	helper = store
 
@@ -135,11 +161,13 @@
 	path = config.d/github
 	path = config.d/gitlab
 	path = config.d/local
+
 [user "email"]
 	com = chaitanyarp4@gmail.com
 
 [rerere]
 	enabled = true
+	autoupdate = true
 
 [maintenance]
 	repo = /home/atan/dotfiles/prog/editors/nvim/nvim_conf
@@ -148,3 +176,6 @@
 [remote.origin]
 	# Fetch all branches from the remote repository.
 	fetch = '+refs/heads/*:refs/remotes/origin/*'
+
+[color]
+	ui = auto

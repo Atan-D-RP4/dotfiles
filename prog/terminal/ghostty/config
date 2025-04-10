@@ -29,3 +29,5 @@ auto-update-channel = tip
 
 keybind = ctrl+alt+r=reload_config
 keybind = ctrl+alt+i=inspector:toggle
+
+# custom-shader = shaders/bloom25.glsl
