@@ -1,5 +1,7 @@
 link "$XDG_CONFIG_HOME/kanata/config.kbd"
 
 packages                                        \
+  apt:kanata                                    \
+  pacman:kanata                                 \
   yay:kanata                                    \
-  apt:kanata
+  paru:kanata
