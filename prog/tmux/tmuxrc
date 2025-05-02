@@ -118,7 +118,7 @@ bind M-b if -F "#{?#{s/0+//:#{S:#{W:$TMUX_ACTIVITY_WINDOW_FILTER}}},1,0}" {
 }
 bind B   choose-client -Z
 
-bind C-w kill-pane
+bind q kill-pane
 bind w   unlink-window -k                                                                          # keeps the window alive in any other sessions if it exists there.
 bind W   kill-window
 bind M-w kill-session

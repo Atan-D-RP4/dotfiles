@@ -17,10 +17,26 @@
 	defaultBranch = master
 
 [core]
+	# Convert CRLF to LF when commiting changes back. Useful for when you clone
+	# a repo on windows, make changes and try to commit it back without the CRLF
+	# line endings showing up as changes.
 	autocrlf = input
-		# Convert CRLF to LF when commiting changes back. Useful for when you clone
-		# a repo on windows, make changes and try to commit it back without the CRLF
-		# line endings showing up as changes.
+	compression = 9
+	preloadindex = true
+	whitespace = error
+
+[url "git@github.com:ad4/"]
+	# GitHub SSH URL.
+	insteadOf = gha:
+
+[url "git@github.com:"]
+	# GitHub SSH URL.
+	insteadOf = gh:
+
+[status]
+	branch = true
+	showUntrackedFiles = all
+	showStash = true
 
 [filter "lfs"]
 	# Configure [[man:git-lfs][git-lfs]]. A git plugin that simplifies commiting and storage of large
@@ -30,8 +46,8 @@
 	process = git-lfs filter-process
 	required = true
 
-# --word-diff default
 [diff]
+	context = 3
 	renames = true
 	mnemonicPrefix = true
 	colorMoved = plain
@@ -55,11 +71,13 @@
 	autoSetupRemote = true
 	followTags = true
 	default = simple
+	pushOption = force-with-lease
 
 [pull]
 	# Prevent merge conflicts when running [[man:git-pull][git pull]], just failing the pull
 	# altogether but keeping the newly fetched changes ready for a following
 	# merge or rebase.
+	default = current
 	ff = only
 	rebase = true
 
@@ -69,6 +87,7 @@
 	autosquash = true
 	interactive = preserve
 	merge = true
+	missingCommitsCheck = warn
 	autoupdate = true
 
 [merge]
@@ -85,9 +104,9 @@
 	b  = branch
 	cl = !dot-git-clone
 	d  = diff
-	l  = log --oneline --graph --all
+	l  = log --oneline --graph --all --pretty=format:'%C(bold blue)%h%Creset %C(bold green)(%ar)%Creset %C(bold red)%d%Creset %s %C(dim white)<%an>%Creset' --abbrev-commit
 	ch = checkout
-	blame = blame -w -M -C -C -C
+	b = blame -w -M -C -C -C
 
 	# Mini git scripts as shortcuts.
 	rcls    = config --list

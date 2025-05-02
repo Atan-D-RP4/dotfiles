@@ -1,4 +1,4 @@
-theme = rose-pine
+# theme = rose-pine
 background = #0c0c0c
 foreground = #cccccc
 
@@ -23,11 +23,11 @@ palette = 14=#61d6d6
 palette = 15=#f2f2f2
 palette = 16=#000000
 
+font-family="Maple Mono"
+
 command = /usr/sbin/fish
 click-repeat-interval = 500
 auto-update-channel = tip
 
 keybind = ctrl+alt+r=reload_config
 keybind = ctrl+alt+i=inspector:toggle
-
-# custom-shader = shaders/bloom25.glsl
