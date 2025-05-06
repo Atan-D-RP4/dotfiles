@@ -1,0 +1,83 @@
+;; ANSI sub-layer (let kanata ignore all other keys)
+(defsrc
+  q        w        e        r        t        y        u        i        o        p
+  a        s        d        f        g        h        j        k        l        ;
+  z        x        c        v        b        n        m        ,        .        /
+                 lalt     lmeta           spc        rmeta       ralt
+)
+
+;; Base layer (active by default when kanata starts up):
+;;  - home-row mods
+;;  - the 3 main thumb keys become mod/taps
+(deflayer base-layer
+  _        _        _        _        _        _        _        _        _        _
+  @a-fn    @s-lmeta @d-lalt  @f-lctl  _        _        @j-rctl  @k-lalt  @l-rmeta @semi-fn
+  _        _        _        _        _        _        _        _        _        _
+                 @lsym    @lsym          @spc        @rsym       @rsym
+)
+
+(deflayer nav-num
+  grv      home     up       end      pgup     _        kp7      kp8      kp9      _
+  @tab-fn  @lft-lm  @down-la @rght-lc pgdn     kp.      @kp4-rc  @kp5-la  @kp6-rm  @esc-fn
+  _        _        _        _        _        spc      kp1      kp2      kp3      _
+              @del-shift @del-shift       _       @kp0-altgr @kp0-altgr
+)
+
+(deflayer fn
+  _        _        _        _        _        _        f7       f8       f9       f12
+  _        _        _        _        _        _        f4       f5       f6       f11
+  _        _        _        _        _        _        f1       f2       f3       f10
+                    _        _            _              _        _
+)
+
+;; ;; Symbol layer (= AltGr except for the left thumb key)
+;; (deflayer r-symbols
+;;   RA-q     RA-w     RA-e     RA-r     RA-t     RA-y     RA-u     RA-i     RA-o     RA-p
+;;   RA-a     RA-s     RA-d     RA-f     RA-g     RA-h     RA-j     RA-k     RA-l     RA-;
+;;   RA-z     RA-x     RA-c     RA-v     RA-b     RA-n     RA-m     RA-,     RA-.     RA-/
+;;                            del          -           _
+;; )
+
+;; Special key aliases
+(defalias
+  ;; Space-cadet thumb keys: BackSpace, Space and Return
+  ;;  - acts as a modifier by default, or as BS/Ret when tapped separately;
+  ;;  - works great with keyboard layouts where neither Shift nor AltGr are used outside of the 3×10
+  ;; main alpha keys.
+  lsym (tap-hold-press 200 200 bspc lsft)
+  spc  (tap-hold-press 200 200 spc  (layer-toggle nav-num))
+  rsym (tap-hold-press 200 200 ret  ralt)
+
+  ;; Home-row mods
+  ;; Must be hold long enough (number of ms on the right) to become a modifier.
+  a-fn    (tap-hold 200 200 a (layer-toggle fn))
+  s-lmeta (tap-hold 200 200 s lmeta)
+  d-lalt  (tap-hold 250 250 d lalt)
+  f-lctl  (tap-hold 200 200 f lctrl)
+  j-rctl  (tap-hold 200 200 j rctrl)
+  k-lalt  (tap-hold 250 250 k lalt)
+  l-rmeta (tap-hold 200 200 l rmeta)
+  semi-fn  (tap-hold 200 200 ; (layer-toggle fn))
+
+  ;; NumRow layer shifter
+  num (layer-toggle nav-num)
+  tab-fn  (tap-hold 200 200 tab (layer-toggle fn))
+  lft-lm  (tap-hold 200 200 lft lmeta)
+  down-la (tap-hold 200 200 down lalt)
+  rght-lc (tap-hold 200 200 rght lctrl)
+  kp4-rc  (tap-hold 200 200 kp4 rctrl)
+  kp5-la  (tap-hold 200 200 kp5 lalt)
+  kp6-rm  (tap-hold 200 200 kp6 rmeta)
+  esc-fn  (tap-hold 200 200 esc (layer-toggle fn))
+  del-shift (tap-hold-press 200 200 del lsft)
+  kp0-altgr (tap-hold-press 200 200 kp0 ralt)
+
+  ;; Mouse wheel emulation
+  mwu (mwheel-up    50 120)
+  mwd (mwheel-down  50 120)
+  mwl (mwheel-left  50 120)
+  mwr (mwheel-right 50 120)
+)
+
+;; vim: set ft=lisp
+
