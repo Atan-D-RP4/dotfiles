@@ -52,6 +52,11 @@
 	mnemonicPrefix = true
 	colorMoved = plain
 	algorithm = histogram
+	wordDiff = always
+	renames = true
+	mnemonicPrefix = true
+	colorMoved = plain
+	algorithm = histogram
 	tool = nvimdiff
 
 [diff "gpg"]
