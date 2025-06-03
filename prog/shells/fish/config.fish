@@ -10,5 +10,10 @@ if status is-interactive
 	    fastfetch
     end
 end
+set -x SHELL /usr/bin/fish
 abbr mkdir 'mkdir -p'
 alias ll='ls -latr'
+
+if type -q atuin
+    atuin init fish | source
+end

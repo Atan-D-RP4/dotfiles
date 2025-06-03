@@ -5,7 +5,7 @@ link-to "$XDG_CONFIG_HOME/nvim/doc" ./nvim_conf/doc/*
 link-to "$XDG_CONFIG_HOME/nvim/lua" ./nvim_conf/lua/*
 link-to "$XDG_CONFIG_HOME/nvim/ftplugin" ./nvim_conf/ftplugin/*
 
-packages                                      \
-  apt:neovim                                  \
-  yay:neovim-git			      \
-  pacman:neovim
+packages \
+	pacman:neovim \
+	yay:neovim-git \
+	paru:neovim-git

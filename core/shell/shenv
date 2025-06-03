@@ -71,13 +71,11 @@ FZF_SHELL_OPTS="--height 99% --reverse"                                         
 if [ -z "$shell" ]; then
   if [ -n "$BASH_VERSION" ]; then
     shell=bash
-  elif [ -n "$ZSH_VERSION" ]; then
-    shell=zshell
   else
     # Fall back to basic binary interpretation.
     case "$(ps -p $$ >/dev/null 2>&1 | awk 'END { print($NF) }')" in
       *bash) shell=bash   ;;
-      *zsh)  shell=zshell ;;
+      *fish)  shell=fish ;;
       *)     false        ;;
     esac
   fi

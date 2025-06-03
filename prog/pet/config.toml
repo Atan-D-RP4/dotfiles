@@ -17,7 +17,7 @@
   Format = "[$description]: $command $tags"
   SelectCmd = "fzf --ansi --layout=reverse --border --height=90% --pointer=* --cycle --prompt=Snippets:"
   SnippetDirs = []
-  SnippetFile = "$XDG_CONFIG_HOME/pet/snippet.toml"
+  SnippetFile = "/home/atan/.config/pet/snippet.toml"
   SortBy = ""
 
 [Gist]

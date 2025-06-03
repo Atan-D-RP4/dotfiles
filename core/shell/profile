@@ -37,7 +37,8 @@ export TMUX_HOME=$XDG_CONFIG_HOME/tmux
 export TMUX_TMPDIR=$XDG_CACHE_HOME/tmux
 export LANG=en_GB.UTF-8 LC_MESSAGES="C"
 export MANPATH=$XDG_DATA_HOME/man:$MANPATH
-export MANPAGER="$(command -v nvim >/dev/null 2>&1 && echo 'nvim --clean +Man!' || (command -v bat >/dev/null 2>&1 && echo 'sh -c "col -bx | bat -l man -p"' || echo 'less -R --use-color -Dd+r -Du+b'))"
+export MANPAGER="$(command -v nvim >/dev/null 2>&1 && echo 'nvim +Man!' || (command -v bat >/dev/null 2>&1 && echo 'sh -c "col -bx | bat -l man -p"' || echo 'less -R --use-color -Dd+r -Du+b'))"
+export EDITOR="/usr/bin/nvim"
 export MAN_KEEP_FORMATTING=1
 export MANROFFOPT="-P -c"
 export INFOPATH=$XDG_DATA_HOME/info:$INFOPATH
@@ -109,13 +110,11 @@ export XKB_DEFAULT_OPTIONS=caps:ctrl_modifier
 shell=
 if [ -n "$BASH_VERSION" ]; then
   shell=bash
-elif [ -n "$ZSH_VERSION" ]; then
-  shell=zshell
 else
   # Fall back to basic binary interpretation.
   case "$(ps -p $$ >/dev/null 2>&1 | awk 'END { print($NF) }')" in
     *bash) shell=bash   ;;
-    *zsh)  shell=zshell ;;
+    *fish)  shell=fish;;
     *)     false         ;;
   esac
 fi
