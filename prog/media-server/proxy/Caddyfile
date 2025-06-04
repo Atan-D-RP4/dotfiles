@@ -35,32 +35,55 @@ import /etc/caddy/local.d/Caddyfile.global
 # └────────────────┘
 
 (error_pages) {
-	handle_errors 5xx {
-		reverse_proxy error-pages:8080 {
-			replace_status {err.status_code}
+	#(status_code)
+	reverse_proxy error-pages:8080 {
+		replace_status {args[0]}
 
-			header_up X-Host       {upstream_hostport}
-			header_up X-Code       {err.status_code}
-			header_up X-Request-Id {http.request.uuid}
-		}
+		header_up X-Host {upstream_hostport}
+		header_up X-Code {args[0]}
+		header_up X-Request-Id {http.request.uuid}
 	}
+}
+
+(ban_bots) {
+	# Adapted from https://darthvi.com/post/forbidden-for-robots/
+    @botForbidden header_regexp User-Agent "(?i)AdsBot-Google|Amazonbot|anthropic-ai|Applebot|Applebot-Extended|AwarioRssBot|AwarioSmartBot|Bytespider|CCBot|ChatGPT|ChatGPT-User|Claude-Web|ClaudeBot|cohere-ai|DataForSeoBot|Diffbot|FacebookBot|Google-Extended|GPTBot|ImagesiftBot|magpie-crawler|omgili|Omgilibot|peer39_crawler|PerplexityBot|YouBot"
+    handle @botForbidden   {
+        import error_pages 403
+    }
 }
 
 (service_proxy_to) {
 	#(service, TLD, service_host, port)
-	{args[0]}.{args[1]} {
+	http://{args[0]}.{args[1]} {
+		redir https://{args[0]}.{args[1]}
+	}
+
+	https://{args[0]}.{args[1]} {
 		# authorize with guests_policy
 		reverse_proxy {args[2]}:{args[3]}
-		import error_pages
+
+        import ban_bots
+		handle_errors 5xx {
+			import error_pages {err.status_code}
+		}
 	}
 }
 
 (authorized_service_proxy_to) {
 	#(service, TLD, service_host, port)
-	{args[0]}.{args[1]} {
+	http://{args[0]}.{args[1]} {
+		redir https://{args[0]}.{args[1]}
+	}
+
+	https://{args[0]}.{args[1]} {
 		import authelia_forward_auth {args[1]}
 		reverse_proxy {args[2]}:{args[3]}
-		import error_pages
+
+        import ban_bots
+		handle_errors 5xx {
+			import error_pages {err.status_code}
+		}
 	}
 }
 
@@ -70,6 +93,6 @@ import /etc/caddy/local.d/Caddyfile.snippets
 # │     Routes     │
 # └────────────────┘
 
-import /etc/caddy/config.d/Caddyfile.services         {$SITE_ADDRESS} service_proxy_to
+import /etc/caddy/config.d/Caddyfile.services {$SITE_ADDRESS} service_proxy_to
 import /etc/caddy/config.d/Caddyfile.private-services {$SITE_ADDRESS} service_proxy_to
 import /etc/caddy/local.d/Caddyfile.routes
