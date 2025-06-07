@@ -9,3 +9,5 @@ link-to "$XDG_CONFIG_HOME/waybar/lua/" ./lua/*
 packages \
   pacman:waybar,lua51,lua51-dkjson \
   paru:waybar,lua51,lua51-dkjson
+
+eval "$XDG_CONFIG_HOME/waybar/waybar.lua"

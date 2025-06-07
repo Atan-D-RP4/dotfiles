@@ -32,8 +32,8 @@ return {
 		modules_center = { { "hyprland/workspaces", "hyprland/window" } },
 		modules_right = {
 			{ "backlight", "network", "pulseaudio", "pulseaudio#microphone", "custom/updates", "custom/keybindhint" },
-			{ "privacy", "tray", "battery" },
-			{ "custom/wallchange", "custom/theme", "custom/wbar", "custom/cliphist", "custom/power" },
+			{ "privacy", "tray", "battery", "disk" },
+			{ "custom/notifications", "custom/theme", "custom/wbar", "custom/cliphist", "custom/power" },
 		},
 	},
 	{

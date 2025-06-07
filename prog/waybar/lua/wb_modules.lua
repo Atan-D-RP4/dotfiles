@@ -205,7 +205,7 @@ return {
 	memory = function(builder)
 		return {
 			states = { c = 90, h = 60, m = 30 },
-			interval = 30,
+			interval = 5,
 			format = "󰾆 {used}GB",
 			rotate = builder.variables.r_deg,
 			["format-m"] = "󰾅 {used}GB",
@@ -215,6 +215,18 @@ return {
 			["max-length"] = 10,
 			tooltip = true,
 			["tooltip-format"] = "󰾆 {percentage}%\n {used:0.1f}GB/{total:0.1f}GB",
+		}
+	end,
+	disk = function(builder)
+		return {
+			states = { c = 90, h = 60, m = 30 },
+			interval = 30,
+			path = "/",
+			rotate = builder.variables.r_deg,
+			["format-m"] = "󰋊 {percentage_used}%",
+			["format-h"] = "󰒋 {percentage_free}%",
+			["format-c"] = "󰒌 {percentage_free}%",
+			["format-alt"] = "󰋊 {used}%",
 		}
 	end,
 	mpris = function(builder)
@@ -452,9 +464,9 @@ return {
 			format = "{}",
 			rotate = builder.variables.r_deg,
 			exec = "echo ; echo  switch bar //  dock",
-			["on-click"] = "wbarconfgen.sh n",
-			["on-click-right"] = "wbarconfgen.sh p",
-			["on-click-middle"] = "sleep 0.1 && quickapps.sh kitty firefox spotify code dolphin",
+			["on-click"] = "$XDG_CONFIG_HOME/waybar/waybar.lua next",
+			["on-click-right"] = "$XDG_CONFIG_HOME/waybar/waybar.lua prev",
+			["on-click-middle"] = "sleep 0.1 && quickapps.sh zen-browser kitty thunar nvim btop",
 			interval = 86400,
 			tooltip = true,
 		}
