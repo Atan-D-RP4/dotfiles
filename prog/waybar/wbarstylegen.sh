@@ -110,6 +110,7 @@ export font_name=${font_name:-"JetBrainsMono Nerd Font"}
 
 # list modules and generate theme style
 export modules_ls
+echo "$modules_ls"
 # modules_ls=$(grep -m 1 '".*.": {'  --exclude="$modules_dir/footer.jsonc" "${modules_dir}"/*.jsonc | cut -d '"' -f 2 | awk -F '/' '{ if($1=="custom") print "#custom-"$NF"," ; else print "#"$NF","}')
 modules_ls=$(grep -m 1 '".*.": {' --exclude="$modules_dir/footer.jsonc" "${modules_dir}"/*.jsonc | cut -d '"' -f 2 | awk -F '/' '{print ($1=="custom" ? "#custom-"$NF : "#"$NF)","}')
 envsubst <"$in_file" >"$out_file"

@@ -76,7 +76,7 @@ function WaybarBuilder:new(theme_name)
 			i_task = 16,
 			i_priv = 12,
 			set_sysname = os.getenv("HOSTNAME") or "localhost",
-			w_output = { "*" },
+			WAYBAR_OUTPUT = { "*" },
 		},
 	}
 	setmetatable(obj, self)
@@ -202,6 +202,35 @@ function WaybarBuilder:build()
 	return config
 end
 
+function WaybarBuilder:generate_style()
+	-- Set environment variables that wbstylegen.sh expects
+	local env_vars = self.variables
+
+	-- Build environment string for the command
+	local env_string = ""
+	for key, value in pairs(env_vars) do
+		vim.print(value)
+		env_string = env_string .. key .. "=" .. string:format(value) .. " "
+	end
+	vim.print("Environment variables for style generation: " .. env_string)
+
+	-- Get script directory (assuming it's in the same location as wbarconfgen.sh)
+	local script_dir = os.getenv("HOME") .. "/.local/lib/hyde"
+	local style_script = script_dir .. "/wbarstylegen.sh"
+
+	-- Execute wbarstylegen.sh with environment variables
+	local command = env_string .. style_script
+	local success = os.execute(command)
+
+	if success == 0 then
+		print("Style generation completed successfully")
+		return true
+	else
+		print("Error: Style generation failed")
+		return false
+	end
+end
+
 function WaybarBuilder:to_json()
 	return json.encode(self:build())
 end
@@ -317,6 +346,10 @@ if arg and arg[0] and arg[0]:match("waybar.*%.lua$") then
 		os.exit(1)
 	end
 end
+
+local builder = WaybarBuilder:from_preset(require("wb_presets")[2])
+builder:generate_style()
+vim.print(builder)
 
 return {
 	WaybarBuilder = WaybarBuilder,
