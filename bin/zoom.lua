@@ -18,7 +18,7 @@ local config = {
 	deadzone = 0.01, -- Ignore very small scale changes (reduces jitter)
 
 	continuous_zoom = true, -- Enable continuous zoom updates during gesture
-	zoom_momentum = 0.15, -- Slight momentum effect after gesture ends
+	zoom_momentum = 0, -- Slight momentum effect after gesture ends
 	scale_damping = 0.92, -- Damping factor for scale changes (more browser-like)
 
 	-- ROBUSTNESS

@@ -89,7 +89,13 @@ if [ -e "$XDG_CONFIG_HOME/diricons" ]; then
 fi
 
 export PYTHONIOENCODING="utf-8"                                                 # Prevents error message with python encoding
-export TERMINAL="st"                                                            # Set terminal used by i3
+# If kitty is executable, use it as the default terminal.
+if command -v kitty >/dev/null 2>&1; then
+  export TERMINAL="kitty --single-instance"                                                        # Set terminal used by i3
+else
+  # Otherwise, use st as the default terminal.
+  export TERMINAL="st"                                                           # Set terminal used by i3
+fi
 
 # Disable telemetary and tracking when possible, see [[https://consoledonottrack.com/][do-not-track]].
 export \
