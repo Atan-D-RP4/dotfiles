@@ -30,7 +30,7 @@ else                                       export EDITOR=vi
 fi
 
 export VISUAL="$EDITOR"
-export PAGER=less
+export PAGER="$(command -v bat >/dev/null 2>&1 && echo 'bat -p' || (command -v less >/dev/null 2>&1 && echo 'less' || echo 'cat'))"
 export LESS="-R -S -i --save-marks -x4"
 export DOTFILES=$XDG_CONFIG_HOME/dotfiles
 export TMUX_HOME=$XDG_CONFIG_HOME/tmux
@@ -38,7 +38,8 @@ export TMUX_TMPDIR=$XDG_CACHE_HOME/tmux
 export LANG=en_GB.UTF-8 LC_MESSAGES="C"
 export MANPATH=$XDG_DATA_HOME/man:$MANPATH
 export MANPAGER="$(command -v nvim >/dev/null 2>&1 && echo 'nvim +Man!' || (command -v bat >/dev/null 2>&1 && echo 'sh -c "col -bx | bat -l man -p"' || echo 'less -R --use-color -Dd+r -Du+b'))"
-export EDITOR="/usr/bin/nvim"
+export EDITOR="$(command -v nvim > /dev/null 2>&1 && echo 'nvim' || (command -v vim > /dev/null 2>&1 && echo 'vim' || echo 'vi'))"
+export MANPAGER="$(command -v nvim >/dev/null 2>&1 && echo 'nvim --clean +Man!' || (command -v bat >/dev/null 2>&1 && echo 'sh -c "col -bx | bat -l man -p"' || echo 'less -R --use-color -Dd+r -Du+b'))"
 export MAN_KEEP_FORMATTING=1
 export MANROFFOPT="-P -c"
 export INFOPATH=$XDG_DATA_HOME/info:$INFOPATH
