@@ -15,14 +15,18 @@ else
   batch='xargs'
 fi
 
-echo "$PATH" | \
+echo "$PATH" |
   awk -e 'BEGIN { RS=":" }' \
-      -e '{
+    -e '{
   f=$0
   gsub(/\n/, "", f)
   if (length(f) > 0 && !mem[f]++) {
       print f
   }
 }' |
-  $batch -d '\n' -I {} -r -- \
-    find -L {} -maxdepth 1 -mindepth 1 -type f -executable -printf '%h/%P\n' 2>/dev/null || true
+  if command -v fd >/dev/null 2>&1; then
+    $batch -d '\n' -I {} -r -- fd -t x -d 1 . {} 2>/dev/null || true
+  else
+    $batch -d '\n' -I {} -r -- \
+      find -L {} -maxdepth 1 -mindepth 1 -type f -executable -printf '%h/%P\n' 2>/dev/null || true
+  fi

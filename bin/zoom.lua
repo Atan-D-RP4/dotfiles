@@ -1,4 +1,4 @@
-#!/usr/bin/env lua
+#!/usr/bin/env luajit
 
 -- Hyprland Pinch-to-Zoom Script
 -- Monitors libinput gestures and controls screen zoom via hyprctl
@@ -15,7 +15,7 @@ local config = {
 
 	gesture_threshold = 0.01, -- Min gesture to trigger zoom (browser-like sensitivity)
 	smoothing_factor = 1.0, -- Gesture smoothing (higher = smoother, browser-like)
-	deadzone = 0.01, -- Ignore very small scale changes (reduces jitter)
+	deadzone = 0.05, -- Ignore very small scale changes (reduces jitter)
 
 	continuous_zoom = true, -- Enable continuous zoom updates during gesture
 	zoom_momentum = 0, -- Slight momentum effect after gesture ends

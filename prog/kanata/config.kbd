@@ -21,6 +21,7 @@
   ret   (tap-hold-press 200       200         ret            rctl)
   cap   (tap-hold-press 200       200         esc            lctl)
   esc   (tap-hold-press 200       200         caps            esc)
+  bsl   (tap-hold-press 200       200         tab               \)
 
   hrw  (layer-switch homerow-kbd)
   bas  (layer-switch base-layer)
@@ -42,7 +43,7 @@
 (deflayer base-layer
   @esc    _       _       _       _       _       _       _       _       _       _       _       _
   @`-mod  _       _       _       _       @5-mod  _       _       _       _       _       _       _       _
-  _       _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       @bsl
   @cap    _       _       _       _       _       _       _       _       _       _       _       @ret
   _       _       _       _       _       _       _       _       _       _       _       _
   _               _       _                       _                       _       _       _
@@ -51,7 +52,7 @@
 (deflayer homerow-kbd
   @esc    _       _       _       _       _       _       _       _       _       _       _       _
   @`-mod  _       _       _       _       @5-bas  _       _       _       _       _       _       _       _
-  _       _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       @bsl
   @cap    @a-lmt  @s-lal  @d-lct  @f-lsh  _       _       @j-rmt  @k-rct  @l-ral  @;-rsh  _       @ret
   _       _       _       _       _       _       _       _       _       _       _       _
   _               _       _                       _                       _       _       _

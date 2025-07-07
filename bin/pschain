@@ -26,14 +26,18 @@ EOF
 format=cmd tail=0 list_flags='-o' reverse=0
 while getopts 'hrf:t:a' OPTION; do
   case "$OPTION" in
-    h) print_help
-       exit 0 ;;
-    a) list_flags="-e $list_flags" ;;
-    f) format="$OPTARG" ;;
-    t) tail="$OPTARG" ;;
-    r) reverse=1 ;;
-    \?) print_usage
-        exit 1 ;;
+  h)
+    print_help
+    exit 0
+    ;;
+  a) list_flags="-e $list_flags" ;;
+  f) format="$OPTARG" ;;
+  t) tail="$OPTARG" ;;
+  r) reverse=1 ;;
+  \?)
+    print_usage
+    exit 1
+    ;;
   esac
 done
 shift $((OPTIND - 1))
@@ -50,18 +54,18 @@ if ! command -v ps >/dev/null 2>&1; then
 fi
 
 # shellcheck disable=SC2086
-ps $list_flags ppid,pid,"$format" --no-headers 2>/dev/null  |
+ps $list_flags ppid,pid,"$format" --no-headers 2>/dev/null |
   awk -v tail="$tail" \
-      -v target="$*" \
-      -v reverse="$reverse" \
-      -e '{
+    -v target="$*" \
+    -v reverse="$reverse" \
+    -e '{
   p[$2,1] = $1
   p[$2,2] = $3
   for (n = 4; n <= NF; n++) {
     p[$2,2] = p[$2,2] FS $n
   }
 }' \
-       -e 'END {
+    -e 'END {
   parent = target
   while (parent && !!p[parent,1]) {
     ptree[++i] = p[parent,2]

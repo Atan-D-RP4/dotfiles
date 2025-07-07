@@ -18,3 +18,6 @@ alias ll='ls -latr'
 if type -q atuin
     atuin init fish | source
 end
+
+bind -M insert  ctrl-e 'nvim'
+bind -M default ctrl-e 'nvim'

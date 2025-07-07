@@ -413,8 +413,6 @@ bind C-x run -b 'tmux-popup -w 100% -h 100% launch'
 # bind W run -b "$TMUX_HOME/cmds/manage-windows -i"
 # bind X run -b "$TMUX_HOME/cmds/run-command"
 
-source $TMUX_HOME/theme.conf
-
 # Install tpm if it doesn't exist
 if-shell '[ ! -d "$HOME/.tmux/plugins/tpm" ]' {
   run 'git clone https://github.com/tmux-plugins/tpm.git $HOME/.tmux/plugins/tpm'
@@ -429,6 +427,11 @@ set -g @plugin 'tmux-plugins/tpm'
 # set -g @resurrect-restore 'C-c'
 # set -g @resurrect-save 'o'
 
+source $TMUX_HOME/theme.conf
+
+set -g @plugin 'janoamaral/tokyo-night-tmux'
+set -g @tokyo-night-tmux_theme storm    # storm | day | default to 'night'
+set -g @tokyo-night-tmux_transparent 1  # 1 or 0
 
 run '$HOME/.tmux/plugins/tpm/tpm'
 
