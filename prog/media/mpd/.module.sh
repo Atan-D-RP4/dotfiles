@@ -8,6 +8,7 @@ link-to "$XDG_CONFIG_HOME/tmuxp/" ./tmux/*
 
 packages                                        \
   choco:mpd                                     \
+  paru:mpd,mpc,mpdris2                          \
   yay:mpd,mpc,mpdris2
 
 if ! bots ncmpc ncmpcpp; then
