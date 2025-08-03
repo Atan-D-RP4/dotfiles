@@ -210,6 +210,12 @@ netrwhist
 __pycache__/
 .ipynb_checkpoints/
 
+# JS/TS
+node_modules/
+jspm_packages/
+bower_components/
+*.tsbuildinfo
+
 # Scala - sbt specific
 .cache
 .history

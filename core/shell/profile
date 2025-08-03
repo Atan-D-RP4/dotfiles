@@ -39,7 +39,6 @@ export LANG=en_GB.UTF-8 LC_MESSAGES="C"
 export MANPATH=$XDG_DATA_HOME/man:$MANPATH
 export MANPAGER="$(command -v nvim >/dev/null 2>&1 && echo 'nvim +Man!' || (command -v bat >/dev/null 2>&1 && echo 'sh -c "col -bx | bat -l man -p"' || echo 'less -R --use-color -Dd+r -Du+b'))"
 export EDITOR="$(command -v nvim > /dev/null 2>&1 && echo 'nvim' || (command -v vim > /dev/null 2>&1 && echo 'vim' || echo 'vi'))"
-export MANPAGER="$(command -v nvim >/dev/null 2>&1 && echo 'nvim --clean +Man!' || (command -v bat >/dev/null 2>&1 && echo 'sh -c "col -bx | bat -l man -p"' || echo 'less -R --use-color -Dd+r -Du+b'))"
 export MAN_KEEP_FORMATTING=1
 export MANROFFOPT="-P -c"
 export INFOPATH=$XDG_DATA_HOME/info:$INFOPATH
@@ -160,7 +159,7 @@ lines_to_path() {
     else
       # shellcheck disable=SC2296
       case "$shell" in
-        zshell) existing=${(P)var} ;;
+        fish) existing="${var}" ;;
         bash) existing="${!var}" ;;
         # POSIX compliant but ugly and vulnerable
         *) existing=$(eval "echo \${$var}") ;;

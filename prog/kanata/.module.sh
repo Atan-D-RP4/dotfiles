@@ -4,43 +4,41 @@ link "$XDG_CONFIG_HOME/kanata/config.kbd"
 #   paru:kanata-bin \
 #   yay:kanata-bin
 
-set -euo pipefail
-
 info "Setting up Kanata service..."
 sudo tee /usr/lib/systemd/system/kanata.service > /dev/null << EOF
 [Unit]
 Description=Kanata keyboard remapper
 Documentation=https://github.com/jtroo/kanata
+After=dev-uinput.device
 
 [Service]
 Nice=-20
 Type=simple
 ExecStart=/usr/bin/kanata --cfg ${HOME}/.config/kanata/config.kbd
-
-# Security enhancements
-AmbientCapabilities=CAP_SYS_ADMIN
-CapabilityBoundingSet=CAP_SYS_ADMIN
+CapabilityBoundingSet=~CAP_SYS_* CAP_SET* CAP_NET_* CAP_DAC_* \
+  CAP_CHOWN CAP_FSETID CAP_FOWNER CAP_IPC_OWNER CAP_LINUX_IMMUTABLE \
+  CAP_IPC_LOCK CAP_BPF CAP_KILL CAP_BLOCK_SUSPEND CAP_LEASE
+AmbientCapabilities=
 NoNewPrivileges=yes
-ProtectHome=yes
-ProtectClock=yes
-ProtectSystem=strict
-ProtectKernelModules=yes
-ProtectControlGroups=yes
-ProtectKernelTunables=yes
-ProtectHostname=yes
-ProtectProc=invisible
-ProcSubset=pid
+KeyringMode=private
 PrivateTmp=yes
-PrivateDevices=yes
-PrivateUsers=yes
-PrivateNetwork=yes
-RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+ProtectSystem=strict
+ProtectClock=yes
+ProtectHostname=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectProc=invisible
+RestrictAddressFamilies=AF_UNIX
 RestrictNamespaces=yes
+RestrictSUIDSGID=yes
 RestrictRealtime=yes
 LockPersonality=yes
 MemoryDenyWriteExecute=yes
-ReadOnlyPaths=/etc /usr
-ReadWritePaths=/var /run
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+
 UMask=0077
 Restart=always
 RestartSec=3
@@ -52,3 +50,4 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl enable kanata.service
 sudo systemctl start kanata.service
+sudo systemctl status kanata.service
