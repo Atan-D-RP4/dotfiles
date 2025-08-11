@@ -8,6 +8,14 @@
 )
 
 (defalias
+  lay   (layer-toggle layers)
+  rab   (layer-toggle alt_bs_tab)
+
+  1bas   (layer-switch base-layer)
+  2hrw   (layer-switch homerow-kbd)
+
+  grl   (tap-hold-release 200 200 grv @lay)
+
   a-lmt (tap-hold       $tap-time $hold-time  a              lmet)
   s-lal (tap-hold       $tap-time $hold-time  s              lalt)
   d-lct (tap-hold       $tap-time $hold-time  d              lctl)
@@ -21,15 +29,13 @@
   ret   (tap-hold-press 200       200         ret            rctl)
   cap   (tap-hold-press 200       200         esc            lctl)
   esc   (tap-hold-press 200       200         caps            esc)
-  bsl   (tap-hold-press 200       200         tab               \)
-
-  hrw  (layer-switch homerow-kbd)
-  bas  (layer-switch base-layer)
-
-  `-mod (tap-hold       200       150         `              lrld)
-  5-mod (tap-hold       200       150         5              @hrw)
-  5-bas (tap-hold       200       150         5              @bas)
 )
+
+#|
+(defchordsv2
+  (\ lalt)    tab                200 first-release ()
+)
+|#
 
 (defsrc
   esc     f1      f2      f3      f4      f5      f6      f7      f8      f9      f10     f11     f12
@@ -40,20 +46,74 @@
   lctl            lmet    lalt                    spc                     ralt    rmet    rctl
 )
 
+(deflayer homerow-kbd
+  @esc    _       _       _       _       _       _       _       _       _       _       _       _
+  @grl    _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       _
+  @cap    @a-lmt  @s-lal  @d-lct  @f-lsh  _       _       @j-rmt  @k-rct  @l-ral  @;-rsh  _       @ret
+  _       _       _       _       _       _       _       _       _       _       _       _
+  _               _       _                       _                       @rab    _       _
+)
+
 (deflayer base-layer
   @esc    _       _       _       _       _       _       _       _       _       _       _       _
-  @`-mod  _       _       _       _       @5-mod  _       _       _       _       _       _       _       _
-  _       _       _       _       _       _       _       _       _       _       _       _       _       @bsl
+  @grl    _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       _
   @cap    _       _       _       _       _       _       _       _       _       _       _       @ret
-  _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       @rab    _       _
   _               _       _                       _                       _       _       _
 )
 
-(deflayer homerow-kbd
-  @esc    _       _       _       _       _       _       _       _       _       _       _       _
-  @`-mod  _       _       _       _       @5-bas  _       _       _       _       _       _       _       _
-  _       _       _       _       _       _       _       _       _       _       _       _       _       @bsl
-  @cap    @a-lmt  @s-lal  @d-lct  @f-lsh  _       _       @j-rmt  @k-rct  @l-ral  @;-rsh  _       @ret
+(deflayer layers
+  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       @1bas   @2hrw   sldr    lrld    _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _
-  _               _       _                       _                       _       _       _
+  _       _       _                       _                       _       _       _
 )
+
+(deflayer alt_bs_tab
+_       _       _       _       _       _       _       _       _       _       _       _       _
+_       _       _       _       _       _       _       _       _       _       _       _       _       _
+_       _       _       _       _       _       _       _       _       _       _       _       _       tab
+_       _       _       _       _       _       _       _       _       _       _       _       _
+_       _       _       _       _       _       _       _       _       _       _       _
+_       _       _                       _                       _       _       _
+)
+#|
+(deffakekeys
+  "git status" (macro g i t spc s t a t u s)
+  "git commit --amend --no-edit" (macro g i t spc c o m m i t spc min min a m e n d spc min min n o min e d i t)
+  "git rebase -i HEAD~" (macro g i t spc r e b a s e spc min i spc S-h S-e S-a S-d S-grv)
+  "git log --pretty=oneline --abbrev-commit" (macro
+	g i t spc l o g spc
+	  min min p r e t t y = o n e l i n e spc
+	  min min a b b r e v min c o m m i t
+  )
+  "git diff --ignore-space-change" (macro
+	g i t spc d i f f spc
+	  min min i g n o r e min s p a c e min c h a n g e
+  )
+  "git diff --cached --ignore-space-change" (macro
+	g i t spc d i f f spc
+	  min min c a c h e d spc
+	  min min i g n o r e min s p a c e min c h a n g e
+  )
+  "git push -f" (macro g i t spc p u s h spc min f)
+  "git commit -m 'fix_this_commit_message'" (macro
+	g i t spc c o m m i t spc
+	  min m spc ' f i x S-min t h i s S-min c o m m i t S-min m e s s a g e '
+  )
+)
+
+(defseq "git status" (g s t)
+  "git commit --amend --no-edit" (g c a)
+  "git rebase -i HEAD~" (g r e b)
+  "git log --pretty=oneline --abbrev-commit" (g l s)
+  "git diff --ignore-space-change" (g d f)
+  "git diff --cached --ignore-space-change" (g d c)
+  "git push -f" (g p f)
+  "git commit -m 'fix_this_commit_message'" (g c m)
+)
+|#
