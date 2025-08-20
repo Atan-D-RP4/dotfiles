@@ -8,13 +8,13 @@ link-to "$XDG_CONFIG_HOME/tmuxp/" ./tmux/*
 
 packages                                        \
   choco:mpd                                     \
-  paru:mpd,mpc,mpdris2                          \
-  yay:mpd,mpc,mpdris2
+  paru:mpd,rmpc,mpdris2                          \
+  yay:mpd,rmpc,mpdris2
 
-if ! bots ncmpc ncmpcpp; then
-  import clients/ncmpcpp
-else
-  import -b                                     \
-    clients/ncmpc                               \
-    clients/ncmpcpp
-fi
+# if ! bots ncmpc ncmpcpp; then
+#   import clients/ncmpcpp
+# else
+#   import -b                                     \
+#     clients/ncmpc                               \
+#     clients/ncmpcpp
+# fi
