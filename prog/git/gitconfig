@@ -10,6 +10,7 @@
 [user]
 	name = Chaitanya Dubakula
 	email = chaitanyarp4@gmail.com
+	signingkey = ~/.ssh/id_ed25519.pub
 
 [init]
 	# For consistency I still default to master but I'll switch to main once

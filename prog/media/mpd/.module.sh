@@ -11,6 +11,8 @@ packages                                        \
   paru:mpd,rmpc,mpdris2                          \
   yay:mpd,rmpc,mpdris2
 
+systemctl --user enable --now mpd mpDris2
+
 # if ! bots ncmpc ncmpcpp; then
 #   import clients/ncmpcpp
 # else

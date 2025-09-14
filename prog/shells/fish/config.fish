@@ -21,3 +21,6 @@ end
 
 bind -M insert  ctrl-e 'nvim'
 bind -M default ctrl-e 'nvim'
+
+bind -M insert  alt-e 'sudo -E nvim' repaint
+bind -M default alt-e 'sudo -E nvim' repaint

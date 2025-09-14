@@ -342,6 +342,12 @@ local function start_libinput_monitor()
 
 		if not state.libinput_handle then
 			log_print("ERROR: Failed to start libinput debug-events")
+			log_print("Are you allowed to read input devices?")
+			log_print("If not, add a udev rule to allow your user access.")
+			log_print("udev rule file placed in /etc/udev/rules.d/99-input.rules:")
+			log_print('KERNEL="event*", SUBSYSTEM=="input", GROUP="input", MODE="0660"')
+			log_print("Reload udev rules with: sudo udevadm control --reload-rules && sudo udevadm trigger")
+			log_print("Ensure your user is in the 'input' group: sudo usermod -aG input $USER")
 			state.restart_count = state.restart_count + 1
 
 			if state.restart_count < config.max_restarts then

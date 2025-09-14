@@ -1,8 +1,8 @@
 link "$XDG_CONFIG_HOME/kanata/config.kbd"
 
-# packages \
-#   paru:kanata-bin \
-#   yay:kanata-bin
+packages \
+  paru:kanata-bin \
+  yay:kanata-bin
 
 info "Setting up Kanata service..."
 sudo tee /usr/lib/systemd/system/kanata.service > /dev/null << EOF

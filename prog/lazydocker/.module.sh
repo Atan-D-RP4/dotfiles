@@ -1,3 +1,4 @@
+import ../docker/
 link "$XDG_CONFIG_HOME/lazydocker/config.yml"
 
 packages                                        \
