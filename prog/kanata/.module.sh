@@ -48,6 +48,5 @@ WantedBy=default.target
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable kanata.service
-sudo systemctl start kanata.service
+sudo systemctl enable --now kanata.service
 sudo systemctl status kanata.service

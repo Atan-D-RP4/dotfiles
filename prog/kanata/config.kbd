@@ -10,6 +10,7 @@
 (defalias
   lay   (layer-toggle layers)
   rab   (layer-toggle alt_bs_tab)
+  unalt-tab (unmod (ralt lalt) tab)
 
   1bas   (layer-switch base-layer)
   2hrw   (layer-switch homerow-kbd)
@@ -23,7 +24,7 @@
 
   j-rmt (tap-hold       $tap-time $hold-time  j              rsft)
   k-rct (tap-hold       $tap-time $hold-time  k              rctl)
-  l-ral (tap-hold       $tap-time $hold-time  l              ralt)
+  l-ral (tap-hold       $tap-time $hold-time  l              (multi @rab ralt))
   ;-rsh (tap-hold       $tap-time $hold-time  ;              rmet)
 
   ret   (tap-hold-press 200       200         ret            rctl)
@@ -74,13 +75,14 @@
 )
 
 (deflayer alt_bs_tab
-_       _       _       _       _       _       _       _       _       _       _       _       _
-_       _       _       _       _       _       _       _       _       _       _       _       _       _
-_       _       _       _       _       _       _       _       _       _       _       _       _       tab
-_       _       _       _       _       _       _       _       _       _       _       _       _
-_       _       _       _       _       _       _       _       _       _       _       _
-_       _       _                       _                       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       @unalt-tab
+  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _                       _                       _       _       _
 )
+
 #|
 (deffakekeys
   "git status" (macro g i t spc s t a t u s)

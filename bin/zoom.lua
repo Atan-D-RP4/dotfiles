@@ -11,10 +11,10 @@ local config = {
 
 	-- ZOOM LIMITS
 	zoom_min = 1.0, -- Minimum zoom level (normal)
-	zoom_max = 3.0, -- Maximum zoom level
+	zoom_max = 4.0, -- Maximum zoom level
 
 	gesture_threshold = 0.01, -- Min gesture to trigger zoom (browser-like sensitivity)
-	smoothing_factor = 1.0, -- Gesture smoothing (higher = smoother, browser-like)
+	smoothing_factor = 1.3, -- Gesture smoothing (higher = smoother, browser-like)
 	deadzone = 0.05, -- Ignore very small scale changes (reduces jitter)
 
 	continuous_zoom = true, -- Enable continuous zoom updates during gesture
@@ -59,19 +59,27 @@ local function log_print(msg, ...)
 	print(string.format("[%s]", timestamp), msg, ...)
 end
 
+---@param value number
+---@param max_val number
+---@param min_val number
+---@return number
 local function clamp(value, min_val, max_val)
 	return math.max(min_val, math.min(max_val, value))
 end
 
 -- Smooth interpolation function (browser-like)
+---@param current number
+---@param target number
+---@param factor number
+---@return number
 local function smooth_step(current, target, factor)
 	return current + (target - current) * factor
 end
 
 -- Check if Hyprland is running
+---@return boolean
 local function is_hyprland_running()
-	local handle = io.popen("pgrep -x Hyprland >/dev/null 2>&1")
-	local result = handle:close()
+	local result = io.popen("pgrep -x Hyprland >/dev/null 2>&1"):close()
 	return result == true or result == 0
 end
 
