@@ -8,17 +8,20 @@
 )
 
 (defalias
-  lay   (layer-toggle layers)
   rab   (layer-toggle alt_bs_tab)
+  lab   (layer-toggle alt_bs_tab)
   unalt-tab (unmod (ralt lalt) tab)
 
+  lay   (layer-toggle layers)
   1bas   (layer-switch base-layer)
   2hrw   (layer-switch homerow-kbd)
+
+  num   (tap-hold-release 200 200 ' (layer-toggle numbers))
 
   grl   (tap-hold-release 200 200 grv @lay)
 
   a-lmt (tap-hold       $tap-time $hold-time  a              lmet)
-  s-lal (tap-hold       $tap-time $hold-time  s              lalt)
+  s-lal (tap-hold       $tap-time $hold-time  s              (multi @lab lalt))
   d-lct (tap-hold       $tap-time $hold-time  d              lctl)
   f-lsh (tap-hold       $tap-time $hold-time  f              lsft)
 
@@ -32,37 +35,31 @@
   esc   (tap-hold-press 200       200         caps            esc)
 )
 
-#|
-(defchordsv2
-  (\ lalt)    tab                200 first-release ()
-)
-|#
-
 (defsrc
   esc     f1      f2      f3      f4      f5      f6      f7      f8      f9      f10     f11     f12
   grv     1       2       3       4       5       6       7       8       9       0       -       =       bspc
   tab     q       w       e       r       t       y       u       i       o       p       [       ]       \
   caps    a       s       d       f       g       h       j       k       l       ;       '       ret
   lsft    z       x       c       v       b       n       m       ,       .       /       rsft
-  lctl            lmet    lalt                    spc                     ralt    rmet    rctl
+  lctl    lmet    lalt                    spc                     ralt    rmet    rctl
 )
 
 (deflayer homerow-kbd
   @esc    _       _       _       _       _       _       _       _       _       _       _       _
   @grl    _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _       _
-  @cap    @a-lmt  @s-lal  @d-lct  @f-lsh  _       _       @j-rmt  @k-rct  @l-ral  @;-rsh  _       @ret
+  @cap    @a-lmt  @s-lal  @d-lct  @f-lsh  _       _       @j-rmt  @k-rct  @l-ral  @;-rsh  @num    @ret
   _       _       _       _       _       _       _       _       _       _       _       _
-  _               _       _                       _                       @rab    _       _
+  _       @lab    _                       _                       @rab    _       _
 )
 
 (deflayer base-layer
   @esc    _       _       _       _       _       _       _       _       _       _       _       _
   @grl    _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _       _
-  @cap    _       _       _       _       _       _       _       _       _       _       _       @ret
-  _       _       _       _       _       _       _       _       _       @rab    _       _
-  _               _       _                       _                       _       _       _
+  @cap    _       _       _       _       _       _       _       _       _       _       @num    @ret
+  _       _       _       @num    _       _       _       _       _       _       _       _
+  _       @lab    _                       _                       @rab    _       _
 )
 
 (deflayer layers
@@ -74,17 +71,43 @@
   _       _       _                       _                       _       _       _
 )
 
-(deflayer alt_bs_tab
+(deflayer numbers
   _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _       _       _       _       _       _       _       _       _       _       _       @unalt-tab
-  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       kp1     kp2     kp3     kp4     kp5     kp6     kp7     kp8     kp9     kp0     _       _
   _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _                       _                       _       _       _
 )
 
-#|
+
+(deflayer alt_bs_tab
+  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       @unalt-tab
+  _       _       @s-lal  @d-lct  @f-lsh  _       _       @j-rmt  @k-rct  @l-ral  _       _       @ret
+  _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _                       _                       _       _       _
+)
+
+(defseq
+  "chaitanyarp4@gmail.com" (c m a i l)
+  "dubakulasaivenkatachaitanya.22.cse@anits.edu.in" (d m a i l)
+  "git status" (g s t)
+  "git commit --amend --no-edit" (g c a)
+  "git rebase -i HEAD~" (g r e b)
+  "git log --pretty=oneline --abbrev-commit" (g l s)
+  "git diff --ignore-space-change" (g d f)
+  "git diff --cached --ignore-space-change" (g d c)
+  "git push -f" (g p f)
+  "git commit -m 'fix_this_commit_message'" (g c m)
+)
+
 (deffakekeys
+  "chaitanyarp4@gmail.com" (macro c h a i t a n y a r p (kp4) S-2 g m a i l . c o m)
+  "dubakulasaivenkatachaitanya.22.cse@anits.edu.in" (macro
+	d u b a k u l a s a i v e n k a t a c h a i t a n y a . (kp2) (kp2) . c s e S-2 a n i t s . e d u . i n
+  )
   "git status" (macro g i t spc s t a t u s)
   "git commit --amend --no-edit" (macro g i t spc c o m m i t spc min min a m e n d spc min min n o min e d i t)
   "git rebase -i HEAD~" (macro g i t spc r e b a s e spc min i spc S-h S-e S-a S-d S-grv)
@@ -109,13 +132,4 @@
   )
 )
 
-(defseq "git status" (g s t)
-  "git commit --amend --no-edit" (g c a)
-  "git rebase -i HEAD~" (g r e b)
-  "git log --pretty=oneline --abbrev-commit" (g l s)
-  "git diff --ignore-space-change" (g d f)
-  "git diff --cached --ignore-space-change" (g d c)
-  "git push -f" (g p f)
-  "git commit -m 'fix_this_commit_message'" (g c m)
-)
-|#
+;; vim: set ft=lisp

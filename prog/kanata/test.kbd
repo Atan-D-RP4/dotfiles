@@ -1,0 +1,89 @@
+
+;; --- global / configuration ---
+(defcfg
+  process-unmapped-keys yes
+)
+
+(defvar
+  tap-time  150
+  hold-time 200
+)
+
+;; --- your aliases, etc. (with minimal changes) ---
+(defalias
+  lay   (layer-toggle layers)
+  1bas   (layer-switch base-layer)
+  2hrw   (layer-switch homerow-kbd)
+
+  grl   (tap-hold-release 200 200 grv @lay)
+
+  a-lmt (tap-hold       $tap-time $hold-time  a              lmet)
+  s-lal (tap-hold       $tap-time $hold-time  s              lalt)
+  d-lct (tap-hold       $tap-time $hold-time  d              lctl)
+  f-lsh (tap-hold       $tap-time $hold-time  f              lsft)
+
+  j-rmt (tap-hold       $tap-time $hold-time  j              rsft)
+  k-rct (tap-hold       $tap-time $hold-time  k              rctl)
+  l-ral (tap-hold       $tap-time $hold-time  l              ralt)
+  ;-rsh (tap-hold       $tap-time $hold-time  ;              rmet)
+
+  ret   (tap-hold-press 200       200         ret            rctl)
+  cap   (tap-hold-press 200       200         esc            lctl)
+  esc   (tap-hold-press 200       200         caps            esc)
+)
+
+;; define a virtual key that emits Tab
+(defvirtualkeys v-bslash tab)
+
+;; alias to press (activate) that virtual key (i.e. send Tab)
+(defalias bslash-press (on-press press-vkey v-bslash))
+
+;; alias to release the virtual key (stop sending Tab)
+(defalias bslash-release (on-press release-vkey v-bslash))
+(defalias bslash-to-tab-or-release-or-backslash
+    (switch
+      (ralt) (unmod (ralt) (multi @bslash-press @bslash-release)) fallthrough
+      ()     \                                                    break
+    )
+)
+
+;; --- source key listing ---
+(defsrc
+  esc     f1      f2      f3      f4      f5      f6      f7      f8      f9      f10     f11     f12
+  grv     1       2       3       4       5       6       7       8       9       0       -       =       bspc
+  tab     q       w       e       r       t       y       u       i       o       p       [       ]       \
+  caps    a       s       d       f       g       h       j       k       l       ;       '       ret
+  lsft    z       x       c       v       b       n       m       ,       .       /       rsft
+  lctl    lmet    lalt                    spc                     ralt    rmet    rctl
+)
+
+;; --- base layer ---
+(deflayer base-layer
+  @esc    _       _       _       _       _       _       _       _       _       _       _       _
+  @grl    _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       @bslash-to-tab-or-release-or-backslash
+  @cap    _       _       _       _       _       _       _       _       _       _       _       @ret
+  _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _                       _                       _       _       _
+)
+
+;; --- homerow layer ---
+(deflayer homerow-kbd
+  @esc    _       _       _       _       _       _       _       _       _       _       _       _
+  @grl    _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       @bslash-to-tab-or-release-or-backslash
+  @cap    @a-lmt  @s-lal  @d-lct  @f-lsh  _       _       @j-rmt  @k-rct  @l-ral  @;-rsh  _       @ret
+  _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _                       _                       _       _       _
+)
+
+;; --- layers switching layer ---
+(deflayer layers
+  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       @1bas   @2hrw   sldr    lrld    _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _                       _                       _       _       _
+)
+;; vim: set ft=lisp
