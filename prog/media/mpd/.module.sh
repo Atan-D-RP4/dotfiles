@@ -1,4 +1,5 @@
 makedir "$XDG_CACHE_HOME/mpd"
+makedir "$XDG_STATE_HOME/mpd/"
 
 link                                            \
   "$XDG_CONFIG_HOME/mpd/mpd.conf"               \

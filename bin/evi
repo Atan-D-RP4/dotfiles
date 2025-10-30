@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Run emacs like vim, using emacsclient. -*- +indent: 2 -*-
-#
+
 # This script is a wrapper around emacs and emacsclient that silently
 # decides what to do. If a single daemon is running connect to it. If
 # multiple are running and -x is given then pick one interactively,

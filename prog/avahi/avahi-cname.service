@@ -12,3 +12,5 @@ ExecStop=docker remove avahi-cname
 
 [Install]
 WantedBy=basic.target
+
+; vim: ts=2 sts=2 sw=2 ft=systemd

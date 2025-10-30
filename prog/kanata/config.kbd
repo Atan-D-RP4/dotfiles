@@ -1,5 +1,10 @@
 (defcfg
   process-unmapped-keys yes
+  concurrent-tap-hold yes
+  sequence-input-mode hidden-delay-type
+  override-release-on-activation yes
+  delegate-to-first-layer yes
+  alias-to-trigger-on-load 2hrw
 )
 
 (defvar
@@ -7,12 +12,14 @@
   hold-time 200
 )
 
-(defalias
-  rab   (layer-toggle alt_bs_tab)
-  lab   (layer-toggle alt_bs_tab)
-  unalt-tab (unmod (ralt lalt) tab)
+(defchordsv2
+  (ralt \)(macro tab)       200 all-released ()
+)
 
-  lay   (layer-toggle layers)
+(defoverrides (ralt \) (tab))
+
+(defalias
+  lay    (layer-toggle layers)
   1bas   (layer-switch base-layer)
   2hrw   (layer-switch homerow-kbd)
 
@@ -21,13 +28,13 @@
   grl   (tap-hold-release 200 200 grv @lay)
 
   a-lmt (tap-hold       $tap-time $hold-time  a              lmet)
-  s-lal (tap-hold       $tap-time $hold-time  s              (multi @lab lalt))
+  s-lal (tap-hold       $tap-time $hold-time  s              lalt)
   d-lct (tap-hold       $tap-time $hold-time  d              lctl)
   f-lsh (tap-hold       $tap-time $hold-time  f              lsft)
 
   j-rmt (tap-hold       $tap-time $hold-time  j              rsft)
   k-rct (tap-hold       $tap-time $hold-time  k              rctl)
-  l-ral (tap-hold       $tap-time $hold-time  l              (multi @rab ralt))
+  l-ral (tap-hold       $tap-time $hold-time  l              ralt)
   ;-rsh (tap-hold       $tap-time $hold-time  ;              rmet)
 
   ret   (tap-hold-press 200       200         ret            rctl)
@@ -44,22 +51,22 @@
   lctl    lmet    lalt                    spc                     ralt    rmet    rctl
 )
 
-(deflayer homerow-kbd
-  @esc    _       _       _       _       _       _       _       _       _       _       _       _
-  @grl    _       _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _       _       _       _       _       _       _       _       _       _       _       _
-  @cap    @a-lmt  @s-lal  @d-lct  @f-lsh  _       _       @j-rmt  @k-rct  @l-ral  @;-rsh  @num    @ret
-  _       _       _       _       _       _       _       _       _       _       _       _
-  _       @lab    _                       _                       @rab    _       _
-)
-
 (deflayer base-layer
   @esc    _       _       _       _       _       _       _       _       _       _       _       _
   @grl    _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _       _
   @cap    _       _       _       _       _       _       _       _       _       _       @num    @ret
-  _       _       _       @num    _       _       _       _       _       _       _       _
-  _       @lab    _                       _                       @rab    _       _
+  _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _                       _                       _       _       _
+)
+
+(deflayer homerow-kbd
+  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       _
+  @cap    @a-lmt  @s-lal  @d-lct  @f-lsh  _       _       @j-rmt  @k-rct  @l-ral  @;-rsh  @num    @ret
+  _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _                       _                       _       _       _
 )
 
 (deflayer layers
@@ -76,16 +83,6 @@
   _       _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _       _
   _       kp1     kp2     kp3     kp4     kp5     kp6     kp7     kp8     kp9     kp0     _       _
-  _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _                       _                       _       _       _
-)
-
-
-(deflayer alt_bs_tab
-  _       _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _       _       _       _       _       _       _       _       _       _       _       @unalt-tab
-  _       _       @s-lal  @d-lct  @f-lsh  _       _       @j-rmt  @k-rct  @l-ral  _       _       @ret
   _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _                       _                       _       _       _
 )
@@ -112,23 +109,23 @@
   "git commit --amend --no-edit" (macro g i t spc c o m m i t spc min min a m e n d spc min min n o min e d i t)
   "git rebase -i HEAD~" (macro g i t spc r e b a s e spc min i spc S-h S-e S-a S-d S-grv)
   "git log --pretty=oneline --abbrev-commit" (macro
-	g i t spc l o g spc
-	  min min p r e t t y = o n e l i n e spc
-	  min min a b b r e v min c o m m i t
+    g i t spc l o g spc
+    min min p r e t t y = o n e l i n e spc
+    min min a b b r e v min c o m m i t
   )
   "git diff --ignore-space-change" (macro
-	g i t spc d i f f spc
-	  min min i g n o r e min s p a c e min c h a n g e
+    g i t spc d i f f spc
+    min min i g n o r e min s p a c e min c h a n g e
   )
   "git diff --cached --ignore-space-change" (macro
-	g i t spc d i f f spc
-	  min min c a c h e d spc
-	  min min i g n o r e min s p a c e min c h a n g e
+    g i t spc d i f f spc
+    min min c a c h e d spc
+    min min i g n o r e min s p a c e min c h a n g e
   )
   "git push -f" (macro g i t spc p u s h spc min f)
   "git commit -m 'fix_this_commit_message'" (macro
-	g i t spc c o m m i t spc
-	  min m spc ' f i x S-min t h i s S-min c o m m i t S-min m e s s a g e '
+    g i t spc c o m m i t spc
+    min m spc ' f i x S-min t h i s S-min c o m m i t S-min m e s s a g e '
   )
 )
 

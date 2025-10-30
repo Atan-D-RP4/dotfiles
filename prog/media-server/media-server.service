@@ -17,3 +17,5 @@ ExecStop=/bin/sh -lip -c 'exec media-server down'
 
 [Install]
 WantedBy=basic.target
+
+; vim: ts=2 sts=2 sw=2 et ft=systemd

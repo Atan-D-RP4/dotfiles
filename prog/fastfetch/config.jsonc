@@ -78,6 +78,11 @@
       "key": "  Session  ",
       "keyColor": "green"
     },
+	{
+		"type": "display",
+		"key": "󰍛  Display  ",
+		"keyColor": "green"
+	},
     {
       "type": "terminal",
       "key": "  Terminal ",

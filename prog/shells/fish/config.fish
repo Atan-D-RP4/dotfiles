@@ -7,7 +7,7 @@ if status is-interactive
     if type -q starship
 	starship init fish | source
     end
-    if type -q fastfetch
+    if type -q fastfetch && test -z "$NVIM"
 	fastfetch
     end
 end

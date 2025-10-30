@@ -104,6 +104,10 @@ send_notification() {
 			DISPLAY="${DISPLAY:-:0}" notify-send "$title" "$msg"
 		fi
 	fi
+	# Play sound if available
+	if command -v paplay >/dev/null 2>&1 && [[ -f "/usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga" ]]; then
+		paplay "/usr/share/sounds/freedesktop/stereo/message-new-instant.oga" 2>/dev/null || true
+	fi
 
 	# Also log for debugging
 	echo "TIMER ALERT: $msg"
@@ -419,3 +423,5 @@ trap 'echo; print_info "Operation cancelled"; exit 130' INT
 
 # Run main function
 main "$@"
+
+# vim: set ft=bash
