@@ -1,5 +1,5 @@
 # Root git configuration file -*- gitconfig -*-
-#
+
 # Post install suggestions for specific repos:
 #   git maintenance start
 #     Sets up cron/systemd hooks to run maintenance tasks on cloned git repos.
@@ -110,7 +110,7 @@
 	b  = branch
 	cl = !dot-git-clone
 	d  = diff
-	l  = log --oneline --all --pretty=format:'%C(bold blue)%h%Creset %C(bold green)(%ar)%Creset %C(bold red)%d%Creset %s %C(dim white)<%an>%Creset' --abbrev-commit
+	l  = log --oneline --pretty=format:'%C(bold blue)%h%Creset %C(bold green)(%ar)%Creset %C(bold red)%d%Creset %s %C(dim white)<%an>%Creset' --abbrev-commit
 	ch = checkout
 	b = blame -w -M -C -C -C
 
@@ -140,14 +140,14 @@
 
 [sendemail]
 	# Mailing lists work through old school E-Mail :sunglasses:.
-	#
+
 	# You pull, edit, commit, rebase, merge etc. code just like you would normally but
 	# to submit patches upstream you have to email them as a set of patch-series through
 	# the [[man:git-send-email][git send-email]] command. This will send an initial message for the first patch
 	# (or a cover-letter) and then send the remaining messages as replies to that initial
 	# message. Developers on the mailing list will respond to each patch individually and
 	# when ready rebase the patch series onto the repository.
-	#
+
 	# When creating a follow up set of patches you should export the patch-set with the
 	# reroll-count argument to increment the patch:
 	#   git format-patch --reroll-count=2 HEAD -- outputfile.patch
@@ -155,7 +155,7 @@
 	# Message-ID field and supply this as the --in-reply-to argument to git-send-email to
 	# continue the message chain. For example:
 	#   git send-email --to 62994@debbugs.gnu.org -v2 --in-reply-to='<handler.62994.B.168208734930664.ack@debbugs.gnu.org>' *.patch
-	#
+
 	# See also [[https://git-send-email.io][git-send-email.io]].
 
 	annotate = no
