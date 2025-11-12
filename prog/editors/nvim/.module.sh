@@ -6,6 +6,6 @@ link-to "$XDG_CONFIG_HOME/nvim/lua" ./nvim_conf/lua/*
 link-to "$XDG_CONFIG_HOME/nvim/ftplugin" ./nvim_conf/ftplugin/*
 
 packages \
-	paru:neovim \
+	paru:neovim-nightly-bin,english-wordnet,wordnet-progs \
 	yay:neovim-git \
 	pacman:neovim-git

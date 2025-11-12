@@ -6,11 +6,11 @@
 # | |_) | | | (_) |  _| | |  __/
 # | .__/|_|  \___/|_| |_|_|\___|
 # |_|
-#
+
 # This shell script should be sourced by any shells during login or just
 # to initialise the environment for an interactive shell. It will not be
 # sourced when running shell scripts or other non-interactive shells.
-#
+
 # NOTE: Both ssh and tmux create login shells so this script will be sourced
 # by them EVERY time. You may end up in a situation where this script ends up
 # being sourced twice which is why there's a header guard in place to avoid
@@ -30,7 +30,7 @@ else                                       export EDITOR=vi
 fi
 
 export VISUAL="$EDITOR"
-export PAGER="$(command -v bat >/dev/null 2>&1 && echo 'bat -p' || (command -v less >/dev/null 2>&1 && echo 'less' || echo 'cat'))"
+export PAGER="$(command -v bat >/dev/null 2>&1 && echo 'bat -p' || (command -v nvim >/dev/null 2>&1 && echo 'nvim -R') || (command -v less >/dev/null 2>&1 && echo 'less' || echo 'cat'))"
 export LESS="-R -S -i --save-marks -x4"
 export DOTFILES=$XDG_CONFIG_HOME/dotfiles
 export TMUX_HOME=$XDG_CONFIG_HOME/tmux
@@ -128,12 +128,12 @@ fi
 lines_to_path() {
   # A helper to quickly declare a bunch of PATH variables from
   # a basic INI like configuration format (supplied through stdin).
-  #
+
   # An environment variable is a section beginning contained in [],
   # comments are specified bash style, and can be interspersed any-
   # where. Any line that's neither a comment nor a section starter
   # is seen as a PATH in the last-most defined section.
-  #
+
   # By default this script checks whether an existing variable matching
   # a section is defined and appends it to the PATH string. You can
   # prefix the variable with a : (eg: [:PATH]) to prevent appending the
