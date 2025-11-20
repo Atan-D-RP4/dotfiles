@@ -20,13 +20,16 @@
 
 [ -r "$HOME/.config/user-dirs.dirs" ] && . "$HOME/.config/user-dirs.dirs"
 export XDG_CONFIG_HOME XDG_DATA_HOME XDG_CACHE_HOME XDG_DOCUMENTS_DIR \
-       XDG_PICTURES_DIR XDG_MUSIC_DIR XDG_VIDEOS_DIR XDG_DESKTOP_DIR \
-       XDG_DOWNLOAD_DIR XDG_TEMP_DIR XDG_GAMES_DIR XDG_DEV_HOME XDG_BIN_DIR \
-       XDG_STATE_HOME XDG_RUNTIME_DIR XDG_LIB_DIR XDG_MEDIA_HOME
+  XDG_PICTURES_DIR XDG_MUSIC_DIR XDG_VIDEOS_DIR XDG_DESKTOP_DIR \
+  XDG_DOWNLOAD_DIR XDG_TEMP_DIR XDG_GAMES_DIR XDG_DEV_HOME XDG_BIN_DIR \
+  XDG_STATE_HOME XDG_RUNTIME_DIR XDG_LIB_DIR XDG_MEDIA_HOME
 
-if   command -v nvim >/dev/null 2>&1; then export EDITOR=nvim
-elif command -v vim  >/dev/null 2>&1; then export EDITOR=vim
-else                                       export EDITOR=vi
+if command -v nvim >/dev/null 2>&1; then
+  export EDITOR=nvim
+elif command -v vim >/dev/null 2>&1; then
+  export EDITOR=vim
+else
+  export EDITOR=vi
 fi
 
 export VISUAL="$EDITOR"
@@ -38,77 +41,85 @@ export TMUX_TMPDIR=$XDG_CACHE_HOME/tmux
 export LANG=en_GB.UTF-8 LC_MESSAGES="C"
 export MANPATH=$XDG_DATA_HOME/man:$MANPATH
 export MANPAGER="$(command -v nvim >/dev/null 2>&1 && echo 'nvim +Man!' || (command -v bat >/dev/null 2>&1 && echo 'sh -c "col -bx | bat -l man -p"' || echo 'less -R --use-color -Dd+r -Du+b'))"
-export EDITOR="$(command -v nvim > /dev/null 2>&1 && echo 'nvim' || (command -v vim > /dev/null 2>&1 && echo 'vim' || echo 'vi'))"
+export EDITOR="$(command -v nvim >/dev/null 2>&1 && echo 'nvim' || (command -v vim >/dev/null 2>&1 && echo 'vim' || echo 'vi'))"
 export MAN_KEEP_FORMATTING=1
 export MANROFFOPT="-P -c"
 export INFOPATH=$XDG_DATA_HOME/info:$INFOPATH
-export OPENER='xopen'                                                           # Command used to open files/URLs.
-ESHELL="$(command -v bash 2>/dev/null || echo /bin/sh)"; export ESHELL          # Shell used by emacs for various shell like purposes.
-export SH_BANNER=0                                                              # Whether to show an ascii art banner on startup.
+export OPENER='xopen' # Command used to open files/URLs.
+ESHELL="$(command -v bash 2>/dev/null || echo /bin/sh)"
+export ESHELL      # Shell used by emacs for various shell like purposes.
+export SH_BANNER=0 # Whether to show an ascii art banner on startup.
 
-[ -r "$XDG_CONFIG_HOME/xdg" ] && . "$XDG_CONFIG_HOME/xdg"                       # Source XDG compatibility environment files
+[ -r "$XDG_CONFIG_HOME/xdg" ] && . "$XDG_CONFIG_HOME/xdg" # Source XDG compatibility environment files
 
 # Colorize less pager, format is red, green & white.
-LESS_TERMCAP_mb=$(printf '\033[1;91m');  export LESS_TERMCAP_mb                 # Begin blinking
-LESS_TERMCAP_md=$(printf '\033[1;91m');  export LESS_TERMCAP_md                 # Begin bold
-LESS_TERMCAP_me=$(printf '\033[0m');     export LESS_TERMCAP_me                 # End mode
-LESS_TERMCAP_se=$(printf '\033[0m');     export LESS_TERMCAP_se                 # End standout-mode
-LESS_TERMCAP_ue=$(printf '\033[0m');     export LESS_TERMCAP_ue                 # End underline
-LESS_TERMCAP_us=$(printf '\033[1;32m');  export LESS_TERMCAP_us                 # Begin underline
-LESS_TERMCAP_so=$(printf '\033[36m');    export LESS_TERMCAP_so                 # Begin standout-mode - info box
+LESS_TERMCAP_mb=$(printf '\033[1;91m')
+export LESS_TERMCAP_mb # Begin blinking
+LESS_TERMCAP_md=$(printf '\033[1;91m')
+export LESS_TERMCAP_md # Begin bold
+LESS_TERMCAP_me=$(printf '\033[0m')
+export LESS_TERMCAP_me # End mode
+LESS_TERMCAP_se=$(printf '\033[0m')
+export LESS_TERMCAP_se # End standout-mode
+LESS_TERMCAP_ue=$(printf '\033[0m')
+export LESS_TERMCAP_ue # End underline
+LESS_TERMCAP_us=$(printf '\033[1;32m')
+export LESS_TERMCAP_us # Begin underline
+LESS_TERMCAP_so=$(printf '\033[36m')
+export LESS_TERMCAP_so # Begin standout-mode - info box
 
 if [ -e "$XDG_CONFIG_HOME/diricons" ]; then
   # Load icons from human readable config file.
   # shellcheck disable=SC2016
-  LF_ICONS=$(sed "$XDG_CONFIG_HOME"/diricons                        \
-                 -e 's@$XDG_CONFIG_HOME@'"$XDG_CONFIG_HOME"'@'      \
-                 -e 's@$XDG_DATA_HOME@'"$XDG_DATA_HOME"'@'          \
-                 -e 's@$XDG_CACHE_HOME@'"$XDG_CACHE_HOME"'@'        \
-                 -e 's@$XDG_DOCUMENTS_DIR@'"$XDG_DOCUMENTS_DIR"'@'  \
-                 -e 's@$XDG_PICTURES_DIR@'"$XDG_PICTURES_DIR"'@'    \
-                 -e 's@$XDG_MUSIC_DIR@'"$XDG_MUSIC_DIR"'@'          \
-                 -e 's@$XDG_VIDEOS_DIR@'"$XDG_VIDEOS_DIR"'@'        \
-                 -e 's@$XDG_DESKTOP_DIR@'"$XDG_DESKTOP_DIR"'@'      \
-                 -e 's@$XDG_DOWNLOAD_DIR@'"$XDG_DOWNLOAD_DIR"'@'    \
-                 -e 's@$XDG_TEMP_DIR@'"$XDG_TEMP_DIR"'@'            \
-                 -e 's@$XDG_GAMES_DIR@'"$XDG_GAMES_DIR"'@'          \
-                 -e 's@$XDG_DEV_HOME@'"$XDG_DEV_HOME"'@'            \
-                 -e 's@$XDG_BIN_DIR@'"$XDG_BIN_DIR"'@'              \
-                 -e 's@$XDG_STATE_HOME@'"$XDG_STATE_HOME"'@'        \
-                 -e 's@$XDG_RUNTIME_DIR@'"$XDG_RUNTIME_DIR"'@'      \
-                 -e 's@$XDG_LIB_DIR@'"$XDG_LIB_DIR"'@'              \
-                 -e 's@$XDG_MEDIA_HOME@'"$XDG_MEDIA_HOME"'@'        \
-                 -e 's@'"$HOME"'@~@'                                \
-                 -e 's/[ \t]*#.*$//'                                \
-                 -e '/^[ \t]*#/d'                                   \
-                 -e '/^[ \t]*$/d'                                   \
-                 -e 's/[ \t]\+/=/g'                                 \
-                 -e 's/$/ /')
+  LF_ICONS=$(sed "$XDG_CONFIG_HOME"/diricons \
+    -e 's@$XDG_CONFIG_HOME@'"$XDG_CONFIG_HOME"'@' \
+    -e 's@$XDG_DATA_HOME@'"$XDG_DATA_HOME"'@' \
+    -e 's@$XDG_CACHE_HOME@'"$XDG_CACHE_HOME"'@' \
+    -e 's@$XDG_DOCUMENTS_DIR@'"$XDG_DOCUMENTS_DIR"'@' \
+    -e 's@$XDG_PICTURES_DIR@'"$XDG_PICTURES_DIR"'@' \
+    -e 's@$XDG_MUSIC_DIR@'"$XDG_MUSIC_DIR"'@' \
+    -e 's@$XDG_VIDEOS_DIR@'"$XDG_VIDEOS_DIR"'@' \
+    -e 's@$XDG_DESKTOP_DIR@'"$XDG_DESKTOP_DIR"'@' \
+    -e 's@$XDG_DOWNLOAD_DIR@'"$XDG_DOWNLOAD_DIR"'@' \
+    -e 's@$XDG_TEMP_DIR@'"$XDG_TEMP_DIR"'@' \
+    -e 's@$XDG_GAMES_DIR@'"$XDG_GAMES_DIR"'@' \
+    -e 's@$XDG_DEV_HOME@'"$XDG_DEV_HOME"'@' \
+    -e 's@$XDG_BIN_DIR@'"$XDG_BIN_DIR"'@' \
+    -e 's@$XDG_STATE_HOME@'"$XDG_STATE_HOME"'@' \
+    -e 's@$XDG_RUNTIME_DIR@'"$XDG_RUNTIME_DIR"'@' \
+    -e 's@$XDG_LIB_DIR@'"$XDG_LIB_DIR"'@' \
+    -e 's@$XDG_MEDIA_HOME@'"$XDG_MEDIA_HOME"'@' \
+    -e 's@'"$HOME"'@~@' \
+    -e 's/[ \t]*#.*$//' \
+    -e '/^[ \t]*#/d' \
+    -e '/^[ \t]*$/d' \
+    -e 's/[ \t]\+/=/g' \
+    -e 's/$/ /')
   LF_ICONS="${LF_ICONS//$'\n'/:}"
   export LF_ICONS
 fi
 
-export PYTHONIOENCODING="utf-8"                                                 # Prevents error message with python encoding
+export PYTHONIOENCODING="utf-8" # Prevents error message with python encoding
 # If kitty is executable, use it as the default terminal.
 if command -v kitty >/dev/null 2>&1; then
-  export TERMINAL="kitty --single-instance"                                                        # Set terminal used by i3
+  export TERMINAL="kitty --single-instance" # Set terminal used by i3
 else
   # Otherwise, use st as the default terminal.
-  export TERMINAL="st"                                                           # Set terminal used by i3
+  export TERMINAL="st" # Set terminal used by i3
 fi
 
 # Disable telemetary and tracking when possible, see [[https://consoledonottrack.com/][do-not-track]].
 export \
-  HOMEBREW_NO_ANALYTICS=1               \
-  SAM_CLI_TELEMETRY=0                   \
-  AZURE_CORE_COLLECT_TELEMETRY=0        \
-  DO_NOT_TRACK=1                        \
-  STRIPE_CLI_TELEMETRY_OPTOUT=1         \
-  GATSBY_TELEMETRY_DISABLED=1           \
+  HOMEBREW_NO_ANALYTICS=1 \
+  SAM_CLI_TELEMETRY=0 \
+  AZURE_CORE_COLLECT_TELEMETRY=0 \
+  DO_NOT_TRACK=1 \
+  STRIPE_CLI_TELEMETRY_OPTOUT=1 \
+  GATSBY_TELEMETRY_DISABLED=1 \
   HASURA_GRAPHQL_ENABLE_TELEMETRY=false \
-  DOTNET_CLI_TELEMETRY_OPTOUT=true      \
-  NEXT_TELEMETRY_DISABLED=1             \
-  AUTOMATEDLAB_TELEMETRY_OPTOUT=1       \
+  DOTNET_CLI_TELEMETRY_OPTOUT=true \
+  NEXT_TELEMETRY_DISABLED=1 \
+  AUTOMATEDLAB_TELEMETRY_OPTOUT=1 \
   POWERSHELL_TELEMETRY_OPTOUT=1
 
 export XKB_DEFAULT_OPTIONS=caps:ctrl_modifier
@@ -119,9 +130,9 @@ if [ -n "$BASH_VERSION" ]; then
 else
   # Fall back to basic binary interpretation.
   case "$(ps -p $$ >/dev/null 2>&1 | awk 'END { print($NF) }')" in
-    *bash) shell=bash   ;;
-    *fish)  shell=fish;;
-    *)     false         ;;
+  *bash) shell=bash ;;
+  *fish) shell=fish ;;
+  *) false ;;
   esac
 fi
 
@@ -142,15 +153,15 @@ lines_to_path() {
   # I'm too inexperienced with sed to use only one sed process
   # once I get some more familirarity with it I'll optimise this.
   local conf
-  conf=$(sed -e 's/ *#.*$//g'             \
-             -e '/^ *$/d'                 \
-             -e 's!^~/!'"${HOME}"/'!g'    \
-             -e '/^\[.\+\]$/!s/.\+$/\0:/' \
-             -e '/^\[.\+\]$/s/.\+/\n\0/' |
-         sed -e '/^$/d' \
-             -e ': again; /:$/ { N; /\[.\+\]$/!s/:\n/:/; t again }' |
-         sed -e '/\[.\+\]/ { N; s/\[\(.\+\)\]\n/\1 / }' \
-             -e 's/:$//')
+  conf=$(sed -e 's/ *#.*$//g' \
+    -e '/^ *$/d' \
+    -e 's!^~/!'"${HOME}"/'!g' \
+    -e '/^\[.\+\]$/!s/.\+$/\0:/' \
+    -e '/^\[.\+\]$/s/.\+/\n\0/' |
+    sed -e '/^$/d' \
+      -e ': again; /:$/ { N; /\[.\+\]$/!s/:\n/:/; t again }' |
+    sed -e '/\[.\+\]/ { N; s/\[\(.\+\)\]\n/\1 / }' \
+      -e 's/:$//')
 
   local var paths existing
   while IFS=' ' read -r var paths; do
@@ -159,16 +170,16 @@ lines_to_path() {
     else
       # shellcheck disable=SC2296
       case "$shell" in
-        fish) existing="${var}" ;;
-        bash) existing="${!var}" ;;
-        # POSIX compliant but ugly and vulnerable
-        *) existing=$(eval "echo \${$var}") ;;
+      fish) existing="${var}" ;;
+      bash) existing="${!var}" ;;
+      # POSIX compliant but ugly and vulnerable
+      *) existing=$(eval "echo \${$var}") ;;
       esac
 
       if [ -n "$existing" ]; then
         # print existing path variables when given in linux path format.
         case "$OSTYPE" in
-          *cygwin|*msys) existing="$(cygpath --path "$existing")" ;;
+        *cygwin | *msys) existing="$(cygpath --path "$existing")" ;;
         esac
       fi
 
@@ -176,7 +187,7 @@ lines_to_path() {
     fi
 
     export "$var"="${paths}"
-  done <<< "$conf"
+  done <<<"$conf"
 }
 
 lines_to_path <<EOF
@@ -233,33 +244,33 @@ EOF
 unset -f lines_to_path
 
 case "$(ls-platform)" in
-  windows)
-    # For programs that don't care about the environment,
-    # only about the OS, convert paths back to a windows
-    # like path.
-    for var in CLASSPATH PYTHONPATH; do
-      export "$var"="$(cygpath --windows --path "${!var}")"
-    done
-    for var in IRBRC SOLARGRAPH_CACHE BUNDLE_USER_CONFIG \
-                     BUNDLE_USER_CACHE BUNDLE_USER_PLUGIN; do
-      [ -n "$var" ] &&
-        export "$var"="$(cygpath --mixed "${!var}")"
-    done
-    unset var
+windows)
+  # For programs that don't care about the environment,
+  # only about the OS, convert paths back to a windows
+  # like path.
+  for var in CLASSPATH PYTHONPATH; do
+    export "$var"="$(cygpath --windows --path "${!var}")"
+  done
+  for var in IRBRC SOLARGRAPH_CACHE BUNDLE_USER_CONFIG \
+    BUNDLE_USER_CACHE BUNDLE_USER_PLUGIN; do
+    [ -n "$var" ] &&
+      export "$var"="$(cygpath --mixed "${!var}")"
+  done
+  unset var
 
-    # shellcheck disable=SC2155
-    export GEM_HOME="$(cygpath --mixed "$GEM_HOME")"
+  # shellcheck disable=SC2155
+  export GEM_HOME="$(cygpath --mixed "$GEM_HOME")"
 
-    # Assume it's the only platform using the TCP file.
-    export EMACS_SERVER_FILE="$XDG_CONFIG_HOME/emacs/var/server/server"
+  # Assume it's the only platform using the TCP file.
+  export EMACS_SERVER_FILE="$XDG_CONFIG_HOME/emacs/var/server/server"
 
-    # Proper symlinks, not that wibbly-wobbley copy paste.
-    export MSYS=winsymlinks:nativestrict
+  # Proper symlinks, not that wibbly-wobbley copy paste.
+  export MSYS=winsymlinks:nativestrict
 
-    # Fix annoying issues with chocolatey mixing up windows
-    # temp variables and msys ones.
-    unset tmp temp
-    ;;
+  # Fix annoying issues with chocolatey mixing up windows
+  # temp variables and msys ones.
+  unset tmp temp
+  ;;
 esac
 
 # Uses darcula theme from fzf color schemes wiki.
