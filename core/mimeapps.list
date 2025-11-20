@@ -23,8 +23,8 @@ video/x-msvideo=mpv.desktop;vlc.desktop;
 #                              Protocol Handlers                              #
 ###############################################################################
 
-x-scheme-handler/http=librewolf.desktop;brave-browser.desktop;
-x-scheme-handler/https=librewolf.desktop;brave-browser.desktop;
+x-scheme-handler/http=zen.desktop;librewolf.desktop;brave-browser.desktop;
+x-scheme-handler/https=zen.desktop;librewolf.desktop;brave-browser.desktop;
 x-scheme-handler/mailto=emacsclient-mail.desktop;
 x-scheme-handler/tel=org.kde.kdeconnect.handler.desktop;
 x-scheme-handler/chrome=zen.desktop;
