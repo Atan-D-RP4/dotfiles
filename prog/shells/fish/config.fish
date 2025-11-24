@@ -25,7 +25,9 @@ alias qodo='deno run -A npm:@qodo/command'
 alias gemini='deno run -A npm:@google/gemini-cli'
 
 if type -q k3s
-    alias kubectl='k3s kubectl --kubeconfig=$XDG_CONFIG_HOME/.kube/config'
+    function kubectl
+        k3s kubectl --kubeconfig=$XDG_CONFIG_HOME/.kube/config $argv
+    end
 end
 
 if type -q atuin
@@ -33,7 +35,13 @@ if type -q atuin
 end
 
 if type -q curl
-    alias wttr='curl wttr.in'
+    function wttr
+        if test (count $argv) -eq 0
+            curl wttr.in
+        else
+            curl wttr.in/$argv
+        end
+    end
 end
 
 if type -q fzf && type -q fd
@@ -49,3 +57,13 @@ if type -q nvim
     bind -M default alt-e 'sudo -E nvim' repaint
 end
 
+if type -q mpv && type -q uv
+    function ytplay
+        set url $(yt-dlp -g "ytsearch:$(read --prompt 'echo "Song Name: "')")
+        if test -n "$url"
+            mpv --no-video "$url"
+        else
+            echo "No results found."
+        end
+    end
+end

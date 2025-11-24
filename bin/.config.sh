@@ -58,8 +58,7 @@ link                                            \
   "$XDG_BIN_DIR/vipe"                           \
   "$XDG_BIN_DIR/win-ctrl"                       \
   "$XDG_BIN_DIR/xopen"                          \
-  "$XDG_BIN_DIR/notifier"                       \
-  "$XDG_BIN_DIR/zoom.lua"
+  "$XDG_BIN_DIR/notifier"
 
 if is-linux; then
   link "$XDG_BIN_DIR/term-dwim"

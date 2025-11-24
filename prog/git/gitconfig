@@ -26,7 +26,7 @@
 	preloadindex = true
 	whitespace = error
 
-[url "git@github.com:ad4/"]
+[url "git@github.com:Atan-D-RP4/"]
 	# GitHub SSH URL.
 	insteadOf = gha:
 
@@ -54,10 +54,6 @@
 	colorMoved = plain
 	algorithm = histogram
 	wordDiff = always
-	renames = true
-	mnemonicPrefix = true
-	colorMoved = plain
-	algorithm = histogram
 	tool = nvimdiff
 
 [diff "gpg"]

@@ -5,7 +5,20 @@ link-to "$XDG_CONFIG_HOME/nvim/doc" ./nvim_conf/doc/*
 link-to "$XDG_CONFIG_HOME/nvim/lua" ./nvim_conf/lua/*
 link-to "$XDG_CONFIG_HOME/nvim/ftplugin" ./nvim_conf/ftplugin/*
 
+# Core app
 packages \
 	paru:neovim-nightly-bin,english-wordnet,wordnet-progs \
-	yay:neovim-git \
-	pacman:neovim-git
+	yay:neovim-git,english-wordnet,wordnet-progs \
+	pacman:neovim-git,
+
+# Lua tools
+packages \
+	paru:emmylua-ls-bin,stylua \
+	yay:emmylua-ls-bin,stylua \
+	pacman:lua-language-server,stylua
+
+# Shell tools
+packages \
+	paru:shfmt,shellcheck \
+	yay:shfmt,shellcheck \
+	pacman:shfmt,shellcheck

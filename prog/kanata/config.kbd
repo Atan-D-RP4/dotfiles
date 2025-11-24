@@ -8,24 +8,23 @@
 )
 
 (defvar
-  tap-time  150
-  hold-time 200
+  tap-time   150
+  hold-time  200
+  chord-time 60
 )
 
 (defchordsv2
-  (ralt \)(macro tab)       200 all-released ()
+  (ralt \)(macro tab)       $chord-time first-release ()
 )
 
 (defoverrides (ralt \) (tab))
 
 (defalias
   lay    (layer-toggle layers)
-  1bas   (layer-switch base-layer)
-  2hrw   (layer-switch homerow-kbd)
 
-  num   (tap-hold-release 200 200 ' (layer-toggle numbers))
+  num   (tap-hold-release $tap-time $hold-time ' (layer-toggle numbers))
 
-  grl   (tap-hold-release 200 200 grv @lay)
+  grl   (tap-hold-release $tap-time $hold-time grv @lay)
 
   a-lmt (tap-hold       $tap-time $hold-time  a              lmet)
   s-lal (tap-hold       $tap-time $hold-time  s              lalt)
@@ -37,9 +36,9 @@
   l-ral (tap-hold       $tap-time $hold-time  l              ralt)
   ;-rsh (tap-hold       $tap-time $hold-time  ;              rmet)
 
-  ret   (tap-hold-press 200       200         ret            rctl)
-  cap   (tap-hold-press 200       200         esc            lctl)
-  esc   (tap-hold-press 200       200         caps            esc)
+  ret   (tap-hold-press $tap-time       $hold-time         ret            rctl)
+  cap   (tap-hold-press $tap-time       $hold-time         esc            lctl)
+  esc   (tap-hold-press $tap-time       $hold-time         caps            esc)
 )
 
 (defsrc
@@ -47,8 +46,8 @@
   grv     1       2       3       4       5       6       7       8       9       0       -       =       bspc
   tab     q       w       e       r       t       y       u       i       o       p       [       ]       \
   caps    a       s       d       f       g       h       j       k       l       ;       '       ret
-  lsft    z       x       c       v       b       n       m       ,       .       /       rsft
-  lctl    lmet    lalt                    spc                     ralt    rmet    rctl
+  lsft    z       x       c       v       b       n       m       ,       .       /       rsft    up
+  lctl    lmet    lalt                    spc                     ralt    rmet    rctl    left    down    right
 )
 
 (deflayer base-layer
@@ -56,8 +55,8 @@
   @grl    _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _       _
   @cap    _       _       _       _       _       _       _       _       _       _       @num    @ret
-  _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _                       _                       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _                       _                       _       _       _       _       _       _
 )
 
 (deflayer homerow-kbd
@@ -65,8 +64,13 @@
   _       _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _       _
   @cap    @a-lmt  @s-lal  @d-lct  @f-lsh  _       _       @j-rmt  @k-rct  @l-ral  @;-rsh  @num    @ret
-  _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _                       _                       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _                       _                       _       _       _       _       _       _
+)
+
+(defalias
+  1bas   (layer-switch base-layer)
+  2hrw   (layer-switch homerow-kbd)
 )
 
 (deflayer layers
@@ -74,58 +78,28 @@
   _       @1bas   @2hrw   sldr    lrld    _       _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _                       _                       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _                       _                       _       _       _       _       _       _
 )
 
 (deflayer numbers
   _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _       _       _       _       _       _       _       _       _       _       _       _
-  _       kp1     kp2     kp3     kp4     kp5     kp6     kp7     kp8     kp9     kp0     _       _
-  _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _                       _                       _       _       _
+  _       1       2       3       _       _       _       _       _       _       _       _       _       _
+  _       4       5       6       _       _       _       _       _       _       _       _       _
+  _       7       8       9       _       _       _       _       _       _       _       _       _
+  _       _       0                       _                       _       _       _       _       _       _
 )
 
 (defseq
   "chaitanyarp4@gmail.com" (c m a i l)
   "dubakulasaivenkatachaitanya.22.cse@anits.edu.in" (d m a i l)
-  "git status" (g s t)
-  "git commit --amend --no-edit" (g c a)
-  "git rebase -i HEAD~" (g r e b)
-  "git log --pretty=oneline --abbrev-commit" (g l s)
-  "git diff --ignore-space-change" (g d f)
-  "git diff --cached --ignore-space-change" (g d c)
-  "git push -f" (g p f)
-  "git commit -m 'fix_this_commit_message'" (g c m)
 )
 
 (deffakekeys
-  "chaitanyarp4@gmail.com" (macro c h a i t a n y a r p (kp4) S-2 g m a i l . c o m)
+  "chaitanyarp4@gmail.com" (macro c h a i t a n y a r p 4 S-2 g m a i l . c o m)
   "dubakulasaivenkatachaitanya.22.cse@anits.edu.in" (macro
-	d u b a k u l a s a i v e n k a t a c h a i t a n y a . (kp2) (kp2) . c s e S-2 a n i t s . e d u . i n
-  )
-  "git status" (macro g i t spc s t a t u s)
-  "git commit --amend --no-edit" (macro g i t spc c o m m i t spc min min a m e n d spc min min n o min e d i t)
-  "git rebase -i HEAD~" (macro g i t spc r e b a s e spc min i spc S-h S-e S-a S-d S-grv)
-  "git log --pretty=oneline --abbrev-commit" (macro
-    g i t spc l o g spc
-    min min p r e t t y = o n e l i n e spc
-    min min a b b r e v min c o m m i t
-  )
-  "git diff --ignore-space-change" (macro
-    g i t spc d i f f spc
-    min min i g n o r e min s p a c e min c h a n g e
-  )
-  "git diff --cached --ignore-space-change" (macro
-    g i t spc d i f f spc
-    min min c a c h e d spc
-    min min i g n o r e min s p a c e min c h a n g e
-  )
-  "git push -f" (macro g i t spc p u s h spc min f)
-  "git commit -m 'fix_this_commit_message'" (macro
-    g i t spc c o m m i t spc
-    min m spc ' f i x S-min t h i s S-min c o m m i t S-min m e s s a g e '
+	d u b a k u l a s a i v e n k a t a c h a i t a n y a . 2 2 . c s e S-2 a n i t s . e d u . i n
   )
 )
 
