@@ -10,14 +10,18 @@
 (defvar
   tap-time   150
   hold-time  200
-  chord-time 60
+  chord-time 80
+)
+
+(defoverrides
+  (ralt \) (tab)
+  ;; (ralt [) (esc)
 )
 
 (defchordsv2
-  (ralt \)(macro tab)       $chord-time first-release ()
+	;; ([ \) (macro tab) $chord-time all-released ()
+  ([ ]) (macro esc) $chord-time all-released ()
 )
-
-(defoverrides (ralt \) (tab))
 
 (defalias
   lay    (layer-toggle layers)
@@ -68,14 +72,42 @@
   _       _       _                       _                       _       _       _       _       _       _
 )
 
+;; ============================================================================
+;; Auto-clicker (cross-platform, pure kanata implementation)
+;; ============================================================================
+;; Toggle with a key to start/stop auto-clicking.
+;; Uses macro-repeat which clicks while the virtual key is held.
+
+(defvirtualkeys
+  ;; State tracker for auto-clicker
+  click-active XX
+  ;; The actual clicking action - repeats left click every 100ms while held
+  click-action (macro-repeat 100 mltp)
+)
+
 (defalias
   1bas   (layer-switch base-layer)
   2hrw   (layer-switch homerow-kbd)
+  ;; Toggle auto-clicker on/off
+  clk (switch
+    ((input virtual click-active))
+      (multi
+        (on-press release-virtualkey click-active)
+        (on-press release-virtualkey click-action)
+      )
+      break
+    ()
+      (multi
+        (on-press press-virtualkey click-active)
+        (on-press press-virtualkey click-action)
+      )
+      break
+  )
 )
 
 (deflayer layers
   _       _       _       _       _       _       _       _       _       _       _       _       _
-  _       @1bas   @2hrw   sldr    lrld    _       _       _       _       _       _       _       _       _
+  _       @1bas   @2hrw   sldr    lrld    @clk    _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _
@@ -91,16 +123,18 @@
   _       _       0                       _                       _       _       _       _       _       _
 )
 
-(defseq
-  "chaitanyarp4@gmail.com" (c m a i l)
-  "dubakulasaivenkatachaitanya.22.cse@anits.edu.in" (d m a i l)
+(deftemplate abbrev (vk-name input-keys output)
+  (deffakekeys $vk-name $output)
+  (defseq $vk-name $input-keys)
 )
 
-(deffakekeys
-  "chaitanyarp4@gmail.com" (macro c h a i t a n y a r p 4 S-2 g m a i l . c o m)
-  "dubakulasaivenkatachaitanya.22.cse@anits.edu.in" (macro
+(t! abbrev "chaitanyarp4@gmail.com" (c m a i l) (macro c h a i t a n y a r p kp4 S-2 g m a i l . c o m))
+(t! abbrev "dubakulasaivenkatachaitanya.22.cse@anits.edu.in" (d m a i l) (macro
 	d u b a k u l a s a i v e n k a t a c h a i t a n y a . 2 2 . c s e S-2 a n i t s . e d u . i n
-  )
-)
+))
+(t! abbrev "9502543064" (p h o n e) (macro kp9 kp5 kp0 kp2 kp5 kp4 kp3 kp0 kp6 kp4))
+(t! abbrev "Dubakula Sai Venkata Chaitanya" (n a m e) (macro
+	S-d u b a k u l a spc S-s a i spc S-v e n k a t a spc S-c h a i t a n y a
+))
 
 ;; vim: set ft=lisp

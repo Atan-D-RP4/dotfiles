@@ -20,9 +20,12 @@ set -x SHELL /usr/bin/fish
 
 abbr mkdir 'mkdir -p'
 alias ll='ls -latr'
-alias bw='deno run -A npm:@bitwarden/cli'
-alias qodo='deno run -A npm:@qodo/command'
-alias gemini='deno run -A npm:@google/gemini-cli'
+
+if type -q deno
+    function bw
+        deno run -A npm:@bitwarden/cli $argv
+    end
+end
 
 if type -q k3s
     function kubectl
@@ -45,8 +48,8 @@ if type -q curl
 end
 
 if type -q fzf && type -q fd
-    bind -M insert ctrl-o 'cd (fd -t d --absolute-path | fzf)' repaint
-    bind -M default ctrl-o 'cd (fd -t d --absolute-path | fzf)' repaint
+    bind -M insert ctrl-o 'pushd (fd -t d --absolute-path | fzf)' repaint
+    bind -M default ctrl-o 'pushd (fd -t d --absolute-path | fzf)' repaint
 end
 
 if type -q nvim

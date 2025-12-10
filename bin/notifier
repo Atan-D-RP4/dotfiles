@@ -12,61 +12,56 @@ readonly YELLOW='\033[1;33m'
 readonly BLUE='\033[0;34m'
 readonly NC='\033[0m'
 
-# Check if running in HyDE environment
-HYDE_MODE=false
-if command -v hyde-shell >/dev/null 2>&1; then
-	if source "$(command -v hyde-shell)" 2>/dev/null; then
-		HYDE_MODE=true
-	fi
-fi
-
 # Function to print colored output
-print_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
-print_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
-print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
-print_error() { echo -e "${RED}[ERROR]${NC} $1"; }
+print_info() { echo -e "${BLUE}[INFO]${NC} $1" >&2; }
+print_success() { echo -e "${GREEN}[SUCCESS]${NC} $1" >&2; }
+print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1" >&2; }
+print_error() { echo -e "${RED}[ERROR]${NC} $1" >&2; }
 
-# Function to validate time input
-validate_time() {
-	local time_input="$1"
-	[[ $time_input =~ ^[0-9]+[smhd]?$ ]]
-}
+# Function to normalize duration format for systemd
+normalize_duration() {
+	local input="$1"
 
-# Function to convert time to seconds for display
-time_to_seconds() {
-	local time_input="$1"
-	local number unit
+	# systemd accepts formats like: 2h, 30min, 5s, 1d
+	# or time spans like: 2h 30min 5s
 
-	if [[ $time_input =~ ^([0-9]+)([smhd])$ ]]; then
-		number="${BASH_REMATCH[1]}"
-		unit="${BASH_REMATCH[2]}"
-		case $unit in
-		s) echo $number ;;
-		m) echo $((number * 60)) ;;
-		h) echo $((number * 3600)) ;;
-		d) echo $((number * 86400)) ;;
-		esac
-	else
-		echo "$time_input"
+	# If it already looks like systemd format (number + unit without space), pass through
+	if [[ $input =~ ^[0-9]+(s|sec|second|seconds|m|min|minute|minutes|h|hr|hour|hours|d|day|days|w|week|weeks|M|month|months|y|year|years)$ ]]; then
+		printf '%s' "$input"
+		return 0
 	fi
+
+	# If it has spaces and looks like systemd format already, pass through
+	if [[ $input =~ ^[0-9]+[[:space:]]+(s|sec|second|seconds|m|min|minute|minutes|h|hr|hour|hours|d|day|days|w|week|weeks|M|month|months|y|year|years)$ ]]; then
+		printf '%s' "$input"
+		return 0
+	fi
+
+	# Convert shorthand to systemd format (no space between number and unit)
+	case "$input" in
+	*s) printf '%s' "$input" ;;   # Already in format like 30s
+	*m) printf '%s' "$input" ;;   # Already in format like 5m
+	*h) printf '%s' "$input" ;;   # Already in format like 2h
+	*d) printf '%s' "$input" ;;   # Already in format like 1d
+	*w) printf '%s' "$input" ;;   # Already in format like 1w
+	*) printf '%s' "${input}s" ;; # Plain number, add 's' for seconds
+	esac
 }
 
-# Function to format seconds to human readable
-seconds_to_human() {
-	local seconds="$1"
-	local days hours minutes secs result=""
+# Function to validate duration using GNU date
+validate_duration() {
+	local input="$1"
+	local normalized
 
-	days=$((seconds / 86400))
-	hours=$(((seconds % 86400) / 3600))
-	minutes=$(((seconds % 3600) / 60))
-	secs=$((seconds % 60))
+	normalized=$(normalize_duration "$input")
 
-	[[ $days -gt 0 ]] && result="${days}d "
-	[[ $hours -gt 0 ]] && result="${result}${hours}h "
-	[[ $minutes -gt 0 ]] && result="${result}${minutes}m "
-	[[ $secs -gt 0 ]] && result="${result}${secs}s"
-
-	echo "${result:-0s}"
+	# Try to parse with GNU date - if it works, it's valid
+	if date -d "+${normalized}" +%s >/dev/null 2>&1; then
+		printf '%s' "$normalized"
+		return 0
+	else
+		return 1
+	fi
 }
 
 # Function to check dependencies
@@ -74,6 +69,11 @@ check_dependencies() {
 	local missing_deps=()
 
 	command -v systemd-run >/dev/null 2>&1 || missing_deps+=("systemd")
+
+	# Check for GNU date
+	if ! date --version 2>/dev/null | grep -q "GNU"; then
+		print_warning "GNU date not detected. Time calculations may not work properly."
+	fi
 
 	# Check for notification capabilities
 	if ! command -v notify-send >/dev/null 2>&1 && ! command -v swaync-client >/dev/null 2>&1; then
@@ -93,136 +93,62 @@ send_notification() {
 	local msg="$1"
 	local title="${2:-Timer Alert}"
 
-	# Use HyDE's notification system if available
+	# Use swaync if available, otherwise notify-send
 	if command -v swaync-client >/dev/null 2>&1; then
 		swaync-client -t "$title" -b "$msg"
 	elif command -v notify-send >/dev/null 2>&1; then
 		# Handle different user contexts
 		if [[ -n "${SUDO_USER:-}" ]]; then
-			sudo -u "$SUDO_USER" DISPLAY="${DISPLAY:-:0}" notify-send "$title" "$msg"
+			sudo -u "$SUDO_USER" DISPLAY="${DISPLAY:-:0}" DBUS_SESSION_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS:-unix:path=/run/user/$(id -u "$SUDO_USER")/bus}" notify-send "$title" "$msg"
 		else
 			DISPLAY="${DISPLAY:-:0}" notify-send "$title" "$msg"
 		fi
 	fi
+
 	# Play sound if available
-	if command -v paplay >/dev/null 2>&1 && [[ -f "/usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga" ]]; then
+	if command -v paplay >/dev/null 2>&1 && [[ -f "/usr/share/sounds/freedesktop/stereo/message-new-instant.oga" ]]; then
 		paplay "/usr/share/sounds/freedesktop/stereo/message-new-instant.oga" 2>/dev/null || true
 	fi
 
 	# Also log for debugging
 	echo "TIMER ALERT: $msg"
-	logger "systemd-timer-notify: $msg" 2>/dev/null || true
-}
-
-# Function to setup Rofi configuration (HyDE integration)
-setup_rofi_config() {
-	[[ "$HYDE_MODE" == false ]] && return
-
-	# Font configuration
-	local font_scale="${ROFI_TIMER_SCALE:-${ROFI_SCALE:-10}}"
-	[[ "${font_scale}" =~ ^[0-9]+$ ]] || font_scale=10
-
-	font_name="${font_name:-JetBrainsMono Nerd Font}"
-
-	font_override="* {font: \"${font_name} ${font_scale}\";}"
-
-	# Border settings
-	local hypr_border wind_border elem_border
-	if command -v hyprctl >/dev/null 2>&1; then
-		hypr_border=$(hyprctl -j getoption decoration:rounding 2>/dev/null | jq -r '.int' 2>/dev/null || echo "5")
-		local hypr_width=$(hyprctl -j getoption general:border_size 2>/dev/null | jq -r '.int' 2>/dev/null || echo "2")
-	else
-		hypr_border=5
-		hypr_width=2
-	fi
-
-	wind_border=$((hypr_border * 3 / 2))
-	elem_border=$((hypr_border == 0 ? 5 : hypr_border))
-
-	# Position
-	if command -v get_rofi_pos >/dev/null 2>&1; then
-		rofi_position=$(get_rofi_pos 2>/dev/null || echo "")
-	else
-		rofi_position=""
-	fi
-
-	r_override="window{border:${hypr_width}px;border-radius:${wind_border}px;}wallbox{border-radius:${elem_border}px;} element{border-radius:${elem_border}px;}"
-}
-
-# Function to get timer duration via Rofi
-get_timer_duration_rofi() {
-	local duration_options="30s - 30 seconds
-5m - 5 minutes
-15m - 15 minutes
-30m - 30 minutes
-1h - 1 hour
-2h - 2 hours
-4h - 4 hours
-1d - 1 day"
-
-	local rofi_cmd=(rofi -dmenu -i -p "Timer Duration"
-		-theme-str "entry { placeholder: \"⏰ Select or type duration (e.g., 30s, 5m)\";}"
-		-theme "${ROFI_TIMER_STYLE:-clipboard}")
-
-	[[ -n "${rofi_position:-}" ]] && rofi_cmd+=(-theme-str "${rofi_position}")
-	[[ -n "${font_override:-}" ]] && rofi_cmd+=(-theme-str "${font_override}")
-	[[ -n "${r_override:-}" ]] && rofi_cmd+=(-theme-str "${r_override}")
-
-	local selected_duration
-	selected_duration=$(echo -e "$duration_options" | "${rofi_cmd[@]}")
-
-	[[ -z "$selected_duration" ]] && return 1
-
-	# Extract duration from selection or use as-is if custom input
-	if [[ "$selected_duration" =~ ^[0-9]+[smhd]?[[:space:]]*- ]]; then
-		echo "$selected_duration" | awk '{print $1}'
-	else
-		echo "$selected_duration"
-	fi
-}
-
-# Function to get notification message via Rofi
-get_notification_message_rofi() {
-	local rofi_cmd=(rofi -dmenu -i -p "Message"
-		-theme-str "entry { placeholder: \"💬 Enter notification message\";}"
-		-theme "${ROFI_TIMER_STYLE:-clipboard}")
-
-	[[ -n "${rofi_position:-}" ]] && rofi_cmd+=(-theme-str "${rofi_position}")
-	[[ -n "${font_override:-}" ]] && rofi_cmd+=(-theme-str "${font_override}")
-	[[ -n "${r_override:-}" ]] && rofi_cmd+=(-theme-str "${r_override}")
-
-	local message
-	message=$(echo "" | "${rofi_cmd[@]}")
-
-	echo "${message:-Timer notification}"
+	logger -t "systemd-timer-notify" "$msg" 2>/dev/null || true
 }
 
 # Function to get timer duration via terminal
-get_timer_duration_terminal() {
-	local duration
+get_timer_duration() {
+	local duration parsed
+
 	while true; do
-		echo -n "Enter timer duration (e.g., 30s, 5m, 2h, 1d): "
-		read -r duration
+		read -r -p "Duration: " duration
+
+		# Trim whitespace
+		duration=$(echo "$duration" | xargs)
 
 		[[ -z "$duration" ]] && {
 			print_warning "Duration cannot be empty"
 			continue
 		}
 
-		validate_time "$duration" && break
+		if parsed=$(validate_duration "$duration" 2>/dev/null); then
+			printf '%s' "$parsed"
+			return 0
+		fi
 
-		print_warning "Invalid time format. Use: number + unit (s/m/h/d) or just number for seconds"
-		print_info "Examples: 30s, 5m, 2h, 1d, or 30 (for 30 seconds)"
+		print_warning "Invalid time format. GNU date couldn't parse: $duration"
+		print_info "Try: 30s, 5m, 2h, 1d, or '3 hours'"
 	done
-	echo "$duration"
 }
 
 # Function to get notification message via terminal
-get_notification_message_terminal() {
+get_notification_message() {
 	local message
-	echo -n "Enter notification message: "
-	read -r message
-	echo "${message:-Timer notification}"
+
+	read -r -p "Message: " message
+
+	# Trim whitespace and return
+	message=$(echo "$message" | xargs)
+	printf '%s' "${message:-Timer notification}"
 }
 
 # Function to create notification script
@@ -240,7 +166,7 @@ DISPLAY="${DISPLAY:-:0}"
 export DISPLAY
 REAL_USER="${SUDO_USER:-${USER}}"
 
-# Function to send notification (same as main script)
+# Function to send notification
 send_notification() {
     local msg="$1" title="${2:-Timer Alert}"
 
@@ -248,14 +174,18 @@ send_notification() {
         swaync-client -t "$title" -b "$msg"
     elif command -v notify-send >/dev/null 2>&1; then
         if [[ -n "${SUDO_USER:-}" ]]; then
-            sudo -u "$REAL_USER" DISPLAY="$DISPLAY" notify-send "$title" "$msg"
+            sudo -u "$REAL_USER" DISPLAY="$DISPLAY" DBUS_SESSION_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS:-unix:path=/run/user/$(id -u "$REAL_USER")/bus}" notify-send "$title" "$msg"
         else
             notify-send "$title" "$msg"
         fi
     fi
 
+    if command -v paplay >/dev/null 2>&1 && [[ -f "/usr/share/sounds/freedesktop/stereo/message-new-instant.oga" ]]; then
+        paplay "/usr/share/sounds/freedesktop/stereo/message-new-instant.oga" 2>/dev/null || true
+    fi
+
     echo "TIMER ALERT: $msg"
-    logger "systemd-timer-notify: $msg" 2>/dev/null || true
+    logger -t "systemd-timer-notify" "$msg" 2>/dev/null || true
 }
 
 # Function to cleanup
@@ -282,24 +212,37 @@ create_timer() {
 	local duration="$1" message="$2"
 
 	# Generate unique identifiers
-	local timestamp=$(date +%s)
-	local random_id=$(head -c 8 /dev/urandom | tr -dc A-Za-z0-9 2>/dev/null || echo "$$")
-	local unit_name="timer-notify-${timestamp}-${random_id}"
+	local timestamp random_id unit_name script_path
+	timestamp=$(date +%s)
+	random_id=$(head -c 8 /dev/urandom | tr -dc 'A-Za-z0-9' 2>/dev/null || echo "$")
+	unit_name="timer-notify-${timestamp}-${random_id}"
+	script_path="/tmp/${unit_name}.sh"
 
 	# Create temporary script
-	local script_path="/tmp/${unit_name}.sh"
 	create_notification_script "$script_path" "$message" "$unit_name"
 
+	# Show timer details
+	echo
 	print_info "Creating timer: $unit_name"
-	print_info "Duration: $(seconds_to_human $(time_to_seconds "$duration"))"
+	print_info "Duration: $duration"
+
+	local trigger_time
+	if trigger_time=$(date -d "+${duration}" '+%c' 2>/dev/null); then
+		print_info "Will trigger at: $trigger_time"
+	else
+		print_warning "Could not calculate trigger time"
+	fi
+
 	print_info "Message: $message"
+	echo
 
 	# Create and start the timer using systemd-run
-	if systemd-run --user \
+	local systemd_output
+	if systemd_output=$(systemd-run --user \
 		--unit="$unit_name" \
 		--on-active="$duration" \
 		--timer-property=RemainAfterElapse=no \
-		bash "$script_path" "$message" "$unit_name"; then
+		bash "$script_path" "$message" "$unit_name" 2>&1); then
 
 		print_success "Timer created successfully!"
 		print_info "Service name: $unit_name"
@@ -308,6 +251,7 @@ create_timer() {
 		return 0
 	else
 		print_error "Failed to create timer"
+		print_error "systemd-run output: $systemd_output"
 		rm -f "$script_path"
 		return 1
 	fi
@@ -316,10 +260,11 @@ create_timer() {
 # Function to list active timers
 list_timers() {
 	print_info "Active notification timers:"
+	echo
 	if ! systemctl --user list-timers --all 2>/dev/null | grep -q "timer-notify-"; then
 		print_info "No active notification timers found"
 	else
-		systemctl --user list-timers --all | grep "timer-notify-"
+		systemctl --user list-timers --all | grep "timer-notify-" || true
 	fi
 }
 
@@ -345,7 +290,7 @@ cleanup_old_timers() {
 
 # Function to show help
 show_help() {
-	cat <<EOF
+	cat >&2 <<EOF
 Usage: $0 [OPTIONS]
 
 Options:
@@ -358,12 +303,19 @@ Time format examples:
   5m              5 minutes
   2h              2 hours
   1d              1 day
+  1w              1 week
+
+You can also use natural language that GNU date understands:
+  "3 hours"       3 hours from now
+  "90 minutes"    90 minutes from now
+  "tomorrow"      Tomorrow at same time
+  "next week"     One week from now
 
 Features:
-  - Interactive mode with Rofi (if HyDE environment detected)
-  - Terminal input mode (fallback)
+  - Simple terminal interface
   - Automatic cleanup of timer scripts
   - Integration with swaync and libnotify
+  - Uses GNU date for accurate time calculations
 EOF
 }
 
@@ -390,29 +342,17 @@ main() {
 	# Check dependencies
 	check_dependencies
 
-	# Determine interface mode and get inputs
+	# Show instructions
+	echo >&2
+	print_info "Enter timer duration"
+	print_info "Examples: 30s, 5m, 2h, 1d, '3 hours', '90 minutes'"
+	echo >&2
+
+	# Get inputs
 	local duration message
 
-	if [[ "$HYDE_MODE" == true ]] && command -v rofi >/dev/null 2>&1 && [[ -n "${DISPLAY:-}" ]]; then
-		print_info "Using Rofi interface"
-		setup_rofi_config
-
-		duration=$(get_timer_duration_rofi) || {
-			print_info "Operation cancelled"
-			exit 0
-		}
-
-		if ! validate_time "$duration"; then
-			print_error "Invalid duration format: $duration"
-			exit 1
-		fi
-
-		message=$(get_notification_message_rofi)
-	else
-		print_info "Using terminal interface"
-		duration=$(get_timer_duration_terminal)
-		message=$(get_notification_message_terminal)
-	fi
+	duration=$(get_timer_duration)
+	message=$(get_notification_message)
 
 	# Create and start timer
 	create_timer "$duration" "$message"
