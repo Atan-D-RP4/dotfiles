@@ -47,17 +47,15 @@ if type -q curl
     end
 end
 
-if type -q fzf && type -q fd
-    bind -M insert ctrl-o 'pushd (fd -t d --absolute-path | fzf)' repaint
-    bind -M default ctrl-o 'pushd (fd -t d --absolute-path | fzf)' repaint
-end
-
 if type -q nvim
     bind -M insert  ctrl-e 'nvim'
     bind -M insert  alt-e 'sudo -E nvim' repaint
 
     bind -M default ctrl-e 'nvim'
     bind -M default alt-e 'sudo -E nvim' repaint
+
+    bind -M insert  ctrl-o 'nvim +Oil' repaint
+    bind -M default  ctrl-o 'nvim +Oil' repaint
 end
 
 if type -q mpv && type -q uv

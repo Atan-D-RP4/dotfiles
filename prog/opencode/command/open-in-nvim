@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# Repo-local wrapper for the user's global open-in-nvim script.
+# This avoids modifying global shell config and is discoverable by opencode in this repo.
+
+exec "/Users/davidhowlett/.local/bin/open-in-nvim" "$@"

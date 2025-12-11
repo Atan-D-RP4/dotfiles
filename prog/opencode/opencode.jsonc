@@ -1,0 +1,932 @@
+{
+	"$schema": "https://opencode.ai/config.json",
+	"plugin": [
+		"@tarquinen/opencode-dcp@latest"
+		// "opencode-elf@latest"
+	],
+	"instructions": [
+		"AGENTS.md",
+		"CONTRIBUTING.md",
+		"docs/principles/yagni-kiss.md",
+		"docs/principles/documentation-standards.md",
+		"docs/principles/documentation-content-guidelines.md"
+	],
+	"agent": {
+		"build": {
+			"mode": "primary",
+			"description": "Full development with all tools enabled",
+			"model": "github-copilot/claude-opus-4.5",
+			"temperature": 0.3,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": true,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": true,
+				"webfetch": true,
+				"todoread": true,
+				"todowrite": true,
+				"ast-grep": true
+			}
+		},
+		"plan": {
+			"mode": "primary",
+			"description": "Analysis and planning without making changes",
+			"model": "github-copilot/claude-sonnet-4.5",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": true,
+				"todoread": true,
+				"todowrite": true,
+				"ast-grep": true
+			}
+		},
+		"general": {
+			"disabled": true,
+			"mode": "primary",
+			"description": "General assistant for code changes and questions",
+			"prompt": "{file:agent/general.md}",
+			"model": "opencode/big-pickle",
+			"temperature": 0.3,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": true,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": true,
+				"webfetch": true,
+				"todoread": true,
+				"todowrite": true,
+				"ast-grep": true
+			}
+		},
+		"brief-agent": {
+			"mode": "primary",
+			"description": "Builds project briefs by gathering context from codebase and user",
+			"prompt": "{file:agent/brief-agent.md}",
+			"temperature": 0.3,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": false,
+				"bash": false,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": true,
+				"todowrite": true,
+				"ast-grep": true
+			}
+		},
+		"spec-agent": {
+			"mode": "primary",
+			"description": "Transforms project briefs into implementation-ready specifications",
+			"prompt": "{file:agent/spec-agent.md}",
+			"temperature": 0.3,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": false,
+				"bash": false,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": true,
+				"todowrite": true,
+				"ast-grep": true
+			}
+		},
+		"orchestration-agent": {
+			"mode": "primary",
+			"description": "Coordinates spec delivery via sub-agents",
+			"prompt": "{file:agent/orchestration-agent.md}",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": true,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": true,
+				"webfetch": false,
+				"todoread": true,
+				"todowrite": true,
+				"ast-grep": true
+			}
+		},
+		"explain": {
+			"mode": "primary",
+			"description": "Explores and explains codebase features, architecture, and design patterns",
+			"prompt": "{file:agent/explain.md}",
+			"model": "github-copilot/claude-sonnet-4.5",
+			"temperature": 0.2,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": false,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": true,
+				"todowrite": true,
+				"ast-grep": true
+			}
+		},
+		"insights": {
+			"mode": "primary",
+			"description": "Experiment/optimization analysis - answers 8 core questions about results",
+			"prompt": "{file:agent/insights.md}",
+			"model": "github-copilot/claude-opus-4.5",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": true,
+				"todowrite": true,
+				"ast-grep": true
+			}
+		},
+		"insights-data-builder": {
+			"mode": "subagent",
+			"description": "Builds data marts from raw experiment/optimization data",
+			"prompt": "{file:agent/insights-data-builder.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": true,
+				"glob": true,
+				"grep": false,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": false
+			}
+		},
+		"insights-top-runs": {
+			"mode": "subagent",
+			"description": "Analyzes top performing runs and parameter differences",
+			"prompt": "{file:agent/insights-top-runs.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": true,
+				"glob": true,
+				"grep": false,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": false
+			}
+		},
+		"insights-run-deep-dive": {
+			"mode": "subagent",
+			"description": "Deep-dive analysis of specific run performance",
+			"prompt": "{file:agent/insights-run-deep-dive.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": true,
+				"glob": true,
+				"grep": false,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": false
+			}
+		},
+		"insights-confidence-evolution": {
+			"mode": "subagent",
+			"description": "Analyzes confidence evolution and disqualification patterns",
+			"prompt": "{file:agent/insights-confidence-evolution.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": true,
+				"glob": true,
+				"grep": false,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": false
+			}
+		},
+		"quick-fix": {
+			"mode": "subagent",
+			"description": "Fast fixes for linting and formatting issues",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": true,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": true,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"acceptance-criteria-refiner": {
+			"mode": "subagent",
+			"description": "Transforms fuzzy acceptance criteria into testable GIVEN/WHEN/THEN format",
+			"prompt": "{file:agent/acceptance-criteria-refiner.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": false,
+				"glob": false,
+				"grep": false,
+				"list": false,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": false
+			}
+		},
+		"brief-compliance-reviewer": {
+			"mode": "subagent",
+			"description": "Verifies spec compliance with original brief - no scope creep, full coverage",
+			"prompt": "{file:agent/brief-compliance-reviewer.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": false,
+				"glob": false,
+				"grep": false,
+				"list": false,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": false
+			}
+		},
+		"bug-reporter": {
+			"mode": "subagent",
+			"description": "Analyzes bugs systematically and produces comprehensive reports",
+			"prompt": "{file:agent/bug-reporter.md}",
+			"temperature": 0.2,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": false,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"code-reviewer-lite": {
+			"mode": "subagent",
+			"description": "First-pass code review, PASS/FAIL verdict",
+			"prompt": "{file:agent/code-reviewer-lite.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": false,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"code-reviewer-pro": {
+			"mode": "subagent",
+			"description": "Second opinion review when lite doesn't resolve",
+			"prompt": "{file:agent/code-reviewer-pro.md}",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": false,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"code-writer": {
+			"mode": "subagent",
+			"description": "Implements features from spec acceptance criteria",
+			"prompt": "{file:agent/code-writer.md}",
+			"temperature": 0.2,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": true,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": true,
+				"webfetch": false,
+				"todoread": true,
+				"todowrite": true,
+				"ast-grep": true
+			}
+		},
+		"config-parameter-agent": {
+			"mode": "subagent",
+			"description": "Retrieves parameter values from configuration files",
+			"prompt": "{file:agent/config-parameter-agent.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": false,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"contract-analyzer": {
+			"mode": "subagent",
+			"description": "Discovers input/output contracts for pipeline components",
+			"prompt": "{file:agent/contract-analyzer.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": false,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"doc-reader": {
+			"mode": "subagent",
+			"description": "Discovers docs via registry, analyzes to answer questions",
+			"prompt": "{file:agent/doc-reader.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": false,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"doc-reviewer": {
+			"mode": "subagent",
+			"description": "Reviews documentation for quality, returns PASS/FAIL with actionable feedback",
+			"prompt": "{file:agent/doc-reviewer.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": false,
+				"bash": false,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"doc-writer": {
+			"mode": "subagent",
+			"description": "Updates documentation for implemented features",
+			"prompt": "{file:agent/doc-writer.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0.2,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": true,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"inline-doc-improver": {
+			"mode": "subagent",
+			"description": "Adds professional docstrings and inline documentation to source code",
+			"prompt": "{file:agent/inline-doc-improver.md}",
+			"temperature": 0.2,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": true,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"pseudocode-writer": {
+			"mode": "subagent",
+			"description": "Generates pseudocode for complex algorithms and state machines",
+			"prompt": "{file:agent/pseudocode-writer.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": false,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"redundancy-checker": {
+			"mode": "subagent",
+			"description": "Identifies dead code, redundancy, and technical debt (READ-ONLY)",
+			"prompt": "{file:agent/redundancy-checker.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": false,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"script-doc-indexer": {
+			"mode": "subagent",
+			"description": "Builds and maintains script documentation registry",
+			"prompt": "{file:agent/script-doc-indexer.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": true,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"script-reader": {
+			"mode": "subagent",
+			"description": "Analyzes source files for brief/spec context gathering",
+			"prompt": "{file:agent/script-reader.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": false,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"task-tracker": {
+			"mode": "subagent",
+			"description": "Tracks delivery progress via tasks.json and progress.md",
+			"prompt": "{file:agent/task-tracker.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": true,
+				"bash": false,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": true,
+				"todowrite": true,
+				"ast-grep": true
+			}
+		},
+		"test-strategy-writer": {
+			"mode": "subagent",
+			"description": "Generates test strategy from acceptance criteria",
+			"prompt": "{file:agent/test-strategy-writer.md}",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": false,
+				"bash": false,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"test-writer": {
+			"mode": "subagent",
+			"description": "Writes test code for implemented features",
+			"prompt": "{file:agent/test-writer.md}",
+			"temperature": 0.2,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": true,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": true,
+				"webfetch": false,
+				"todoread": true,
+				"todowrite": true,
+				"ast-grep": true
+			}
+		},
+		"yagni-checker": {
+			"mode": "subagent",
+			"description": "Identifies scope creep, YAGNI violations, and over-engineering",
+			"prompt": "{file:agent/yagni-checker.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": false,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"junior-dev": {
+			"mode": "subagent",
+			"description": "Junior developer for simple, well-defined tasks",
+			"prompt": "{file:agent/junior-dev.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0.2,
+			"tools": {
+				"read": true,
+				"write": true,
+				"edit": true,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": true,
+				"todowrite": true,
+				"ast-grep": true
+			}
+		},
+		"implementation-reviewer": {
+			"mode": "subagent",
+			"description": "Catches implementation gaps: TODOs, orphaned code, missing integrations",
+			"prompt": "{file:agent/implementation-reviewer.md}",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"integration-gap-checker": {
+			"mode": "subagent",
+			"description": "Detects orphaned code and missing component wiring",
+			"prompt": "{file:agent/integration-gap-checker.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"incomplete-code-detector": {
+			"mode": "subagent",
+			"description": "Finds TODOs, placeholders, stubs, and incomplete implementations",
+			"prompt": "{file:agent/incomplete-code-detector.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": true,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"dependency-tracer": {
+			"mode": "subagent",
+			"description": "Traces imports, exports, and module dependencies",
+			"prompt": "{file:agent/dependency-tracer.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": false,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"pattern-identifier": {
+			"mode": "subagent",
+			"description": "Identifies design patterns and architectural patterns in code",
+			"prompt": "{file:agent/pattern-identifier.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0.1,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": false,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		},
+		"call-graph-analyzer": {
+			"mode": "subagent",
+			"description": "Maps function call relationships and execution flow",
+			"prompt": "{file:agent/call-graph-analyzer.md}",
+			"model": "github-copilot/claude-haiku-4.5",
+			"temperature": 0,
+			"tools": {
+				"read": true,
+				"write": false,
+				"edit": false,
+				"bash": false,
+				"glob": true,
+				"grep": true,
+				"list": true,
+				"patch": false,
+				"webfetch": false,
+				"todoread": false,
+				"todowrite": false,
+				"ast-grep": true
+			}
+		}
+	},
+	"command": {
+		"test": {
+			"template": "Run the project's test suite and report any failures with suggested fixes. Look for test configuration (pytest.ini, Cargo.toml, package.json, Makefile) to determine the correct test command.",
+			"description": "Run full test suite",
+			"agent": "build"
+		},
+		"test-fast": {
+			"template": "Run a quick subset of tests for fast validation. Use --fast flags or equivalent for the project's test framework.",
+			"description": "Run tests skipping slow ones"
+		},
+		"test-suite": {
+			"template": "Run tests for the specific module or path: $ARGUMENTS\n\nIf no module is specified, run the full test suite.",
+			"description": "Run specific test suite"
+		},
+		"review-docs": {
+			"template": "Review documentation file $ARGUMENTS for code synchronization and standards compliance\n\nIf no file is specified, review all documentation files in the project.",
+			"description": "Review documentation",
+			"agent": "doc-reviewer"
+		},
+		"check-yagni": {
+			"template": "Analyze the following target for YAGNI violations and over-engineering: $ARGUMENTS\n\nIf no target is specified, analyze the current working directory and all source files within it.",
+			"description": "Check for scope creep",
+			"agent": "yagni-checker"
+		},
+		"review": {
+			"template": "Review implementation for gaps, TODOs, orphaned code, and missing integrations.\n\nTarget: $ARGUMENTS\n\nIf no target specified, review staged/uncommitted changes.\nIf --since <branch> specified, review changes since that branch.\nIf --spec <path> specified, also validate against acceptance criteria.",
+			"description": "Review implementation completeness",
+			"agent": "implementation-reviewer"
+		},
+		"fix-lint": {
+			"template": "Fix linting and formatting violations in staged files. Detect the project's linter/formatter from config files (pyproject.toml, .eslintrc, rustfmt.toml, etc.)",
+			"description": "Fix linting issues",
+			"agent": "quick-fix"
+		},
+		"create-worktree": {
+			"template": "Create a git worktree for feature: $ARGUMENTS. Determine the project name from the current directory and run: git worktree add ../<project>-$ARGUMENTS -b $ARGUMENTS\n\nIf no feature name is specified, prompt for a feature name.",
+			"description": "Create git worktree for feature development"
+		}
+	},
+	"permission": {
+		"bash": {
+			"git push": "ask",
+			"git push --force": "deny",
+			"rm -rf*": "deny",
+			"rm -fr*": "deny"
+		}
+	},
+	"tools": {
+		"webfetch": true,
+		"ast-grep": true
+	},
+	"mcp": {
+		"deepwiki": {
+			"enabled": true,
+			"type": "remote",
+			"url": "https://mcp.deepwiki.com/sse"
+		},
+		"context7": {
+			"type": "remote",
+			"url": "https://mcp.context7.com/mcp"
+		}
+	},
+	"lsp": {
+		"pyrefly": {
+			"command": [
+				"uvx",
+				"pyrefly",
+				"lsp"
+			],
+			"extensions": [
+				".py",
+				".pyi"
+			]
+		}
+	},
+	"formatter": {
+		"ruff": {
+			"command": [
+				"uvx",
+				"ruff",
+				"format",
+				"$FILE"
+			],
+			"extensions": [
+				".py"
+			]
+		}
+	}
+}
