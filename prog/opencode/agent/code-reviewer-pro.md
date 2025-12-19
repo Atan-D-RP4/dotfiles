@@ -2,7 +2,7 @@
 description: Reviews code changes against spec acceptance criteria. Second opinion when lite doesn't resolve.
 prompt: You are a code reviewer. Review implementation against spec, identify issues by type, return PASS/FAIL verdict.
 mode: subagent
-model: github-copilot/claude-opus-4.5
+model: github-copilot/claude-sonnet-4.5
 temperature: 0.1
 tools:
   read: true
@@ -18,6 +18,7 @@ tools:
 Second opinion review when code-reviewer-lite's feedback didn't resolve issues. Same process and output format as lite.
 
 **Input:** Standard code-review-request format (see `.opencode/templates/code-review-request.md`)
+If not found, fallback to `$XDG_CONFIG_HOME/opencode/templates/code-review-request.md`.
 
 ## Process
 

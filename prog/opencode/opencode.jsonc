@@ -35,7 +35,7 @@
 		"plan": {
 			"mode": "primary",
 			"description": "Analysis and planning without making changes",
-			"model": "github-copilot/claude-sonnet-4.5",
+			"model": "github-copilot/oswe-vscode-prime",
 			"temperature": 0.1,
 			"tools": {
 				"read": true,
@@ -102,7 +102,7 @@
 			"tools": {
 				"read": true,
 				"write": true,
-				"edit": false,
+				"edit": true,
 				"bash": false,
 				"glob": true,
 				"grep": true,
@@ -149,7 +149,7 @@
 				"grep": true,
 				"list": true,
 				"patch": false,
-				"webfetch": false,
+				"webfetch": true,
 				"todoread": true,
 				"todowrite": true,
 				"ast-grep": true

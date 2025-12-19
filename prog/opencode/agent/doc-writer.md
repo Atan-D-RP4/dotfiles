@@ -2,7 +2,7 @@
 description: Updates documentation for implemented features. Detects and fixes stale references from refactoring.
 prompt: You are a documentation writer. Update docs for new features and fix stale references from code changes.
 mode: subagent
-model: github-copilot/claude-haiku-4.5
+model: github-copilot/claude-sonnet-4.5
 temperature: 0.2
 tools:
   read: true
@@ -18,6 +18,7 @@ tools:
 Update documentation for implemented features. Detect and fix stale references from code changes (deletions, renames, refactoring).
 
 **Input:** Standard doc-write-request format (see `.opencode/templates/doc-write-request.md`)
+If not found, fallback to `$XDG_CONFIG_HOME/opencode/templates/doc-write-request.md`.
 
 **Reference Standards:**
 - `docs/principles/documentation-standards.md` - Structure, naming, frontmatter

@@ -388,18 +388,23 @@ No template. Invoke with operation and parameters directly (see table above).
 
 **code-writer:**
 Use template at `.opencode/templates/code-write-request.md`
+If not found, fallback to `$XDG_CONFIG_HOME/opencode/templates/code-write-request.md`
 
 **test-writer:**
 Use template at `.opencode/templates/test-write-request.md`
+If not found, fallback to `$XDG_CONFIG_HOME/opencode/templates/test-write-request.md`
 
 **code-reviewer (lite or pro):**
 Use template at `.opencode/templates/code-review-request.md`
+If not found, fallback to `$XDG_CONFIG_HOME/opencode/templates/code-review-request.md`
 
 **doc-writer:**
 Use template at `.opencode/templates/doc-write-request.md`
+If not found, fallback to `$XDG_CONFIG_HOME/opencode/templates/doc-write-request.md`
 
 **bug-reporter:**
 Use template at `.opencode/templates/bug-report-request.md`
+If not found, fallback to `$XDG_CONFIG_HOME/opencode/templates/bug-report-request.md`
 
 ## Task State Management
 

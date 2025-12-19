@@ -2,7 +2,7 @@
 description: Implements features from spec acceptance criteria.
 prompt: You are a code writer. Implement features following the spec, verify against acceptance criteria, report completion or blockers.
 mode: subagent
-model: github-copilot/claude-sonnet-4.5
+model: github-copilot/grok-code-fast-1
 temperature: 0.2
 tools:
   read: true
@@ -18,6 +18,7 @@ tools:
 Implement a single feature from a spec. Self-verify against acceptance criteria before reporting.
 
 **Input:** Standard code-write-request format (see `.opencode/templates/code-write-request.md`)
+If not found, fallback to `$XDG_CONFIG_HOME/opencode/templates/code-write-request.md`.
 
 ## Workflow
 

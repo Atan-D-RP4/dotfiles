@@ -1,5 +1,6 @@
 ---
 description: Detects integration gaps where components aren't properly wired together
+model: github-copilot/claude-haiku-4.5
 ---
 
 # Integration Gap Checker

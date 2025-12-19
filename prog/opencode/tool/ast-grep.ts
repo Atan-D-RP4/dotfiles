@@ -68,6 +68,29 @@ Go:
 - Error checks: "if err != nil { $$$ }"
 - Goroutines: "go $FUNC($$$)"
 
+MULTI-LINE PATTERNS:
+- Patterns can span multiple lines for matching code blocks
+- Use $$$ to match variable numbers of statements within blocks
+- Example - find if statements with early return:
+  pattern="if ($COND) {
+    return $VAL
+  }"
+- Example - find try-catch blocks:
+  pattern="try {
+    $$$BODY
+  } catch ($ERR) {
+    $$$HANDLER
+  }"
+
+CRITICAL LIMITATION - SINGLE AST NODE:
+- A pattern MUST parse to exactly ONE AST node
+- "Multiple AST nodes detected" error means your pattern has separate syntax elements
+- WRONG: "#[attr] pub $NAME: $TYPE" (attribute + field = 2 nodes)
+- RIGHT: "pub $NAME: $TYPE" (just the field = 1 node)
+- WRONG: "import $A; import $B" (2 import statements)
+- RIGHT: "import $A" (1 import statement)
+- For multi-node matching, use YAML rules with relational rules (has/inside) instead
+
 TIPS:
 - Patterns must be syntactically valid in the target language
 - Use --lang when the file extension is ambiguous or when searching mixed codebases
@@ -85,7 +108,35 @@ REWRITE MODE (requires edit permission):
 REWRITE EXAMPLES:
 - Rename function: pattern="oldFunc($$$)" rewrite="newFunc($$$)"
 - Add error handling: pattern="$EXPR.unwrap()" rewrite="$EXPR.expect(\"error\")"
-- Modernize syntax: pattern="var $X = $Y" rewrite="const $X = $Y"`
+- Modernize syntax: pattern="var $X = $Y" rewrite="const $X = $Y"
+
+MULTI-LINE REWRITE EXAMPLES:
+- Wrap function body with error handling:
+  pattern="function $NAME($$$ARGS) {
+    $$$BODY
+  }"
+  rewrite="function $NAME($$$ARGS) {
+    try {
+      $$$BODY
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
+  }"
+- Convert callback to async/await:
+  pattern="$FN($$$ARGS, function($ERR, $RESULT) {
+    $$$BODY
+  })"
+  rewrite="const $RESULT = await $FN($$$ARGS)
+  $$$BODY"
+- Add logging to catch blocks:
+  pattern="catch ($ERR) {
+    $$$HANDLER
+  }"
+  rewrite="catch ($ERR) {
+    logger.error($ERR)
+    $$$HANDLER
+  }"`
 
 export default tool({
   description: SEARCH_DESCRIPTION + REWRITE_ADDENDUM,

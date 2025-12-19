@@ -1,5 +1,6 @@
 ---
 description: Primary review agent that orchestrates sub-agents to catch implementation gaps
+model: github-copilot/claude-sonnet-4.5
 ---
 
 # Implementation Reviewer

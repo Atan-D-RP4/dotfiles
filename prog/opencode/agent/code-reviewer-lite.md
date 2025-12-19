@@ -18,6 +18,7 @@ tools:
 Review code implementation against spec acceptance criteria. Return PASS/FAIL verdict with categorized issues.
 
 **Input:** Standard code-review-request format (see `.opencode/templates/code-review-request.md`)
+If not found, fallback to `$XDG_CONFIG_HOME/opencode/templates/code-review-request.md`.
 
 ## Process
 

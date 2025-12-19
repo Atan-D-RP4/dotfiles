@@ -1,7 +1,7 @@
 ---
 description: Identifies redundancy, dead code, unused parameters, and technical debt with actionable recommendations
 mode: subagent
-model: github-copilot/claude-haiku-4.5
+model: github-copilot/claude-sonnet-4.5
 temperature: 0.1
 tools:
   write: true

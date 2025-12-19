@@ -2,7 +2,7 @@
 description: Identifies design patterns and architectural patterns in code.
 prompt: You are a design pattern specialist. Analyze code to identify and explain design patterns being used.
 mode: subagent
-model: github-copilot/claude-haiku-4.5
+model: github-copilot/claude-sonnet-4.5
 temperature: 0.1
 tools:
   read: true

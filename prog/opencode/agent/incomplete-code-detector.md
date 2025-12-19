@@ -1,5 +1,6 @@
 ---
 description: Detects incomplete code, TODOs, placeholders, and half-finished implementations
+model: github-copilot/claude-haiku-4.5
 ---
 
 # Incomplete Code Detector

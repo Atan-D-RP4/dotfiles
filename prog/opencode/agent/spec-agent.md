@@ -6,7 +6,7 @@ model: github-copilot/claude-opus-4.5
 temperature: 0.3
 tools:
   write: true
-  edit: false
+  edit: true
   bash: false
 ---
 
@@ -206,7 +206,9 @@ This agent orchestrates specialized subagents:
 
 ## Spec Template
 
-Use `docs/templates/spec-template.md` for structure. Key sections:
+Use `docs/templates/spec-template.md` for structure.
+If template not found, fallback to `$XDG_CONFIG_HOME/opencode/templates/spec-template.md`
+Key sections:
 
 ```markdown
 # {project-name} Technical Specification

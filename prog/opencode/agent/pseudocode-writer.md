@@ -2,7 +2,7 @@
 description: Generates pseudocode for complex algorithms and state machines.
 prompt: You are a pseudocode specialist. Create clear, language-agnostic pseudocode for algorithms, state machines, and workflows.
 mode: subagent
-model: github-copilot/claude-haiku-4.5
+model: github-copilot/gpt-5.1-codex
 temperature: 0.1
 tools:
   write: false

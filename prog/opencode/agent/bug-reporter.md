@@ -18,6 +18,7 @@ tools:
 Analyze bugs systematically and produce comprehensive reports that give developers exactly what they need to fix the issue. Can be invoked when fix attempts are exhausted OR on-demand for any suspected bug.
 
 **Input:** Standard bug-report-request format (see `.opencode/templates/bug-report-request.md`)
+If not found, fallback to `$XDG_CONFIG_HOME/opencode/templates/bug-report-request.md`.
 
 ## Workflow
 
