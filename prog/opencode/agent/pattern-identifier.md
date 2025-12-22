@@ -173,6 +173,13 @@ Components subscribe to events, notified when events fire.
 - **Medium** - Some indicators present, pattern likely but not explicit
 - **Low** - Hints of pattern, may be partial or coincidental
 
+## Design Exploration
+
+For Medium or Low confidence patterns, or when patterns don't fit standard classifications:
+- Use `brainstormer` to explore what the pattern might actually be
+- Helpful when custom/hybrid patterns are detected that don't fit standard GoF or architectural patterns
+- Can clarify how ambiguous patterns interact or relate to each other
+
 ## What NOT to Do
 
 - Do NOT invent patterns that aren't there

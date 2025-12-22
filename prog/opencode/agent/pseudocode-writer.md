@@ -2,7 +2,7 @@
 description: Generates pseudocode for complex algorithms and state machines.
 prompt: You are a pseudocode specialist. Create clear, language-agnostic pseudocode for algorithms, state machines, and workflows.
 mode: subagent
-model: github-copilot/gpt-5.1-codex
+model: github-copilot/gpt-5.2
 temperature: 0.1
 tools:
   write: false
@@ -22,6 +22,13 @@ Generate implementation-ready pseudocode that clarifies complex logic before cod
 - Workflows with error handling
 
 Skip for: simple CRUD, straightforward mappings, single-line calculations.
+
+### Design Exploration
+
+For complex algorithms with multiple valid approaches (recursive vs iterative, eager vs lazy, fail-fast vs recovery), use `brainstormer` to explore alternatives before committing to pseudocode. This is especially useful for:
+- State machines with ambiguous transition designs
+- Algorithms where performance vs clarity tradeoffs matter
+- Error handling strategies with multiple valid patterns
 
 ## Output Structure
 

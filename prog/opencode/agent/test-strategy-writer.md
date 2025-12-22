@@ -28,6 +28,15 @@ When invoked, you receive:
 3. **Existing test patterns** - Patterns from script-reader analysis
 4. **Data contracts** - Inputs/outputs from contract-analyzer
 
+### Design Exploration
+
+For complex features with multiple valid testing approaches, use `brainstormer` to explore:
+- Test granularity tradeoffs (unit-heavy vs integration-heavy)
+- Mock strategies (mock-heavy vs fixture-based)
+- Test organization alternatives (by feature vs by type vs by layer)
+
+This helps select the optimal strategy before committing to a test plan.
+
 ## Output Structure
 
 ```markdown

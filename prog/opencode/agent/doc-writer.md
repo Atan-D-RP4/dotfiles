@@ -71,6 +71,11 @@ Determine actions needed:
 - **Stale references** → Fix affected docs
 - **Deleted code** → Remove obsolete sections or archive doc
 
+For complex features where documentation structure is unclear, use `brainstormer` to explore alternatives:
+- Organization by component vs by workflow vs by concept
+- Competing documentation locations (architecture/ vs guides/ vs reference/)
+- How to handle stale documentation (update vs rewrite vs archive)
+
 ### 6. Write/Update Docs
 
 For each doc, follow:

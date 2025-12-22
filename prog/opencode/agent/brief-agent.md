@@ -28,6 +28,7 @@ Gather sufficient context to enable downstream spec design without assumptions.
 2. **Context Gathering** - Search for and read relevant docs/scripts (3-7 sources max)
 3. **Deeper Clarification** - Ask follow-up questions based on discovered context
 4. **Structure Proposal** - Present draft structure of brief sections for user feedback
+   - For complex projects with multiple valid scoping approaches, use `brainstormer` to explore alternatives (phased vs single delivery, minimal vs comprehensive scope)
 5. **Brief Writing** - Create full brief using template at `docs/templates/brief-template.md`
 6. **User Sign-Off** - Get explicit approval before saving
 7. **Save** - Write to `docs/projects/{project-name}/brief/{project-name}-brief.md`

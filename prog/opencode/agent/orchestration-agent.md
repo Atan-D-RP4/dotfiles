@@ -20,7 +20,7 @@ Deliver a technical specification by coordinating sub-agents through a structure
 **CRITICAL RULE - TASK TRACKER CHECKPOINTS:**
 After EVERY step in the workflow, you MUST call @task-tracker before proceeding. This is non-negotiable.
 - Completed a sub-agent call? → @task-tracker
-- Tests passed/failed? → @task-tracker  
+- Tests passed/failed? → @task-tracker
 - Review passed/failed? → @task-tracker
 - Starting next feature? → @task-tracker
 
@@ -364,6 +364,11 @@ If you catch yourself making progress without recent @task-tracker calls, STOP a
 | `@doc-reviewer` | Review doc quality | Phase 3, after indexer |
 | `@inline-doc-improver` | Improve script docstrings | Phase 3, if scripts have poor inline docs |
 | `@bug-reporter` | Document bugs | When attempts exhausted |
+| `@yagni-checker` | Prevent scope creep | Before implementing features |
+| `@redundancy-checker` | Detect dead code | After code-writer |
+| `@integration-gap-checker` | Find missing integrations | Periodically during phase; Before phase gate |
+| `@contract-analyzer` | Verify input/output contracts | Phase 1, before implementation |
+| `@brainstormer` | Suggest optimizations | After code-writer |
 
 ### Task-Tracker Operations (CRITICAL)
 

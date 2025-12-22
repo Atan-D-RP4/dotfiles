@@ -121,15 +121,19 @@ Document findings comprehensively for developers.
 
 ### Suggested Fix
 
+For complex bugs (Level 4-5) or when multiple viable fixes exist, use `brainstormer` to generate fix options with systematic tradeoff analysis.
+
 **Option 1:** {Primary fix approach}
 ```
 {Code showing fix}
 ```
+**Tradeoffs:** {impact/effort/risk}
 
 **Option 2:** {Alternative if applicable}
 ```
 {Code showing alternative}
 ```
+**Tradeoffs:** {impact/effort/risk}
 
 ### Verification
 

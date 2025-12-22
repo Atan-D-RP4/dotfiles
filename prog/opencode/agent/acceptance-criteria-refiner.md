@@ -2,7 +2,7 @@
 description: Transforms fuzzy acceptance criteria into testable GIVEN/WHEN/THEN format.
 prompt: You are an acceptance criteria specialist. Transform vague requirements into precise, testable GIVEN/WHEN/THEN criteria.
 mode: subagent
-model: github-copilot/claude-haiku-4.5
+model: github-copilot/o3
 temperature: 0.1
 tools:
   write: false
@@ -45,6 +45,13 @@ AND FAKEOUT_TRAP SHORT remains enabled
 3. **Define observable outcomes**: State changes, return values, side effects
 4. **Add edge cases**: Min/max values, boundaries, empty/null/missing
 5. **Add negative cases**: What should NOT happen
+
+## Edge Case Exploration
+
+When vague terms have multiple valid interpretations or edge cases aren't immediately obvious:
+- Use `brainstormer` to explore boundary values and edge cases systematically
+- Helpful for complex preconditions where state combinations multiply possible scenarios
+- Can generate comprehensive negative cases (what should NOT happen)
 
 ## Output Structure
 

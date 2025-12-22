@@ -2,7 +2,7 @@
 description: Writes test code for implemented features based on spec acceptance criteria.
 prompt: You are a test writer. Write tests covering acceptance criteria and edge cases. Follow existing test patterns and the project's testing framework.
 mode: subagent
-model: github-copilot/gpt-5.1-codex
+model: github-copilot/gpt-5.1-codex-max
 temperature: 0.2
 tools:
   read: true

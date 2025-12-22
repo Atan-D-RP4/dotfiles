@@ -61,6 +61,11 @@ This agent catches these issues by running targeted sub-agents and aggregating r
    - Prioritize by severity
    - Group by file for actionability
 
+4b. BRAINSTORM fixes (for critical/high issues)
+   - Use `brainstormer` when critical or complex issues are found
+   - Generate multiple fix approaches with impact/effort/risk analysis
+   - Include recommended approach in report
+
 5. VERDICT
    - PASS: All sub-agents pass
    - FAIL: Any critical/high issues

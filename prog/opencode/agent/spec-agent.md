@@ -74,6 +74,7 @@ A good spec enables developers to implement without asking "what did the brief m
 2. Define data models, state machines, workflows
 3. Use `@.opencode/agent/script-reader` for existing patterns to follow
 4. Use `@.opencode/agent/doc-reader` for documented conventions
+5. Use `@.opencode/agent/brainstormer` for complex integrations and designing new patterns
 
 **Output**: Technical Design section of spec
 

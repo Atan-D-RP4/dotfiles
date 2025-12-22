@@ -1,8 +1,8 @@
 {
 	"$schema": "https://opencode.ai/config.json",
 	"plugin": [
-		"@tarquinen/opencode-dcp@latest"
-		// "opencode-elf@latest"
+		"@tarquinen/opencode-dcp@latest",
+		"opencode-elf@latest"
 	],
 	"instructions": [
 		"AGENTS.md",
@@ -12,6 +12,10 @@
 		"docs/principles/documentation-content-guidelines.md"
 	],
 	"agent": {
+		"compaction": {
+			"model": "github-copilot/oswe-vscode-prime",
+			"temperature": 0
+		},
 		"build": {
 			"mode": "primary",
 			"description": "Full development with all tools enabled",

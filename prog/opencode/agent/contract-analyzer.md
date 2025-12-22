@@ -26,6 +26,7 @@ Prevents specs that break existing integrations or assume non-existent data.
 3. **Trace outputs**: Consumer, type, format, timing expectations
 4. **Identify constraints**: What CAN'T change without breaking things
 5. **Classify scope**: GREENFIELD (new) | BROWNFIELD (existing) | HYBRID
+6. **Explore integration strategies** (for HYBRID components): Use `brainstormer` to explore different integration approaches when component must bridge greenfield and brownfield code, or when interface constraints conflict with desired changes
 
 ## Output Structure
 
