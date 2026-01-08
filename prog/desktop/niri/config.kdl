@@ -1,0 +1,369 @@
+// This config is in the KDL format: https://kdl.dev
+// "/-" comments out the following node.
+// Check the wiki for a full description of the configuration:
+// https://github.com/YaLTeR/niri/wiki/Configuration:-Introduction
+
+// Include dms files
+include "dms/colors.kdl"
+include "dms/layout.kdl"
+include "dms/alttab.kdl"
+include "dms/binds.kdl"
+
+//
+// Current file will override settings from included files.
+//
+
+// Set environment variables for niri and its children.
+environment {
+  DMS_DANKBAR_LAYER "top"
+  XDG_CURRENT_DESKTOP "niri"
+  XDG_SESSION_DESKTOP "niri"
+  QT_QPA_PLATFORM "wayland" // prefer wayland, fall back to xcb
+  ELECTRON_OZONE_PLATFORM_HINT "auto"
+  QT_QPA_PLATFORMTHEME "gtk3"
+  QT_QPA_PLATFORMTHEME_QT6 "gtk3"
+}
+
+// Use a custom build of xwayland-satellite.
+xwayland-satellite {
+    path "/usr/bin/xwayland-satellite"
+}
+
+
+// Input device configuration.
+// Find the full list of options on the wiki:
+// https://yalter.github.io/niri/Configuration:-Input
+input {
+    keyboard {
+	xkb {
+	    // You can set rules, model, layout, variant and options.
+	    // For more information, see xkeyboard-config(7).
+
+	    // For example:
+	    layout "us,ru"
+	    // options "grp:win_space_toggle,compose:ralt,ctrl:nocaps"
+
+	    // If this section is empty, niri will fetch xkb settings
+	    // from org.freedesktop.locale1. You can control these using
+	    // localectl set-x11-keymap.
+	}
+
+	// Enable numlock on startup, omitting this setting disables it.
+	numlock
+    }
+
+
+    touch {
+	// natural-scroll
+    }
+
+    // Next sections include libinput settings.
+    // Omitting settings disables them, or leaves them at their default values.
+    // All commented-out settings here are examples, not defaults.
+    touchpad {
+	// off
+	tap
+	// dwt
+	// dwtp
+	// drag false
+	// drag-lock
+	natural-scroll
+	accel-speed 0.4
+	accel-profile "adaptive"
+	// scroll-method "two-finger"
+	// disabled-on-external-mouse
+    }
+
+    mouse {
+	// off
+	// natural-scroll
+	// accel-speed 0.2
+	// accel-profile "flat"
+	// scroll-method "no-scroll"
+    }
+
+    trackpoint {
+	// off
+	// natural-scroll
+	// accel-speed 0.2
+	// accel-profile "flat"
+	// scroll-method "on-button-down"
+	// scroll-button 273
+	// scroll-button-lock
+	// middle-emulation
+    }
+
+    // Uncomment this to make the mouse warp to the center of newly focused windows.
+    // warp-mouse-to-focus
+
+    // Focus windows and outputs automatically when moving the mouse into them.
+    // Setting max-scroll-amount="0%" makes it work only on windows already fully on screen.
+    // focus-follows-mouse max-scroll-amount="0%"
+}
+
+
+config-notification {
+    disable-failed
+}
+
+// You can configure outputs by their name, which you can find
+// by running `niri msg outputs` while inside a niri instance.
+// The built-in laptop monitor is usually called "eDP-1".
+// Find more information on the wiki:
+// https://yalter.github.io/niri/Configuration:-Outputs
+// Remember to uncomment the node by removing "/-"!
+output "eDP-1" {
+    // Uncomment this line to disable this output.
+    // off
+
+    // Resolution and, optionally, refresh rate of the output.
+    // The format is "<width>x<height>" or "<width>x<height>@<refresh rate>".
+    // If the refresh rate is omitted, niri will pick the highest refresh rate
+    // for the resolution.
+    // If the mode is omitted altogether or is invalid, niri will pick one automatically.
+    // Run `niri msg outputs` while inside a niri instance to list all outputs and their modes.
+    mode "1920x1080@60.002"
+
+    // You can use integer or fractional scale, for example use 1.5 for 150% scale.
+    scale 1.50
+
+    // Transform allows to rotate the output counter-clockwise, valid values are:
+    // normal, 90, 180, 270, flipped, flipped-90, flipped-180 and flipped-270.
+    transform "normal"
+
+    // Position of the output in the global coordinate space.
+    // This affects directional monitor actions like "focus-monitor-left", and cursor movement.
+    // The cursor can only move between directly adjacent outputs.
+    // Output scale and rotation has to be taken into account for positioning:
+    // outputs are sized in logical, or scaled, pixels.
+    // For example, a 3840×2160 output with scale 2.0 will have a logical size of 1920×1080,
+    // so to put another output directly adjacent to it on the right, set its x to 1920.
+    // If the position is unset or results in an overlap, the output is instead placed
+    // automatically.
+    // position x=1280 y=0
+}
+
+
+gestures {
+    hot-corners {
+        off
+    }
+}
+
+// Add lines like this to spawn processes at startup.
+// Note that running niri as a session supports xdg-desktop-autostart,
+// which may be more convenient to use.
+// See the binds section below for more spawn examples.
+// spawn-at-startup "dms" "run" // This line starts Dank Material Shell
+// You should make dms session depend on the Niri session though; "systemctl --user add-wants niri.service dms"
+
+// Set up the environment for Wayland apps and systemd user services.
+spawn-sh-at-startup "dbus-update-activation-environment --systemd --all"
+spawn-sh-at-startup "systemctl --user import-environment --all"
+spawn-sh-at-startup "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP XDG_CONFIG_HOME QT_QPA_PLATFORMTHEME"
+spawn-sh-at-startup "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP XDG_CONFIG_HOME QT_QPA_PLATFORMTHEME"
+
+// Start applications with systemd-run to have them managed by user systemd.
+spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "wl-paste" "--watch" "cliphist" "store"
+spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "wl-paste" "--type" "image/png" "--watch" "cliphist" "store"
+spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "wl-clip-persist" "--clipboard" "regular"
+spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "udiskie" "--no-automount" "--smart-tray"
+spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "kitty" "--single-instance" "--start-as=hidden"
+
+// To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
+// spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
+
+// Configure xdg-desktop-portal-hyprland for screenshot and screen capture support.
+spawn-sh-at-startup "killall -e xdg-desktop-portal-hyprland; systemd-run --user /usr/lib/xdg-desktop-portal-hyprland"
+spawn-sh-at-startup "killall -e xdg-desktop-portal-gtk; systemd-run --user /usr/lib/xdg-desktop-portal-gtk"
+spawn-sh-at-startup "killall -e xdg-desktop-portal; systemd-run --user /usr/lib/xdg-desktop-portal"
+
+overview {
+    workspace-shadow {
+        off
+    }
+}
+
+hotkey-overlay {
+    // Uncomment this line to disable the "Important Hotkeys" pop-up at startup.
+    skip-at-startup
+}
+
+// Uncomment this line to ask the clients to omit their client-side decorations if possible.
+// If the client will specifically ask for CSD, the request will be honored.
+// Additionally, clients will be informed that they are tiled, removing some client-side rounded corners.
+// This option will also fix border/focus ring drawing behind some semitransparent windows.
+// After enabling or disabling this, you need to restart the apps for this to take effect.
+prefer-no-csd
+
+// You can change the path where screenshots are saved.
+// A ~ at the front will be expanded to the home directory.
+// The path is formatted with strftime(3) to give you the screenshot date and time.
+screenshot-path "~/Media/images/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+
+// You can also set this to null to disable saving screenshots to disk.
+// screenshot-path null
+
+// Animation settings.
+// The wiki explains how to configure individual animations:
+// https://yalter.github.io/niri/Configuration:-Animations
+animations {
+    workspace-switch {
+        spring damping-ratio=0.80 stiffness=523 epsilon=0.0001
+    }
+    window-open {
+        duration-ms 150
+        curve "ease-out-expo"
+    }
+    window-close {
+        duration-ms 150
+        curve "ease-out-quad"
+    }
+    horizontal-view-movement {
+        spring damping-ratio=0.85 stiffness=423 epsilon=0.0001
+    }
+    window-movement {
+        spring damping-ratio=0.75 stiffness=323 epsilon=0.0001
+    }
+    window-resize {
+        spring damping-ratio=0.85 stiffness=423 epsilon=0.0001
+    }
+    config-notification-open-close {
+        spring damping-ratio=0.65 stiffness=923 epsilon=0.001
+    }
+    screenshot-ui-open {
+        duration-ms 200
+        curve "ease-out-quad"
+    }
+    overview-open-close {
+        spring damping-ratio=0.85 stiffness=800 epsilon=0.0001
+    }
+}
+
+// Window rules let you adjust behavior for individual windows.
+// Find more information on the wiki:
+// https://github.com/YaLTeR/niri/wiki/Configuration:-Window-Rules
+
+// Work around WezTerm's initial configure bug
+// by setting an empty default-column-width.
+window-rule {
+    // This regular expression is intentionally made as specific as possible,
+    // since this is the default config, and we want no false positives.
+    // You can get away with just app-id="wezterm" if you want.
+    match app-id=r#"^org\.wezfurlong\.wezterm$"#
+    default-column-width {}
+}
+
+// Remove borders and rounded corners from GNOME apps.
+window-rule {
+    match app-id=r#"^org\.gnome\."#
+    draw-border-with-background false
+    geometry-corner-radius 12
+    clip-to-geometry true
+}
+
+// Open the Zen|Firefox picture-in-picture player as floating by default.
+window-rule {
+    // This app-id regular expression will work for both:
+    // - host Firefox (app-id is "firefox")
+    // - Flatpak Firefox (app-id is "org.mozilla.firefox")
+    match app-id=r#"zen|firefox"# title="^Picture-in-Picture$"
+    match app-id="zoom"
+    open-floating true
+}
+
+// Example: block out two password managers from screen capture.
+// (This example rule is commented out with a "/-" in front.)
+/-window-rule {
+    match app-id=r#"^org\.keepassxc\.KeePassXC$"#
+    match app-id=r#"^org\.gnome\.World\.Secrets$"#
+
+    block-out-from "screen-capture"
+
+    // Use this instead if you want them visible on third-party screenshot tools.
+    // block-out-from "screencast"
+}
+
+// Set specific apps to use half the screen width by default.
+window-rule {
+    match app-id=r#"^gnome-control-center$"#
+    match app-id=r#"^pavucontrol$"#
+    match app-id=r#"^nm-connection-editor$"#
+    default-column-width { proportion 0.5; }
+    open-floating false
+}
+
+// Open certain small utilities as floating by default.
+window-rule {
+    match app-id=r#"^gnome-calculator$"#
+    match app-id=r#"^galculator$"#
+    match app-id=r#"^blueman-manager$"#
+    match app-id=r#"^org\.gnome\.Nautilus$"#
+    match app-id=r#"^steam$"#
+    match app-id=r#"^xdg-desktop-portal$"#
+    open-floating true
+}
+
+// Remove borders from certain terminal emulators.
+window-rule {
+    match app-id=r#"^org\.wezfurlong\.wezterm$"#
+    match app-id="Alacritty"
+    match app-id="zen"
+    match app-id="com.mitchellh.ghostty"
+    match app-id="kitty"
+    draw-border-with-background false
+}
+
+// Make inactive windows slightly transparent
+window-rule {
+    match is-active=false
+    opacity 0.9
+}
+
+// Open dms windows as floating by default
+window-rule {
+    match app-id=r#"org.quickshell$"#
+    open-floating true
+}
+
+// The following layer-rules require DMS_DANKBAR_LAYER="top" in the environment section
+// =================
+// Place quickshell in the backdrop layer
+layer-rule {
+    match namespace="^quickshell$"
+    place-within-backdrop true
+}
+
+// Place dms blur wallpaper and bar in the backdrop layer
+layer-rule {
+    match namespace="dms:blurwallpaper"
+    place-within-backdrop true
+}
+
+// Place dms bar in the backdrop layer
+layer-rule {
+    match namespace="dms:bar"
+    place-within-backdrop true
+}
+// =================
+
+// Enable debug options
+debug {
+    honor-xdg-activation-with-invalid-serial
+}
+
+// Override to disable super+tab
+recent-windows {
+    binds {
+        Alt+Tab         { next-window scope="output"; }
+        Alt+Shift+Tab   { previous-window scope="output"; }
+        Alt+grave       { next-window filter="app-id"; }
+        Alt+Shift+grave { previous-window filter="app-id"; }
+    }
+}
+
+// Configure to use xdg-desktop-portal-hyprland for screenshot and screen capture
+// Write this to a file called ~/.config/xdg-desktop-portal/niri-portals.conf
+// [preferred]
+// default=gtk;hyprland
+// org.freedesktop.impl.portal.ScreenCast=hyprland;gtk
