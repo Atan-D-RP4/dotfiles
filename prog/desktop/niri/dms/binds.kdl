@@ -26,7 +26,9 @@ binds {
     Mod+N hotkey-overlay-title="Notification Center" { spawn "dms" "ipc" "call" "notifications" "toggle"; }
     Mod+Shift+N hotkey-overlay-title="Notepad" { spawn "dms" "ipc" "call" "notepad" "toggle"; }
     Mod+Y hotkey-overlay-title="Dashboard" { spawn "dms" "ipc" "dash" "toggle" "'[tab]'"; }
-    Mod+Shift+Y hotkey-overlay-title="Dashboard" { spawn "dms" "ipc" "powermenu" "toggle"; }
+    Mod+P hotkey-overlay-title="Power Menu" { spawn "dms" "ipc" "powermenu" "toggle"; }
+    Mod+Shift+Y hotkey-overlay-title="Control Center" { spawn "dms" "ipc" "call" "control-center" "toggle"; }
+    Mod+S { focus-workspace "special"; }
     Ctrl+Alt+Delete hotkey-overlay-title="Task Manager" {
 	spawn "dms" "ipc" "call" "processlist" "focusOrToggle";
     }
@@ -76,13 +78,12 @@ binds {
     Mod+Q repeat=false { close-window; }
     Mod+F { maximize-column; }
     Mod+M { maximize-window-to-edges; }
-    // Mod+Shift+F { fullscreen-window; }
-    // I personally never use real fullscreen
-    // fake fullscreen + maximize to edges is great
-    Mod+Shift+F {
-        spawn-sh "niri msg action toggle-windowed-fullscreen; niri msg action maximize-window-to-edges;";
-    }
-    // Mod+Alt+F { toggle-windowed-fullscreen; }
+    Mod+Shift+F { fullscreen-window; } // true fullscreen, prefered only if DMS is on overlay layer
+    // fake fullscreen + maximize to edges is great if DMS is not on overlay layer
+    // Mod+Shift+F {
+    //     spawn-sh "niri msg action toggle-windowed-fullscreen; niri msg action maximize-window-to-edges;";
+    // }
+    Mod+Alt+F { toggle-windowed-fullscreen; }
 
     // Move the focused window between the floating and the tiling layout.
     Mod+W       { toggle-window-floating; }

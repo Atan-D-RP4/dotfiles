@@ -15,7 +15,10 @@ include "dms/binds.kdl"
 
 // Set environment variables for niri and its children.
 environment {
-  DMS_DANKBAR_LAYER "top"
+  DMS_DANKBAR_LAYER "overlay"
+  DMS_POPUT_LAYER "overlay"
+  DMS_MODAL_LAYER "overlay"
+  DMS_NOTIFICATION_LAYER "overlay"
   XDG_CURRENT_DESKTOP "niri"
   XDG_SESSION_DESKTOP "niri"
   QT_QPA_PLATFORM "wayland" // prefer wayland, fall back to xcb
@@ -29,11 +32,16 @@ xwayland-satellite {
     path "/usr/bin/xwayland-satellite"
 }
 
+switch-events {
+    tablet-mode-on { spawn "sh" "-c" "notify-send 'Tablet Mode: On' && niri msg output $(niri msg --json outputs | jq -r '.[].name') transform 90"; }
+    tablet-mode-off { spawn "sh" "-c" "notify-send 'Tablet Mode: Off' && niri msg output $(niri msg --json outputs | jq -r '.[].name') transform normal"; }
+}
 
 // Input device configuration.
 // Find the full list of options on the wiki:
 // https://yalter.github.io/niri/Configuration:-Input
 input {
+    workspace-auto-back-and-forth
     keyboard {
 	xkb {
 	    // You can set rules, model, layout, variant and options.
@@ -52,9 +60,8 @@ input {
 	numlock
     }
 
-
     touch {
-	// natural-scroll
+	natural-scroll
     }
 
     // Next sections include libinput settings.
@@ -70,8 +77,7 @@ input {
 	natural-scroll
 	accel-speed 0.4
 	accel-profile "adaptive"
-	// scroll-method "two-finger"
-	// disabled-on-external-mouse
+	scroll-method "two-finger" // disabled-on-external-mouse
     }
 
     mouse {
@@ -79,7 +85,8 @@ input {
 	// natural-scroll
 	// accel-speed 0.2
 	// accel-profile "flat"
-	// scroll-method "no-scroll"
+	scroll-method "on-button-down"
+	scroll-button-lock
     }
 
     trackpoint {
@@ -158,10 +165,10 @@ gestures {
 // You should make dms session depend on the Niri session though; "systemctl --user add-wants niri.service dms"
 
 // Set up the environment for Wayland apps and systemd user services.
-spawn-sh-at-startup "dbus-update-activation-environment --systemd --all"
-spawn-sh-at-startup "systemctl --user import-environment --all"
 spawn-sh-at-startup "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP XDG_CONFIG_HOME QT_QPA_PLATFORMTHEME"
 spawn-sh-at-startup "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP XDG_CONFIG_HOME QT_QPA_PLATFORMTHEME"
+spawn-sh-at-startup "dbus-update-activation-environment --systemd --all"
+spawn-sh-at-startup "systemctl --user import-environment --all"
 
 // Start applications with systemd-run to have them managed by user systemd.
 spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "wl-paste" "--watch" "cliphist" "store"
@@ -169,14 +176,17 @@ spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "wl-paste"
 spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "wl-clip-persist" "--clipboard" "regular"
 spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "udiskie" "--no-automount" "--smart-tray"
 spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "kitty" "--single-instance" "--start-as=hidden"
+spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "init.lua"
+spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "dms" "run" "--daemon"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
 
 // Configure xdg-desktop-portal-hyprland for screenshot and screen capture support.
-spawn-sh-at-startup "killall -e xdg-desktop-portal-hyprland; systemd-run --user /usr/lib/xdg-desktop-portal-hyprland"
-spawn-sh-at-startup "killall -e xdg-desktop-portal-gtk; systemd-run --user /usr/lib/xdg-desktop-portal-gtk"
-spawn-sh-at-startup "killall -e xdg-desktop-portal; systemd-run --user /usr/lib/xdg-desktop-portal"
+// Spawn them as services under systemd to have better lifecycle management.
+spawn-sh-at-startup "killall -e xdg-desktop-portal-hyprland; systemd-run --user --scope --slice=app.slice /usr/lib/xdg-desktop-portal-hyprland"
+spawn-sh-at-startup "killall -e xdg-desktop-portal-gtk; systemd-run --user --scope --slice=app.slice /usr/lib/xdg-desktop-portal-gtk"
+spawn-sh-at-startup "killall -e xdg-desktop-portal; systemd-run --user --scope --slice=app.slice /usr/lib/xdg-desktop-portal"
 
 overview {
     workspace-shadow {
@@ -272,6 +282,11 @@ window-rule {
     open-floating true
 }
 
+window-rule {
+    match app-id=r#"zen|firefox"# title="Extension.*"
+    open-floating true
+}
+
 // Example: block out two password managers from screen capture.
 // (This example rule is commented out with a "/-" in front.)
 /-window-rule {
@@ -360,6 +375,10 @@ recent-windows {
         Alt+grave       { next-window filter="app-id"; }
         Alt+Shift+grave { previous-window filter="app-id"; }
     }
+}
+
+workspace "special" {
+    open-on-output "eDP-1"
 }
 
 // Configure to use xdg-desktop-portal-hyprland for screenshot and screen capture

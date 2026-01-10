@@ -9,5 +9,6 @@ packages \
 
 link -f \
 	config.kdl:"$XDG_CONFIG_HOME/niri/config.kdl" \
+	events.lua:"$XDG_CONFIG_HOME/niri/events.lua"
 
 cp -r ./dms/ "$XDG_CONFIG_HOME/niri/"
