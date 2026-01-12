@@ -1,7 +1,7 @@
 packages \
-	paru:niri,xwayland-satellite \
-	pacman:niri,xwayland-satellite \
-	yay:niri,xwayland-satellite
+	paru:niri,xwayland-satellite,xdg-desktop-portal-hyprland \
+	pacman:niri,xwayland-satellite,xdg-desktop-portal-hyprland \
+	yay:niri,xwayland-satellite,xdg-desktop-portal-hyprland
 
 packages \
 	paru:dms-shell-bin,quickshell-git \
@@ -9,6 +9,8 @@ packages \
 
 link -f \
 	config.kdl:"$XDG_CONFIG_HOME/niri/config.kdl" \
-	events.lua:"$XDG_CONFIG_HOME/niri/events.lua"
+	init.lua:"$XDG_CONFIG_HOME/niri/init.lua" \
+	lua:"$XDG_CONFIG_HOME/niri/lua" \
+	niri-portals.conf:"$XDG_CONFIG_HOME/xdg-desktop-portal/niri-portals.conf"
 
 cp -r ./dms/ "$XDG_CONFIG_HOME/niri/"

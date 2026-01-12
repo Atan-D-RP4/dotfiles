@@ -16,7 +16,7 @@ include "dms/binds.kdl"
 // Set environment variables for niri and its children.
 environment {
   DMS_DANKBAR_LAYER "overlay"
-  DMS_POPUT_LAYER "overlay"
+  DMS_POPOUT_LAYER "overlay"
   DMS_MODAL_LAYER "overlay"
   DMS_NOTIFICATION_LAYER "overlay"
   XDG_CURRENT_DESKTOP "niri"
@@ -33,8 +33,8 @@ xwayland-satellite {
 }
 
 switch-events {
-    tablet-mode-on { spawn "sh" "-c" "notify-send 'Tablet Mode: On' && niri msg output $(niri msg --json outputs | jq -r '.[].name') transform 90"; }
-    tablet-mode-off { spawn "sh" "-c" "notify-send 'Tablet Mode: Off' && niri msg output $(niri msg --json outputs | jq -r '.[].name') transform normal"; }
+    tablet-mode-on { spawn "sh" "-c" "notify-send 'Tablet Mode: On' && niri msg output $(niri msg --json focused-output | jq -r '.[].name') transform 90"; }
+    tablet-mode-off { spawn "sh" "-c" "notify-send 'Tablet Mode: Off' && niri msg output $(niri msg --json focused-output | jq -r '.[].name') transform normal"; }
 }
 
 // Input device configuration.
@@ -61,7 +61,7 @@ input {
     }
 
     touch {
-	natural-scroll
+	// natural-scroll
     }
 
     // Next sections include libinput settings.
@@ -171,22 +171,22 @@ spawn-sh-at-startup "dbus-update-activation-environment --systemd --all"
 spawn-sh-at-startup "systemctl --user import-environment --all"
 
 // Start applications with systemd-run to have them managed by user systemd.
-spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "wl-paste" "--watch" "cliphist" "store"
-spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "wl-paste" "--type" "image/png" "--watch" "cliphist" "store"
-spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "wl-clip-persist" "--clipboard" "regular"
-spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "udiskie" "--no-automount" "--smart-tray"
-spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "kitty" "--single-instance" "--start-as=hidden"
-spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "init.lua"
-spawn-at-startup "systemd-run" "--user" "--scope" "--slice=app.slice" "dms" "run" "--daemon"
+spawn-at-startup "systemd-run" "--user" "--slice=app.slice" "--property=Restart=on-failure" "wl-paste" "--watch" "cliphist" "store"
+spawn-at-startup "systemd-run" "--user" "--slice=app.slice" "--property=Restart=on-failure" "wl-paste" "--type" "image/png" "--watch" "cliphist" "store"
+spawn-at-startup "systemd-run" "--user" "--slice=app.slice" "--property=Restart=on-failure" "wl-clip-persist" "--clipboard" "regular"
+spawn-at-startup "systemd-run" "--user" "--slice=app.slice" "--property=Restart=on-failure" "udiskie" "--no-automount" "--smart-tray"
+spawn-at-startup "systemd-run" "--user" "--slice=app.slice" "--property=Restart=on-failure" "kitty" "--single-instance" "--start-as=hidden"
+spawn-at-startup "systemd-run" "--user" "--slice=app.slice" "--property=Restart=on-failure" "luajit" "$XDG_CONFIG_HOME/niri/init.lua"
+spawn-at-startup "systemd-run" "--user" "--slice=app.slice" "--property=Restart=on-failure" "dms" "run" "--session"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
 
 // Configure xdg-desktop-portal-hyprland for screenshot and screen capture support.
 // Spawn them as services under systemd to have better lifecycle management.
-spawn-sh-at-startup "killall -e xdg-desktop-portal-hyprland; systemd-run --user --scope --slice=app.slice /usr/lib/xdg-desktop-portal-hyprland"
-spawn-sh-at-startup "killall -e xdg-desktop-portal-gtk; systemd-run --user --scope --slice=app.slice /usr/lib/xdg-desktop-portal-gtk"
-spawn-sh-at-startup "killall -e xdg-desktop-portal; systemd-run --user --scope --slice=app.slice /usr/lib/xdg-desktop-portal"
+spawn-sh-at-startup "killall -e xdg-desktop-portal-hyprland; systemd-run --user --slice=app.slice --property=Restart=on-failure /usr/lib/xdg-desktop-portal-hyprland"
+spawn-sh-at-startup "killall -e xdg-desktop-portal-gtk; systemd-run --user --slice=app.slice --property=Restart=on-failure /usr/lib/xdg-desktop-portal-gtk"
+spawn-sh-at-startup "killall -e xdg-desktop-portal; systemd-run --user --slice=app.slice --property=Restart=on-failure /usr/lib/xdg-desktop-portal"
 
 overview {
     workspace-shadow {

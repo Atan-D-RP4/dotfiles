@@ -36,5 +36,15 @@ function M.start()
 	end
 end
 
-return M
+function M.autocmd(events, callback)
+	M.config.dispatcher:on(events, callback)
+end
 
+function M.request(command, callback)
+	return ipc.command(command, function(ok, resp)
+		log.info("IPC Response for command '" .. command .. "':")
+		return pcall(callback, ok, resp)
+	end, M.config.sockpath)
+end
+
+return M

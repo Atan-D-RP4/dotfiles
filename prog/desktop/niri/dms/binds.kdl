@@ -12,15 +12,17 @@ binds {
 
     // Mod-Shift-/, which is usually the same as Mod-?,
     // shows a list of important hotkeys.
-    Mod+Shift+Slash { show-hotkey-overlay; }
+    Mod+Shift+Slash { spawn "dms" "ipc" "call" "keybinds" "toggle" "niri"; }
 
-    // === Application Launchers ===
+    // == Common Application ==
     Mod+T hotkey-overlay-title="Terminal" { spawn-sh "systemd-run --user --scope --slice=app.slice $TERMINAL"; }
     Mod+B hotkey-overlay-title="Browser" { spawn "systemd-run" "--user" "--scope" "--slice=app.slice" "zen-browser"; }
     Mod+C hotkey-overlay-title="Editor" { spawn-sh "systemd-run --user --scope --slice=app.slice $TERMINAL $EDITOR"; }
     Mod+E hotkey-overlay-title="File Manager" { spawn "systemd-run" "--user" "--scope" "--slice=app.slice" "thunar"; }
-    Mod+Alt+L hotkey-overlay-title="Lock the Screen" { spawn "dms" "ipc" "call" "lock" "lock"; }
+
+    // === Application Launchers ===
     Mod+A hotkey-overlay-title="Application Launcher" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
+    Mod+Alt+L hotkey-overlay-title="Lock the Screen" { spawn "dms" "ipc" "call" "lock" "lock"; }
     Mod+V hotkey-overlay-title="Clipboard Manager" { spawn "dms" "ipc" "call" "clipboard" "toggle"; }
     Mod+Comma hotkey-overlay-title="Settings" { spawn "dms" "ipc" "call" "settings" "focusOrToggle"; }
     Mod+N hotkey-overlay-title="Notification Center" { spawn "dms" "ipc" "call" "notifications" "toggle"; }
@@ -62,11 +64,11 @@ binds {
     // Example brightness key mappings for brightnessctl.
     // You can use regular spawn with multiple arguments too (to avoid going through "sh"),
     // but you need to manually put each argument in separate "" quotes.
-    XF86MonBrightnessUp   allow-when-locked=true { spawn-sh "dms ipc call brightness increment 5 ''"; }
-    XF86MonBrightnessDown allow-when-locked=true { spawn-sh "dms ipc call brightness decrement 5 ''"; }
+    XF86MonBrightnessUp   allow-when-locked=true hotkey-overlay-title="Brightness Up" { spawn-sh "dms ipc call brightness increment 5 ''"; }
+    XF86MonBrightnessDown allow-when-locked=true hotkey-overlay-title="Brightness Down" { spawn-sh "dms ipc call brightness decrement 5 ''"; }
     Mod+XF86MonBrightnessDown hotkey-overlay-title="Toggle Exponential Brightness" allow-when-locked=true {
-		spawn-sh "dms ipc call brightness toggleExponential ";
-	}
+	    spawn-sh "dms ipc call brightness toggleExponential ";
+    }
 
     // === System & Overview ===
     // Open/close the Overview: a zoomed-out view of workspaces and windows.
@@ -193,8 +195,8 @@ binds {
     // These binds are also affected by touchpad's natural-scroll, so these
     // example binds are "inverted", since we have natural-scroll enabled for
     // touchpads by default.
-    Mod+TouchpadScrollDown { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.02+"; }
-    Mod+TouchpadScrollUp   { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.02-"; }
+    Mod+TouchpadScrollDown hotkey-overlay-title="Volume Down" { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.02+"; }
+    Mod+TouchpadScrollUp hotkey-overlay-title="Volume Up" { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.02-"; }
 
     // === Numbered Workspaces ===
     // You can refer to workspaces by index. However, keep in mind that
