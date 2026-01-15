@@ -2,9 +2,16 @@ local dkjson = require("dkjson")
 local uv = require("luv")
 local config = require("niri.config")
 local log = require("niri.utils.log")
+local types = require("niri.types")
+
+---@class IpcModule
+---@field command fun(cmd: types.RequestType|types.Action, callback: fun(ok: boolean, response: any), sockpath?: string): nil
+---@field stream_events fun(sockpath: string, event_dispatcher: any): nil
 
 local M = {}
 
+---@param response string
+---@param callback fun(ok: boolean, response: any)
 local function handle_response(response, callback)
 	local parsed, pos, parse_err = dkjson.decode(response, 1, nil)
 	if parse_err then
@@ -18,6 +25,9 @@ local function handle_response(response, callback)
 	end
 end
 
+---@param cmd types.RequestType|types.Action
+---@param callback fun(ok: boolean, response: any)
+---@param sockpath string?
 function M.command(cmd, callback, sockpath)
 	sockpath = sockpath or config.get("sockpath")
 	local pipe = uv.new_pipe(false)
@@ -65,11 +75,14 @@ function M.command(cmd, callback, sockpath)
 	end)
 end
 
+---@param sockpath string
+---@param event_dispatcher any
 function M.stream_events(sockpath, event_dispatcher)
 	sockpath = sockpath or config.get("sockpath")
 	local event_pipe = uv.new_pipe(false)
 	local read_buffer = ""
 
+	---@param dispatcher any
 	local function connect_to_socket(dispatcher)
 		uv.pipe_connect(event_pipe, sockpath, function(err)
 			if err then
@@ -120,9 +133,6 @@ function M.stream_events(sockpath, event_dispatcher)
 							local event_data, pos, parse_err = dkjson.decode(line, 1, nil)
 							if not parse_err then
 								if not (event_data.Ok or event_data.Err) and event_data then
-									if config.get("debug_events") then
-										log.debug("Event received:", event_data)
-									end
 									for event_type, data in pairs(event_data) do
 										dispatcher:emit(event_type, data)
 									end
@@ -145,4 +155,3 @@ function M.stream_events(sockpath, event_dispatcher)
 end
 
 return M
-

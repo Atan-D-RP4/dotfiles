@@ -1,0 +1,75 @@
+{
+  "$schema": "https://raw.githubusercontent.com/LuaLS/lua-language-server/master/meta/schema/luarc.json",
+  "name": "niri-lua",
+  "version": "1.0.0",
+  "description": "Niri window manager Lua API type definitions",
+  "language": {
+    "config": {
+      "Lua.workspace.library": [
+        "lua"
+      ]
+    }
+  },
+  "workspace": {
+    "maxPreload": 5000,
+    "preloadFileSize": 500
+  },
+  "intelliSense": {
+    "enable": true,
+    "caseSenseCompletion": true,
+    "searchDepth": 20
+  },
+  "completion": {
+    "enable": true,
+    "callSnippet": "Replace",
+    "displayWord": "Full",
+    "keywordSnippet": "Replace",
+    "showParams": true,
+    "showSpace": true,
+    "wordPattern": "([\\w\\.]+)",
+    "autoCompletion": true
+  },
+  "hover": {
+    "enable": true,
+    "enums": true,
+    "fields": true,
+    "keywords": true,
+    "numbers": true,
+    "strings": true,
+    "types": true,
+    "variable": true,
+    "weakTypeCheck": true
+  },
+  "diagnostics": {
+    "enable": true,
+    "groupFileStatus": {
+      "Ambiguous": "Open",
+      "Different": "Open",
+      "Same": "None"
+    },
+    "groupSeverity": {
+      "Ambiguous": "Hint",
+      "Different": "Warning",
+      "Same": "None"
+    },
+    "unusedLocalExclude": [],
+    "unusedFunctionExclude": [],
+    "checkThirdParty": false,
+    "globals": [],
+    "disable": [],
+    "enable": [
+      "strict"
+    ]
+  },
+  "format": {
+    "enable": true,
+    "configPath": ""
+  },
+  "misc": {
+    "param": "n",
+    "type": "v"
+  },
+  "telemetry": {
+    "enable": true
+  }
+}

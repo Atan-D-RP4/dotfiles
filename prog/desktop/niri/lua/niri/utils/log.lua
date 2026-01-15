@@ -1,5 +1,15 @@
 local config = require("niri.config")
 
+---@class LogModule
+---@field levels table<string, number>
+---@field should_log fun(level: string): boolean
+---@field serialize fun(tbl: table, indent?: number): string
+---@field format_message fun(...: any): string
+---@field error fun(...: any): nil
+---@field warn fun(...: any): nil
+---@field info fun(...: any): nil
+---@field debug fun(...: any): nil
+
 local M = {
 	levels = {
 		error = 0,
@@ -9,10 +19,15 @@ local M = {
 	},
 }
 
+---@param level string
+---@return boolean
 function M.should_log(level)
 	return M.levels[level] <= M.levels[config.get("log_level")]
 end
 
+---@param tbl table
+---@param indent number?
+---@return string
 function M.serialize(tbl, indent)
 	indent = indent or 0
 	local toprint = "{\n"
@@ -37,6 +52,7 @@ function M.serialize(tbl, indent)
 	return toprint
 end
 
+---@return string
 function M.format_message(...)
 	local args = { ... }
 	local messages = {}
@@ -51,6 +67,8 @@ function M.format_message(...)
 end
 
 for level in pairs(M.levels) do
+	---@param ... any
+	---@return nil
 	M[level] = function(...)
 		if M.should_log(level) then
 			local output = io[level == "error" and "stderr" or "stdout"]

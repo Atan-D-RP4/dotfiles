@@ -1,3 +1,7 @@
+---@class ConfigModule
+---@field setup fun(opts?: table): table
+---@field get fun(key: string): any
+
 local M = {}
 
 local defaults = {
@@ -17,6 +21,8 @@ setmetatable(M, {
 	end
 })
 
+---@param opts table?
+---@return table
 function M.setup(opts)
 	local cfg = {}
 	for k, v in pairs(defaults) do
@@ -29,6 +35,8 @@ function M.setup(opts)
 	return cfg
 end
 
+---@param key string
+---@return any
 function M.get(key)
 	return current_config and current_config[key] or defaults[key]
 end

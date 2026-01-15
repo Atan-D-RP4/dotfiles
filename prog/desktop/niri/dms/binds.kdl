@@ -15,6 +15,7 @@ binds {
     Mod+Shift+Slash { spawn "dms" "ipc" "call" "keybinds" "toggle" "niri"; }
 
     // == Common Application ==
+    Mod+Shift+T hotkey-overlay-title="Terminal Standalone" { spawn-sh "kitty"; }
     Mod+T hotkey-overlay-title="Terminal" { spawn-sh "systemd-run --user --scope --slice=app.slice $TERMINAL"; }
     Mod+B hotkey-overlay-title="Browser" { spawn "systemd-run" "--user" "--scope" "--slice=app.slice" "zen-browser"; }
     Mod+C hotkey-overlay-title="Editor" { spawn-sh "systemd-run --user --scope --slice=app.slice $TERMINAL $EDITOR"; }

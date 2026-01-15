@@ -3,8 +3,17 @@
 -- Request: https://yalter.github.io/niri/niri_ipc/enum.Request.html
 
 -- Get current script directory
-local script_path = debug.getinfo(1, "S").source:sub(2)
-local script_dir = script_path:match("(.*/)")
+local function get_script_dir()
+	local path = arg and arg[0]
+	if not path then
+		return nil
+	end
+
+	path = assert(io.popen("readlink -f " .. path, "r")):read("*l")
+	return path:match("(.*/)")
+end
+
+local script_dir = get_script_dir()
 
 package.path = package.path .. ";/usr/share/lua/5.1/?.lua;/usr/share/lua/5.1/?/init.lua"
 package.path = package.path .. ";/usr/share/lua/5.2/?.lua;/usr/share/lua/5.2/?/init.lua"
@@ -16,24 +25,12 @@ local niri = require("niri")
 local log = require("niri.utils.log")
 local ipc = require("niri.events.ipc")
 local uv = require("luv")
+require("niri.types")
 
 niri.setup({
 	sockpath = os.getenv("NIRI_SOCKET"),
 	debug_events = os.getenv("NIRI_DEBUG_EVENTS") or false,
 })
-
-local function is_fullscreen(window_id) end
-
-log.info(niri.request("FocusedWindow"), function(ok, resp)
-	log.info("Focused window:", ok, resp)
-end)
-
-if niri.config.debug_events then
-	niri.autocmd("*", function(event_name, data)
-		log.debug("[Event]", event_name, data)
-		print("----------------------------------------")
-	end)
-end
 
 niri.autocmd("ConfigLoaded", function(data)
 	if data and data.failed then
@@ -42,17 +39,6 @@ niri.autocmd("ConfigLoaded", function(data)
 		log.info("Config reloaded successfully")
 	end
 end)
-
-niri.autocmd({ "MonitorAdded", "MonitorRemoved" }, function(data)
-	log.debug("Monitor event:", data)
-end)
-
-local patterns = {
-	browser = {
-		title = { "Extension.*", "extension.*" },
-		app_id = { "zen", "firefox" },
-	},
-}
 
 local function matches_pattern(text, pattern_list)
 	for _, pattern in ipairs(pattern_list) do
@@ -66,18 +52,14 @@ end
 local function is_browser_extension(window)
 	local title = window.title or ""
 	local app_id = window.app_id or ""
-
-	return matches_pattern(title, patterns.browser.title) and matches_pattern(app_id, patterns.browser.app_id)
-end
-
-local function create_window_action(action, window_id)
-	return {
-		Action = {
-			[action] = {
-				id = window_id,
-			},
+	local patterns = {
+		browser = {
+			title = { "Extension.*", "extension.*" },
+			app_id = { "zen", "firefox" },
 		},
 	}
+
+	return matches_pattern(title, patterns.browser.title) and matches_pattern(app_id, patterns.browser.app_id)
 end
 
 local function execute_command(cmd_obj, success_msg, error_msg)
@@ -92,14 +74,14 @@ local function execute_command(cmd_obj, success_msg, error_msg)
 	end, niri.config.sockpath)
 end
 
-niri.autocmd("WindowOpenedOrChanged", function(data)
-	log.debug("----------------------------------------")
-	log.debug("Window event:", data)
-	if data and data.window and is_browser_extension(data.window) then
+niri.autocmd("WindowOpenedOrChanged", function(ctx)
+	log.debug("WindowOpenedOrChanged event data:", ctx.data)
+	if ctx and ctx.data and ctx.data.window and is_browser_extension(ctx.data.window) then
+		log.info("Detected browser extension window:", ctx.data.window.title)
 		local cmd = {
 			Action = {
 				MoveWindowToFloating = {
-					id = data.window.id,
+					id = ctx.data.window.id,
 				},
 			},
 		}
@@ -107,20 +89,34 @@ niri.autocmd("WindowOpenedOrChanged", function(data)
 	end
 end)
 
-niri.autocmd("ScreenshotCaptured", function(data)
+niri.autocmd("ScreenshotCaptured", function(ctx)
 	-- Open the screenshot using the default image viewer
+	log.info(ctx)
 	uv.spawn("satty", {
 		args = {
 			"--filename",
-			data.path,
+			ctx.data.path,
 		},
 	}, function(code, signal)
 		if code ~= 0 then
-			log.error("Failed to open screenshot:", data.path)
+			log.error("Failed to open screenshot:", ctx.data.path)
+			log.error("Exit code:", code, "Signal:", signal)
 		end
 	end)
 end)
 
-niri.autocmd("WindowOpenedOrChanged", function(data) end)
+niri.autocmd("WindowLayoutsChanged", function(wrapped)
+	log.info(wrapped.event)
+	local changes = wrapped.data.changes
+	for _, change in ipairs(changes) do
+		local window_id = change[1]
+		log.info(change)
+		if niri.is_fullscreen(window_id) then
+			log.info("Window went fullscreen:", window_id)
+		else
+			log.info("Window exited fullscreen:", window_id)
+		end
+	end
+end)
 
 niri.start()
