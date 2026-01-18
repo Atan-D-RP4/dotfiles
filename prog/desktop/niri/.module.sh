@@ -16,10 +16,14 @@ packages \
 # Link config files
 link -f \
 	config.kdl:"$XDG_CONFIG_HOME/niri/config.kdl" \
-	dms:"$XDG_CONFIG_HOME/dms" \
+	binds.kdl:"$XDG_CONFIG_HOME/niri/binds.kdl" \
+	rules.kdl:"$XDG_CONFIG_HOME/niri/rules.kdl" \
+	dms:"$XDG_CONFIG_HOME/niri/dms" \
 	init.lua:"$XDG_CONFIG_HOME/niri/init.lua" \
 	lua:"$XDG_CONFIG_HOME/niri/lua" \
-	niri-portals.conf:"$XDG_CONFIG_HOME/xdg-desktop-portal/niri-portals.conf"
+	niri-portals.conf:"$XDG_CONFIG_HOME/xdg-desktop-portal/niri-portals.conf" \
+	wl-copy:"$XDG_BIN_DIR/wl-copy" \
+	wl-paste:"$XDG_BIN_DIR/wl-paste"
 
 # Power and Thermal Management
 packages \

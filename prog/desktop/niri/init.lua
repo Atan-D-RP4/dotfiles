@@ -26,6 +26,7 @@ local log = require("niri.utils.log")
 local ipc = require("niri.events.ipc")
 local uv = require("luv")
 require("niri.types")
+local types = require("lua.niri.types")
 
 niri.setup({
 	sockpath = os.getenv("NIRI_SOCKET"),

@@ -3,15 +3,13 @@
 // Check the wiki for a full description of the configuration:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Introduction
 
-// Include dms files
-include "dms/colors.kdl"
-include "dms/layout.kdl"
-include "dms/alttab.kdl"
-include "dms/binds.kdl"
+// With KDL, whichever include is placed first takes precedence.
+// So for binds.kdl's, the DMS one is overriden by user's custom one.
 
-//
-// Current file will override settings from included files.
-//
+// Overide DMS default binds
+include "binds.kdl"
+// Include DMS binds
+include "dms/binds.kdl"
 
 // Set environment variables for niri and its children.
 environment {
@@ -33,16 +31,35 @@ xwayland-satellite {
 }
 
 switch-events {
-    tablet-mode-on { spawn "sh" "-c" "notify-send 'Tablet Mode: On' && niri msg output $(niri msg --json focused-output | jq -r '.[].name') transform 90"; }
-    tablet-mode-off { spawn "sh" "-c" "notify-send 'Tablet Mode: Off' && niri msg output $(niri msg --json focused-output | jq -r '.[].name') transform normal"; }
+    tablet-mode-on {
+        spawn \
+        "sh" "-c" \
+        "notify-send 'Tablet Mode: On' &&
+        niri msg output $(niri msg --json focused-output | jq -r '.name') transform 90 &&
+        niri msg action do-screen-transistion &&
+        dms ipc call bar manualHide index 0" \
+        ;
+    }
+    tablet-mode-off {
+        spawn \
+        "sh" "-c" \
+        "notify-send 'Tablet Mode: Off' &&
+        niri msg output $(niri msg --json focused-output | jq -r '.name') transform normal &&
+        niri msg action do-screen-transistion &&
+        dms ipc call bar autoHide index 0" \
+        ;
+    }
 }
 
 // Settings that influence how windows are positioned and sized.
 // Find more information on the wiki:
 // https://yalter.github.io/niri/Configuration:-Layout
+include "dms/layout.kdl" // Includes DMS layout settings
+include "dms/colors.kdl" // Includes DMS color settings
+// Override DMS layout settings here if needed.
 layout {
     // Set gaps around windows in logical pixels.
-    gaps 2
+    gaps 1
 
     // When to center a column when changing focus, options are:
     // - "never", default behavior, focusing an off-screen column will keep at the left
@@ -57,10 +74,10 @@ layout {
         // Proportion sets the width as a fraction of the output width, taking gaps into account.
         // For example, you can perfectly fit four windows sized "proportion 0.25" on an output.
         // The default preset widths are 1/3, 1/2 and 2/3 of the output.
-        proportion 0.33333
-        proportion 0.5
         proportion 0.66667
-	proportion 1.0
+        proportion 0.5
+        proportion 0.33333
+        proportion 1.0
 
         // Fixed sets the width in logical pixels exactly.
         // fixed 1920
@@ -68,10 +85,10 @@ layout {
 
     // You can also customize the heights that "switch-preset-window-height" (Mod+Shift+R) toggles between.
     preset-window-heights {
-	proportion 0.33333
-        proportion 0.5
         proportion 0.66667
-	proportion 1.0
+        proportion 0.5
+        proportion 0.33333
+        proportion 1.0
     }
 
     // You can change the default width of the new windows.
@@ -208,7 +225,7 @@ input {
     }
 
     touch {
-	natural-scroll
+	// natural-scroll
     }
 
     // Next sections include libinput settings.
@@ -260,13 +277,19 @@ config-notification {
     disable-failed
 }
 
+include "dms/cursor.kdl" // Includes DMS output settings
+// Override DMS cursor settings here if needed.
+cursor {
+
+}
+
 // You can configure outputs by their name, which you can find
 // by running `niri msg outputs` while inside a niri instance.
 // The built-in laptop monitor is usually called "eDP-1".
 // Find more information on the wiki:
 // https://yalter.github.io/niri/Configuration:-Outputs
 // Remember to uncomment the node by removing "/-"!
-output "eDP-1" {
+output "eDP-1" { // Overrides for DMS output settings
     // Uncomment this line to disable this output.
     // off
 
@@ -296,7 +319,7 @@ output "eDP-1" {
     // automatically.
     // position x=1280 y=0
 }
-
+include "dms/outputs.kdl" // Applies DMS output settings
 
 gestures {
     hot-corners {
@@ -316,24 +339,23 @@ spawn-sh-at-startup "dbus-update-activation-environment --systemd WAYLAND_DISPLA
 spawn-sh-at-startup "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP XDG_CONFIG_HOME QT_QPA_PLATFORMTHEME"
 spawn-sh-at-startup "dbus-update-activation-environment --systemd --all"
 spawn-sh-at-startup "systemctl --user import-environment --all"
+spawn-sh-at-startup "app2unit -s a -t service -p Restart=on-failure luajit $XDG_CONFIG_HOME/niri/init.lua"
 
-// Start applications with systemd-run to have them managed by user systemd.
-spawn-at-startup "systemd-run" "--user" "--slice=app.slice" "--property=Restart=on-failure" "wl-paste" "--watch" "cliphist" "store"
-spawn-at-startup "systemd-run" "--user" "--slice=app.slice" "--property=Restart=on-failure" "wl-paste" "--type" "image/png" "--watch" "cliphist" "store"
-spawn-at-startup "systemd-run" "--user" "--slice=app.slice" "--property=Restart=on-failure" "wl-clip-persist" "--clipboard" "regular"
-spawn-at-startup "systemd-run" "--user" "--slice=app.slice" "--property=Restart=on-failure" "udiskie" "--no-automount" "--smart-tray"
-spawn-at-startup "systemd-run" "--user" "--slice=app.slice" "--property=Restart=on-failure" "kitty" "--single-instance" "--start-as=hidden"
-spawn-at-startup "systemd-run" "--user" "--slice=app.slice" "--property=Restart=on-failure" "luajit" "$XDG_CONFIG_HOME/niri/init.lua"
-spawn-at-startup "systemd-run" "--user" "--slice=app.slice" "--property=Restart=on-failure" "dms" "run" "--session"
+// Start applications with app2unit to have them managed by user systemd.
+spawn-at-startup "app2unit" "-s" "a" "-t" "service" "-p" "Restart=on-failure" "wl-clip-persist" "--clipboard" "regular"
+spawn-at-startup "app2unit" "-s" "a" "-t" "service" "-p" "Restart=on-failure" "udiskie" "--no-automount" "--smart-tray"
+spawn-at-startup "app2unit" "-s" "a" "-t" "service" "-p" "Restart=on-failure" "kitty" "--single-instance" "--start-as=hidden"
+spawn-at-startup "app2unit" "-s" "a" "-t" "service" "-p" "Restart=on-failure" "luajit" "$XDG_CONFIG_HOME/niri/init.lua"
+spawn-at-startup "app2unit" "-s" "a" "-t" "service" "-p" "Restart=on-failure" "dms" "run"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
 
 // Configure xdg-desktop-portal-hyprland for screenshot and screen capture support.
 // Spawn them as services under systemd to have better lifecycle management.
-spawn-sh-at-startup "killall -e xdg-desktop-portal-gnome; systemd-run --user --slice=app.slice --property=Restart=on-failure /usr/lib/xdg-desktop-portal-gnome"
-spawn-sh-at-startup "killall -e xdg-desktop-portal-gtk; systemd-run --user --slice=app.slice --property=Restart=on-failure /usr/lib/xdg-desktop-portal-gtk"
-spawn-sh-at-startup "killall -e xdg-desktop-portal; systemd-run --user --slice=app.slice --property=Restart=on-failure /usr/lib/xdg-desktop-portal"
+spawn-sh-at-startup "killall -e xdg-desktop-portal-gnome; app2unit -s a -t service -p Restart=on-failure /usr/lib/xdg-desktop-portal-gnome"
+spawn-sh-at-startup "killall -e xdg-desktop-portal-gtk; app2unit -s a -t service -p Restart=on-failure /usr/lib/xdg-desktop-portal-gtk"
+spawn-sh-at-startup "killall -e xdg-desktop-portal; app2unit -s a -t service -p Restart=on-failure /usr/lib/xdg-desktop-portal"
 
 overview {
     workspace-shadow {
@@ -398,134 +420,14 @@ animations {
     }
 }
 
-// Window rules let you adjust behavior for individual windows.
-// Find more information on the wiki:
-// https://github.com/YaLTeR/niri/wiki/Configuration:-Window-Rules
-
-window-rule {
-    geometry-corner-radius 8
-    clip-to-geometry true
-    draw-border-with-background false
-}
-
-// Enable shadows for all floating windows
-window-rule {
-    match is-floating=true
-    shadow {
-	on
-    }
-}
-
-// Enable shadows and rounded corners for dms windows
-layer-rule {
-    match namespace="dms:*"
-    place-within-backdrop true
-    geometry-corner-radius 12
-    shadow {
-	on
-    }
-}
-
-
-// Work around WezTerm's initial configure bug
-// by setting an empty default-column-width.
-window-rule {
-    // This regular expression is intentionally made as specific as possible,
-    // since this is the default config, and we want no false positives.
-    // You can get away with just app-id="wezterm" if you want.
-    match app-id=r#"^org\.wezfurlong\.wezterm$"#
-    default-column-width {}
-}
-
-// Remove borders and rounded corners from GNOME apps.
-window-rule {
-    match app-id=r#"^org\.gnome\."#
-    draw-border-with-background false
-    geometry-corner-radius 12
-    clip-to-geometry true
-}
-
-// Open the Zen|Firefox picture-in-picture player as floating by default.
-window-rule {
-    // This app-id regular expression will work for both:
-    // - host Firefox (app-id is "firefox")
-    // - Flatpak Firefox (app-id is "org.mozilla.firefox")
-    match app-id=r#"^zen|zoom|firefox$"# title=r#"^Picture-in-Picture$"#
-    open-floating true
-    default-floating-position x=16 y=48 relative-to="bottom-right"
-    default-column-width { fixed 480; }
-    default-window-height { fixed 270; }
-}
-
-// Open satty as floating+focused by default.
-window-rule {
-    match app-id="satty"
-    open-floating true
-    open-focused true
-}
-
-// Example: block out two password managers from screen capture.
-// (This example rule is commented out with a "/-" in front.)
-window-rule {
-    match app-id=r#"^org\.keepassxc\.KeePassXC$"#
-    match app-id=r#"^org\.gnome\.World\.Secrets$"#
-    match app-id=r#"^zen|zoom|firefox$"# title=r#"^Extension.*Bitwarder.*$"#
-
-    block-out-from "screen-capture"
-
-    // Use this instead if you want them visible on third-party screenshot tools.
-    // block-out-from "screencast"
-}
-
-// Set specific apps to use half the screen width by default.
-window-rule {
-    match app-id=r#"^gnome-control-center$"#
-    match app-id=r#"^pavucontrol$"#
-    match app-id=r#"^nm-connection-editor$"#
-    default-column-width { proportion 0.5; }
-    open-floating false
-}
-
-// Open certain small utilities as floating by default.
-window-rule {
-    match app-id=r#"^gnome-calculator$"#
-    match app-id=r#"^galculator$"#
-    match app-id=r#"^blueman-manager$"#
-    match app-id=r#"^org\.gnome\.Nautilus$"#
-    match app-id=r#"^steam$"#
-    match app-id=r#"^xdg-desktop-portal$"#
-    open-floating true
-}
-
-// Remove borders from certain terminal emulators.
-window-rule {
-    match app-id=r#"^org\.wezfurlong\.wezterm$"#
-    match app-id="Alacritty"
-    match app-id="zen"
-    match app-id="com.mitchellh.ghostty"
-    match app-id="kitty"
-    draw-border-with-background false
-}
-
-// Make inactive windows slightly transparent
-window-rule {
-    match is-active=false
-    opacity 0.9
-}
-
-// Open dms windows as floating by default
-window-rule {
-    match app-id=r#"org.quickshell$"#
-    open-floating true
-}
+include "rules.kdl"
 
 // Enable debug options
 debug {
     honor-xdg-activation-with-invalid-serial
 }
 
-// Override to disable super+tab
-recent-windows {
+recent-windows { // Override to disable super+tab
     binds {
         Alt+Tab         { next-window scope="output"; }
         Alt+Shift+Tab   { previous-window scope="output"; }
@@ -533,6 +435,7 @@ recent-windows {
         Alt+Shift+grave { previous-window filter="app-id"; }
     }
 }
+// Override to disable super+tab
 
 workspace "special" {
     open-on-output "eDP-1"

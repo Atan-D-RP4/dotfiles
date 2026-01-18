@@ -1,0 +1,10 @@
+#! /bin/env sh
+
+# Parse and ignore --no-newline flag for compatibility with wl-clipboard
+if [ "$1" = "--no-newline" ]; then
+	shift
+fi
+
+dms clipboard paste "$@"
+
+# vim: set ft=sh

@@ -1,0 +1,10 @@
+#! /bin/env sh
+
+# Parse and ignore --primary flag for compatibility with wl-clipboard
+if [ "$1" = "--primary" ]; then
+	shift
+fi
+
+dms clipboard copy "$@"
+
+# vim: set ft=sh

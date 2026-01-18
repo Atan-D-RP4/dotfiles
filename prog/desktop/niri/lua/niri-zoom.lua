@@ -1,29 +1,6 @@
 -- niri-zoom-luv.lua (libuv-based)
 -- Pinch-to-zoom for Niri using libuv (direct unix-socket IPC)
 -- Uses dkjson for JSON encoding.
-
--- Get current script directory
-local function get_script_dir()
-	local path = arg and arg[0]
-	if not path then
-		return nil
-	end
-
-	path = assert(io.popen("readlink -f " .. path, "r")):read("*l")
-	return path:match("(.*/)")
-end
-
-local script_dir = get_script_dir()
-
-package.cpath = package.cpath .. ";/usr/lib/lib?.so"
--- package path tweaks (user preference)
-package.path = package.path .. ";/usr/share/lua/5.1/?.lua;/usr/share/lua/5.1/?/init.lua"
-package.path = package.path .. ";/usr/share/lua/5.2/?.lua;/usr/share/lua/5.2/?/init.lua"
-if script_dir then
-	package.path = package.path .. ";" .. script_dir .. "?.lua;" .. script_dir .. "?/init.lua"
-	package.path = package.path .. ";" .. script_dir .. "/lua/?.lua;" .. script_dir .. "/lua/?/init.lua"
-end
-
 local ok, uv = pcall(require, "luv")
 if not ok then
 	io.stderr:write("ERROR: could not require luv (libuv). Ensure libluv is available in package.cpath\n")
