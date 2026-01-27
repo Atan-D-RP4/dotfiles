@@ -2,6 +2,18 @@
 // Find more information on the wiki:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Window-Rules
 
+// Place quickshell in the backdrop layer
+// This gets DMS wallpaper as overview backdrop
+layer-rule {
+    match namespace="^quickshell$"
+    place-within-backdrop true
+}
+
+layer-rule  {
+    match namespace="dms:blurwallpaper"
+    place-within-backdrop true
+}
+
 // Enable rounded corners for all windows
 // And disable border drawing with background by default
 window-rule {
@@ -16,18 +28,6 @@ window-rule {
     shadow {
 	on
     }
-}
-
-// Place quickshell in the backdrop layer
-// This gets DMS wallpaper as overview backdrop
-layer-rule {
-    match namespace="^quickshell$"
-    place-within-backdrop true
-}
-
-layer-rule  {
-    match namespace="dms:blurwallpaper"
-    place-within-backdrop true
 }
 
 // Work around WezTerm's initial configure bug
@@ -102,10 +102,8 @@ window-rule {
 // Remove borders from certain terminal emulators.
 window-rule {
     match app-id=r#"^org\.wezfurlong\.wezterm$"#
-    match app-id="Alacritty"
-    match app-id="zen"
+    match app-id=r#"Alacritty|kitty"#
     match app-id="com.mitchellh.ghostty"
-    match app-id="kitty"
     draw-border-with-background false
 }
 
@@ -119,4 +117,14 @@ window-rule {
 window-rule {
     match app-id=r#"org.quickshell$"#
     open-floating true
+}
+
+// Open Terminal windows as maximized by default
+window-rule {
+    match app-id=r#"^org\.gnome\.Terminal$"#
+    match app-id=r#"^org\.wezfurlong\.wezterm$"#
+    match app-id=r#"Alacritty|kitty"#
+    match app-id="com.mitchellh.ghostty"
+    match is-focused=true
+    open-maximized true
 }

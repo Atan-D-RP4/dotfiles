@@ -15,11 +15,11 @@ end
 
 local script_dir = get_script_dir()
 
+package.cpath = package.cpath .. ";/usr/lib/lib?.so"
 package.path = package.path .. ";/usr/share/lua/5.1/?.lua;/usr/share/lua/5.1/?/init.lua"
 package.path = package.path .. ";/usr/share/lua/5.2/?.lua;/usr/share/lua/5.2/?/init.lua"
 package.path = package.path .. ";" .. script_dir .. "?.lua;" .. script_dir .. "?/init.lua"
 package.path = package.path .. ";" .. script_dir .. "/lua/?.lua;" .. script_dir .. "/lua/?/init.lua"
-package.cpath = package.cpath .. ";/usr/lib/lib?.so"
 
 local niri = require("niri")
 local log = require("niri.utils.log")
@@ -28,18 +28,16 @@ local uv = require("luv")
 require("niri.types")
 local types = require("lua.niri.types")
 
+--- Niri Setup
+uv.sleep(1000) -- Wait for niri to start
 niri.setup({
 	sockpath = os.getenv("NIRI_SOCKET"),
 	debug_events = os.getenv("NIRI_DEBUG_EVENTS") or false,
 })
 
-niri.autocmd("ConfigLoaded", function(data)
-	if data and data.failed then
-		log.error("Failed to load config:", data.failed)
-	else
-		log.info("Config reloaded successfully")
-	end
-end)
+---
+--- Helper Functions
+---
 
 local function matches_pattern(text, pattern_list)
 	for _, pattern in ipairs(pattern_list) do
@@ -63,7 +61,7 @@ local function is_browser_extension(window)
 	return matches_pattern(title, patterns.browser.title) and matches_pattern(app_id, patterns.browser.app_id)
 end
 
-local function execute_command(cmd_obj, success_msg, error_msg)
+local function execute_action(cmd_obj, success_msg, error_msg)
 	ipc.command(cmd_obj, function(ok, resp)
 		if ok then
 			if success_msg then
@@ -75,18 +73,29 @@ local function execute_command(cmd_obj, success_msg, error_msg)
 	end, niri.config.sockpath)
 end
 
+---
+--- Autocommands
+---
+
+niri.autocmd("ConfigLoaded", function(data)
+	if data and data.failed then
+		log.error("Failed to load config:", data.failed)
+	else
+		log.info("Config reloaded successfully")
+	end
+end)
+
 niri.autocmd("WindowOpenedOrChanged", function(ctx)
 	log.debug("WindowOpenedOrChanged event data:", ctx.data)
 	if ctx and ctx.data and ctx.data.window and is_browser_extension(ctx.data.window) then
 		log.info("Detected browser extension window:", ctx.data.window.title)
-		local cmd = {
+		execute_action({
 			Action = {
 				MoveWindowToFloating = {
 					id = ctx.data.window.id,
 				},
 			},
-		}
-		execute_command(cmd, "Successfully toggled floating for window", "Error toggling window floating")
+		}, "Successfully toggled floating for window", "Error toggling window floating")
 	end
 end)
 
@@ -120,4 +129,6 @@ niri.autocmd("WindowLayoutsChanged", function(wrapped)
 	end
 end)
 
+--- Niri IPC Event Stream Start
+log.info(niri.request("Version", 500))
 niri.start()

@@ -4,24 +4,53 @@
 -- Based on: https://yalter.github.io/niri/niri_ipc/
 
 ---@alias EventVariant
----|"WorkspacesChanged"|"WorkspaceUrgencyChanged"|"WorkspaceActivated"|"WorkspaceActiveWindowChanged"|
----|"WindowsChanged"|"WindowOpenedOrChanged"|"WindowClosed"|"WindowFocusChanged"|
----|"WindowFocusTimestampChanged"|"WindowUrgencyChanged"|"WindowLayoutsChanged"|"KeyboardLayoutsChanged"|
----|"KeyboardLayoutSwitched"|"OverviewOpenedOrClosed"|"ConfigLoaded"|"ScreenshotCaptured"
+---|"WorkspacesChanged"
+---|"WorkspaceUrgencyChanged"
+---|"WorkspaceActivated"
+---|"WorkspaceActiveWindowChanged"
+---|"WindowsChanged"
+---|"WindowOpenedOrChanged"
+---|"WindowClosed"
+---|"WindowFocusChanged"
+---|"WindowFocusTimestampChanged"
+---|"WindowUrgencyChanged"
+---|"WindowLayoutsChanged"
+---|"KeyboardLayoutsChanged"
+---|"KeyboardLayoutSwitched"
+---|"OverviewOpenedOrClosed"
+---|"ConfigLoaded"
+---|"ScreenshotCaptured"
 
 ---@alias RequestType
----|"Version"|"Outputs"|"Workspaces"|"Windows"|"Layers"|"KeyboardLayouts"|
----|"FocusedOutput"|"FocusedWindow"|"PickWindow"|"PickColor"|"Action"|
----|"Output"|"EventStream"|"ReturnError"|"OverviewState"
+---|"Version"
+---|"Outputs"
+---|"Workspaces"
+---|"Windows"
+---|"Layers"
+---|"KeyboardLayouts"
+---|"FocusedOutput"
+---|"FocusedWindow"
+---|"PickWindow"
+---|"PickColor"
+---|"Action"
+---|"Output"
+---|"EventStream"
+---|"ReturnError"
+---|"OverviewState"
 
 ---@alias ColumnDisplay
----|"stack"|"tabbed"|"stacked"
+---|"stack"
+---|"tabbed"
+---|"stacked"
 
 ---@alias LayoutSwitchTarget
----|"prev"|"next"
+---|"prev"
+---|"next"
 
 ---@alias SizeChange
----|"SetExact"|"Adjust"|"SetAuto"
+---|"SetExact"
+---|"Adjust"
+---|"SetAuto"
 
 ---@alias WorkspaceReferenceArg
 ---{index: integer}|--as workspace index
@@ -842,7 +871,7 @@ return {
 	ColumnDisplay = { "stack", "tabbed", "stacked" },
 	LayoutSwitchTarget = { "prev", "next" },
 	SizeChange = { "SetExact", "Adjust", "SetAuto" },
-	
+
 	-- Utility functions
 	get_request_type = get_request_type,
 	get_action_result = get_action_result,

@@ -1,7 +1,7 @@
 # Maintainer: Chaitanya Dubakula <chaitanyarp4@gmail.com>
 
 pkgname=niri-custom
-pkgver=25.11.94re7a400d
+pkgver=25.11.117r89978dd
 pkgrel=1
 pkgdesc="A scrollable-tiling Wayland compositor"
 arch=(x86_64)

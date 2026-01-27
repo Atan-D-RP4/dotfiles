@@ -142,11 +142,11 @@ function M.is_fullscreen(window_id)
 	else
 		win = M.get_focused_window()
 	end
-	
+
 	if not win or not win.layout or not win.layout.tile_size then
 		return false
 	end
-	
+
 	local output
 	if win.workspace_id then
 		local ws = M.state.workspaces[win.workspace_id]
@@ -160,12 +160,12 @@ function M.is_fullscreen(window_id)
 	if not output then
 		return false
 	end
-	
+
 	local tile_w = win.layout.tile_size.width or win.layout.tile_size[1]
 	local tile_h = win.layout.tile_size.height or win.layout.tile_size[2]
 	local out_w = output.logical and output.logical.width or output.logical_width
 	local out_h = output.logical and output.logical.height or output.logical_height
-	
+
 	return tile_w == out_w and tile_h == out_h
 end
 
@@ -364,7 +364,7 @@ end
 ---@param command RequestType|Action
 ---@param timeout number?
 ---@return boolean, ResponseData|ActionResult
-function M.command(command, timeout)
+function M.request(command, timeout)
 	timeout = timeout or 5000
 
 	local result = nil
@@ -406,7 +406,7 @@ end
 ---@param command RequestType|Action
 ---@param sockpath string?
 ---@return Promise
-function M.async_command(command, sockpath)
+function M.async_request(command, sockpath)
 	sockpath = sockpath or M.config.sockpath
 
 	return Promise.new(function(resolve, reject)
