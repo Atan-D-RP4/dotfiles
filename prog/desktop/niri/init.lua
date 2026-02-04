@@ -39,6 +39,8 @@ niri.setup({
 --- Helper Functions
 ---
 
+---@param text string
+---@param pattern_list string[]
 local function matches_pattern(text, pattern_list)
 	for _, pattern in ipairs(pattern_list) do
 		if text:match(pattern) then
@@ -46,19 +48,6 @@ local function matches_pattern(text, pattern_list)
 		end
 	end
 	return false
-end
-
-local function is_browser_extension(window)
-	local title = window.title or ""
-	local app_id = window.app_id or ""
-	local patterns = {
-		browser = {
-			title = { "Extension.*", "extension.*" },
-			app_id = { "zen", "firefox" },
-		},
-	}
-
-	return matches_pattern(title, patterns.browser.title) and matches_pattern(app_id, patterns.browser.app_id)
 end
 
 local function execute_action(cmd_obj, success_msg, error_msg)
@@ -87,15 +76,46 @@ end)
 
 niri.autocmd("WindowOpenedOrChanged", function(ctx)
 	log.debug("WindowOpenedOrChanged event data:", ctx.data)
-	if ctx and ctx.data and ctx.data.window and is_browser_extension(ctx.data.window) then
-		log.info("Detected browser extension window:", ctx.data.window.title)
+	if not (ctx and ctx.data and ctx.data.window) then
+		return
+	end
+	local match_accepted = matches_pattern(
+		ctx.data.window.title,
+		{ "[Ee]xtension.*", ".*Sign [Ii]n.*", ".*Log [Ii]n.*", ".*Sign [Uu]p.*" }
+	) and matches_pattern(ctx.data.window.app_id, { "zen", "firefox" })
+	-- Reject main browser windows (they have " | " in title like "Page | Site — Browser")
+	local match_rejected = matches_pattern(ctx.data.window.title, {
+		".* | .* — Zen Browser$",
+		".* | .* — Firefox$",
+		".* | .* — Mozilla Firefox$",
+		"^Zen Browser$",
+		"^Firefox$",
+		"^Mozilla Firefox$",
+	})
+
+	if not match_accepted or match_rejected then
+		return
+	end
+
+	if ctx.data.window.is_floating then
+		log.info("Window is already floating, no action needed:", ctx.data.window.title)
+		return
+	end
+
+	local window_id = ctx.data.window.id
+
+	log.info("Detected browser pop-up window:", ctx.data.window.title)
+	local actions = {
+		{
+			MoveWindowToFloating = { id = window_id },
+		},
+	}
+
+	for _, action in ipairs(actions) do
+		log.info("Executing action:", action)
 		execute_action({
-			Action = {
-				MoveWindowToFloating = {
-					id = ctx.data.window.id,
-				},
-			},
-		}, "Successfully toggled floating for window", "Error toggling window floating")
+			Action = action,
+		}, "Successfully executed action", "Failed to execute action")
 	end
 end)
 

@@ -2,6 +2,7 @@
 // Find more information on the wiki:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Window-Rules
 
+// ============== Layer Rules ===============
 // Place quickshell in the backdrop layer
 // This gets DMS wallpaper as overview backdrop
 layer-rule {
@@ -9,11 +10,9 @@ layer-rule {
     place-within-backdrop true
 }
 
-layer-rule  {
-    match namespace="dms:blurwallpaper"
-    place-within-backdrop true
-}
+// ==========================================
 
+// ============== Window Rules ==============
 // Enable rounded corners for all windows
 // And disable border drawing with background by default
 window-rule {
@@ -53,11 +52,21 @@ window-rule {
     // This app-id regular expression will work for both:
     // - host Firefox (app-id is "firefox")
     // - Flatpak Firefox (app-id is "org.mozilla.firefox")
-    match app-id=r#"^zen|zoom|firefox$"# title=r#"^Picture-in-Picture$"#
+    // match app-id=r#"^zen|zoom|(org\.mozilla\.)?firefox$"#
+    match title=r#"^Picture-in-Picture$"#
     open-floating true
     default-floating-position x=16 y=48 relative-to="bottom-right"
     default-column-width { fixed 480; }
     default-window-height { fixed 270; }
+}
+
+// Browser popups (Sign In, Sign Up, Extensions) - open as floating
+window-rule {
+    match app-id=r#"^(zen|firefox|org\.mozilla\.firefox)$"# title=r#"(?i)(Extension|Sign[ ]In|Log[ ]In|Sign[ ]Up)"# is-floating=true
+    opacity 0.5
+    default-floating-position x=16 y=48 relative-to="top-right"
+    max-width 720
+    max-height 720
 }
 
 // Open satty as floating+focused by default.
@@ -128,3 +137,4 @@ window-rule {
     match is-focused=true
     open-maximized true
 }
+// ==========================================

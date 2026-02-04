@@ -13,12 +13,14 @@ if type -q starship
     # set -x STARSHIP_CACHE $XDG_CACHE_HOME/starship
     # set -x STARSHIP_CONFIG $XDG_CONFIG_HOME/starship/starship.toml
 end
+
 if type -q fastfetch
     # Check if shell is in Neovim terminal
-    if not test -z "$NVIM"
+    if test -z "$NVIM"
         fastfetch
     end
 end
+
 set -x SHELL /usr/bin/fish
 
 abbr mkdir 'mkdir -p'

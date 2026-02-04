@@ -6,6 +6,7 @@ packages \
 
 # DMS Shell
 packages \
+	pacman:dms-shell-git,qt6-multimedia,matugen \
 	paru:dms-shell-bin,quickshell-git,qt6-multimedia,matugen \
 	yay:dms-shell-bin,quickshell-git,qt6-multimedia,matugen
 
@@ -36,10 +37,6 @@ packages \
 # File Manager
 packages \
 	pacman:thunar,thunar-archive-plugin,thunar-volman,thunar-media-tags-plugin,engrampa
-
-# Bluetooth
-packages \
-	pacman:bluez,bluez-utils
 
 # Misc
 packages \

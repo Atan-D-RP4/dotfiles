@@ -30,7 +30,8 @@ binds {
     Mod+Y hotkey-overlay-title="Dashboard" { spawn "dms" "ipc" "dash" "toggle" "'[tab]'"; }
     Mod+P hotkey-overlay-title="Power Menu" { spawn "dms" "ipc" "powermenu" "toggle"; }
     Mod+Shift+Y hotkey-overlay-title="Control Center" { spawn "dms" "ipc" "call" "control-center" "toggle"; }
-    Mod+S { focus-workspace "special"; }
+    // Mod+S { focus-workspace "special"; }
+    Mod+S { spawn "wl-kbptr" "-o" "modes=tile,bisect,click"; }
     Ctrl+Alt+Delete hotkey-overlay-title="Task Manager" {
 	spawn "dms" "ipc" "call" "processlist" "focusOrToggle";
     }
