@@ -1,0 +1,681 @@
+// cursor-zoom stuff 1
+// ========================
+zoom {
+    movement-mode "on-edge"
+    increment-type "exponential"
+    pinch-sensitivity 1.0
+    max-zoom 20.0
+}
+
+cursor {
+    scale-with-zoom false
+}
+
+// ========================
+
+
+// touch-gestures stuff
+// ========================
+input {
+    touch {
+        natural-scroll
+    }
+}
+// ========================
+//
+// blur {
+//    passes 3        // more passes = stronger blur (default: 3)
+//    offset 3.0      // sample distance per pass (default: 3.0)
+//    noise 0.02      // grain overlay (default: 0.02)
+//    saturation 1.5  // color saturation boost (default: 1.5)
+// }
+
+// custom-background-effect stuff
+// ========================
+window-rule {
+    background-effect {
+        xray true
+        blur true
+        animate true
+        /-custom-shader "
+            // Reference glass custom background shader for niri.
+            //
+            // This shader recreates the full liquid glass effect using the niri
+            // custom-shader background-effect system.
+            //
+            // Uniforms available from the template (do not re-declare):
+            //   uniform sampler2D tex;          // backdrop texture
+            //   uniform vec2 v_coords;          // texture coordinates (use texture2D(tex, ...) yourself)
+            //   uniform mat3 input_to_geo;      // maps tex coords to [0,1] element space
+            //   uniform vec2 geo_size;          // element size in logical pixels
+            //   uniform vec2 niri_pointer;      // pointer in window-local px; (-1,-1) = no pointer
+            //   uniform vec2 niri_window_size;  // window size in logical pixels
+            //   float gradient_noise(vec2 uv);  // helper: interleaved gradient noise
+            //
+            // Quality variants: edit LOW/MEDIUM/HIGH sections below to change quality.
+
+            // Baked visual constants (replaces removed lg-* config fields).
+            const float DISTORTION = 2.240;                 // convex lens distortion strength
+            const float ABERRATION = 2.8;                   // chromatic aberration amount
+            const float HIGHLIGHT  = 0.26;                  // specular highlight brightness
+            const vec3  TINT       = vec3(0.93, 0.96, 0.98); // cool glass absorption tint
+            const vec2  UV_EPS     = vec2(0.0015);          // keeps samples safely in-bounds
+
+            vec2 safe_uv(vec2 uv) {
+                return clamp(uv, UV_EPS, vec2(1.0) - UV_EPS);
+            }
+
+            vec4 sample(vec2 uv) {
+                return texture2D(tex, safe_uv(uv));
+            }
+
+            // ---------- LOW quality variant (no distortion, no CA) ----------
+            // Replace the HIGH variant below with this for integrated GPUs.
+            // vec4 custom_postprocess() {
+            //     vec4 color = sample(v_coords);
+            //     float luma = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
+            //     color.rgb = mix(vec3(luma), color.rgb, 0.95);
+            //     color.rgb *= TINT;
+            //     return color;
+            // }
+
+            // ---------- MEDIUM quality variant (distortion + 2-sample CA + highlights) ----------
+            // vec4 custom_postprocess() {
+            //     vec3 coords_geo = input_to_geo * vec3(v_coords, 1.0);
+            //     vec2 local_uv = coords_geo.xy;
+            //     vec2 from_center = local_uv - vec2(0.5);
+            //     float r = length(from_center);
+            //     vec2 radial_dir = from_center / max(r, 0.001);
+            //     float r2 = r * r;
+            //     vec2 dist_vec = from_center * r2 * DISTORTION;
+            //     vec2 pointer_vec = vec2(0.0);
+            //     if (niri_pointer.x >= 0.0) {
+            //         vec2 pointer_local = niri_pointer / max(niri_window_size, vec2(1.0));
+            //         vec2 to_pointer = local_uv - pointer_local;
+            //         float p_dist = length(to_pointer);
+            //         float p_influence = (1.0 - smoothstep(0.0, 0.25, p_dist)) * 0.007;
+            //         pointer_vec = normalize(to_pointer + vec2(0.001)) * p_influence;
+            //     }
+            //     vec2 ca = radial_dir * r * (ABERRATION * 0.0025);
+            //     vec2 shift = dist_vec + pointer_vec;
+            //     vec2 excursion = abs(shift) + abs(ca);
+            //     vec2 budget = max(min(v_coords, vec2(1.0) - v_coords) - UV_EPS, vec2(0.0));
+            //     float uv_scale = min(1.0, min(budget.x / max(excursion.x, 1e-5), budget.y / max(excursion.y, 1e-5)));
+            //     shift *= uv_scale;
+            //     ca *= uv_scale;
+            //     vec2 distorted = v_coords + shift;
+            //     vec4 rg = sample(distorted + ca);
+            //     vec4 gb = sample(distorted - ca);
+            //     vec4 base = sample(distorted);
+            //     vec4 color = vec4(rg.r, (rg.g + gb.g) * 0.5, gb.b, base.a);
+            //     color.rgb *= TINT;
+            //     vec2 light = normalize(vec2(-0.5, -1.0));
+            //     float NdotL = max(dot(radial_dir, light), 0.0);
+            //     float rim = pow(NdotL, 3.0) * smoothstep(0.05, 0.25, r) * (1.0 - smoothstep(0.3, 0.65, r));
+            //     float top_glow = exp(-pow(local_uv.y * 5.0, 2.0)) * HIGHLIGHT * 0.35;
+            //     float p_glow = 0.0;
+            //     if (niri_pointer.x >= 0.0) {
+            //         vec2 pointer_local = niri_pointer / max(niri_window_size, vec2(1.0));
+            //         float pointer_dist = length(local_uv - pointer_local);
+            //         p_glow = (1.0 - smoothstep(0.0, 0.15, pointer_dist)) * HIGHLIGHT * 0.25;
+            //     }
+            //     color.rgb += (rim * HIGHLIGHT + top_glow + p_glow) * color.a;
+            //     return color;
+            // }
+
+            // ---------- HIGH quality variant (full: distortion + 3-sample CA + specular + pointer) ----------
+            vec4 custom_postprocess() {
+                vec3 coords_geo = input_to_geo * vec3(v_coords, 1.0);
+                vec2 local_uv = coords_geo.xy;
+
+                vec2 from_center = local_uv - vec2(0.5);
+                float r = length(from_center);
+                vec2 radial_dir = from_center / max(r, 0.001);
+
+                // Soft convex refraction. Keep strength low for polished, glassy depth.
+                float r2 = r * r;
+                float warp = DISTORTION * (0.25 + 0.75 * smoothstep(0.0, 0.65, r));
+                vec2 dist_vec = from_center * r2 * warp;
+                vec2 pointer_vec = vec2(0.0);
+
+                // Cursor interaction: subtle local lens wobble.
+                if (niri_pointer.x >= 0.0) {
+                    vec2 pointer_local = niri_pointer / max(niri_window_size, vec2(1.0));
+                    vec2 to_pointer = local_uv - pointer_local;
+                    float p_dist = length(to_pointer);
+                    float p_influence = (1.0 - smoothstep(0.0, 0.28, p_dist)) * LG_DISTORTION * 0.008;
+                    pointer_vec = normalize(to_pointer + vec2(0.001)) * p_influence;
+                }
+
+                // Radial chromatic split with bounded sampling.
+                vec2 ca = radial_dir * r * (ABERRATION * 0.0025);
+                vec2 shift = dist_vec + pointer_vec;
+                vec2 excursion = abs(shift) + abs(ca);
+                vec2 budget = max(min(v_coords, vec2(1.0) - v_coords) - UV_EPS, vec2(0.0));
+                float uv_scale = min(1.0, min(budget.x / max(excursion.x, 1e-5), budget.y / max(excursion.y, 1e-5)));
+                shift *= uv_scale;
+                ca *= uv_scale;
+                vec2 distorted = v_coords + shift;
+                float r_ch = sample(distorted + ca).r;
+                vec4 base = sample(distorted);
+                float b_ch = sample(distorted - ca).b;
+                vec4 color = vec4(r_ch, base.g, b_ch, base.a);
+
+                // Frosted appearance: slight desaturation + cool tint.
+                float luma = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
+                color.rgb = mix(vec3(luma), color.rgb, 0.94);
+                color.rgb *= TINT;
+                color.rgb += 0.02 * color.a;
+
+                // Apple-like glazing: fresnel edge lift + narrow specular + top sheen.
+                vec3 n = normalize(vec3(from_center * 2.0, 1.25));
+                vec3 v = vec3(0.0, 0.0, 1.0);
+                vec3 l = normalize(vec3(-0.45, -0.85, 0.35));
+                float fresnel = pow(1.0 - max(dot(n, v), 0.0), 3.5);
+                float specular = pow(max(dot(reflect(-l, n), v), 0.0), 22.0);
+                float top_sheen = exp(-pow((local_uv.y - 0.05) * 7.0, 2.0)) * 0.20;
+                float edge_lift = fresnel * 0.14;
+
+                float highlight = (specular * 0.45 + edge_lift + top_sheen) * HIGHLIGHT;
+
+                // Pointer proximity glow.
+                float p_glow = 0.0;
+                if (niri_pointer.x >= 0.0) {
+                    vec2 pointer_local = niri_pointer / max(niri_window_size, vec2(1.0));
+                    float pointer_dist = length(local_uv - pointer_local);
+                    p_glow = (1.0 - smoothstep(0.0, 0.16, pointer_dist)) * HIGHLIGHT * 0.23;
+                }
+
+                color.rgb += (highlight + p_glow) * color.a;
+
+                return color;
+                // Note: saturation, noise, bg_color blending, and rounding are applied
+                // by the template main() after this function returns — do not add them here.
+            }
+        "
+    }
+}
+
+layer-rule {
+    exclude namespace="dms:bar"
+    background-effect {
+        xray true
+        blur true
+        animate true
+        /-custom-shader "
+            // Reference glass custom background shader for niri.
+            //
+            // This shader recreates the full liquid glass effect using the niri
+            // custom-shader background-effect system.
+            //
+            // Uniforms available from the template (do not re-declare):
+            //   uniform sampler2D tex;          // backdrop texture
+            //   uniform vec2 v_coords;          // texture coordinates (use texture2D(tex, ...) yourself)
+            //   uniform mat3 input_to_geo;      // maps tex coords to [0,1] element space
+            //   uniform vec2 geo_size;          // element size in logical pixels
+            //   uniform vec2 niri_pointer;      // pointer in window-local px; (-1,-1) = no pointer
+            //   uniform vec2 niri_window_size;  // window size in logical pixels
+            //   float gradient_noise(vec2 uv);  // helper: interleaved gradient noise
+            //
+            // Quality variants: edit LOW/MEDIUM/HIGH sections below to change quality.
+
+            // Baked visual constants (replaces removed lg-* config fields).
+            const float DISTORTION = 2.240;                 // convex lens distortion strength
+            const float ABERRATION = 2.8;                   // chromatic aberration amount
+            const float HIGHLIGHT  = 0.26;                  // specular highlight brightness
+            const vec3  TINT       = vec3(0.93, 0.96, 0.98); // cool glass absorption tint
+            const vec2  UV_EPS     = vec2(0.0015);          // keeps samples safely in-bounds
+
+            vec2 safe_uv(vec2 uv) {
+                return clamp(uv, UV_EPS, vec2(1.0) - UV_EPS);
+            }
+
+            vec4 sample(vec2 uv) {
+                return texture2D(tex, safe_uv(uv));
+            }
+
+            // ---------- LOW quality variant (no distortion, no CA) ----------
+            // Replace the HIGH variant below with this for integrated GPUs.
+            // vec4 custom_postprocess() {
+            //     vec4 color = sample(v_coords);
+            //     float luma = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
+            //     color.rgb = mix(vec3(luma), color.rgb, 0.95);
+            //     color.rgb *= TINT;
+            //     return color;
+            // }
+
+            // ---------- MEDIUM quality variant (distortion + 2-sample CA + highlights) ----------
+            // vec4 custom_postprocess() {
+            //     vec3 coords_geo = input_to_geo * vec3(v_coords, 1.0);
+            //     vec2 local_uv = coords_geo.xy;
+            //     vec2 from_center = local_uv - vec2(0.5);
+            //     float r = length(from_center);
+            //     vec2 radial_dir = from_center / max(r, 0.001);
+            //     float r2 = r * r;
+            //     vec2 dist_vec = from_center * r2 * DISTORTION;
+            //     vec2 pointer_vec = vec2(0.0);
+            //     if (niri_pointer.x >= 0.0) {
+            //         vec2 pointer_local = niri_pointer / max(niri_window_size, vec2(1.0));
+            //         vec2 to_pointer = local_uv - pointer_local;
+            //         float p_dist = length(to_pointer);
+            //         float p_influence = (1.0 - smoothstep(0.0, 0.25, p_dist)) * 0.007;
+            //         pointer_vec = normalize(to_pointer + vec2(0.001)) * p_influence;
+            //     }
+            //     vec2 ca = radial_dir * r * (ABERRATION * 0.0025);
+            //     vec2 shift = dist_vec + pointer_vec;
+            //     vec2 excursion = abs(shift) + abs(ca);
+            //     vec2 budget = max(min(v_coords, vec2(1.0) - v_coords) - UV_EPS, vec2(0.0));
+            //     float uv_scale = min(1.0, min(budget.x / max(excursion.x, 1e-5), budget.y / max(excursion.y, 1e-5)));
+            //     shift *= uv_scale;
+            //     ca *= uv_scale;
+            //     vec2 distorted = v_coords + shift;
+            //     vec4 rg = sample(distorted + ca);
+            //     vec4 gb = sample(distorted - ca);
+            //     vec4 base = sample(distorted);
+            //     vec4 color = vec4(rg.r, (rg.g + gb.g) * 0.5, gb.b, base.a);
+            //     color.rgb *= TINT;
+            //     vec2 light = normalize(vec2(-0.5, -1.0));
+            //     float NdotL = max(dot(radial_dir, light), 0.0);
+            //     float rim = pow(NdotL, 3.0) * smoothstep(0.05, 0.25, r) * (1.0 - smoothstep(0.3, 0.65, r));
+            //     float top_glow = exp(-pow(local_uv.y * 5.0, 2.0)) * HIGHLIGHT * 0.35;
+            //     float p_glow = 0.0;
+            //     if (niri_pointer.x >= 0.0) {
+            //         vec2 pointer_local = niri_pointer / max(niri_window_size, vec2(1.0));
+            //         float pointer_dist = length(local_uv - pointer_local);
+            //         p_glow = (1.0 - smoothstep(0.0, 0.15, pointer_dist)) * HIGHLIGHT * 0.25;
+            //     }
+            //     color.rgb += (rim * HIGHLIGHT + top_glow + p_glow) * color.a;
+            //     return color;
+            // }
+
+            // ---------- HIGH quality variant (full: distortion + 3-sample CA + specular + pointer) ----------
+            vec4 custom_postprocess() {
+                vec3 coords_geo = input_to_geo * vec3(v_coords, 1.0);
+                vec2 local_uv = coords_geo.xy;
+
+                vec2 from_center = local_uv - vec2(0.5);
+                float r = length(from_center);
+                vec2 radial_dir = from_center / max(r, 0.001);
+
+                // Soft convex refraction. Keep strength low for polished, glassy depth.
+                float r2 = r * r;
+                float warp = DISTORTION * (0.25 + 0.75 * smoothstep(0.0, 0.65, r));
+                vec2 dist_vec = from_center * r2 * warp;
+                vec2 pointer_vec = vec2(0.0);
+
+                // Cursor interaction: subtle local lens wobble.
+                if (niri_pointer.x >= 0.0) {
+                    vec2 pointer_local = niri_pointer / max(niri_window_size, vec2(1.0));
+                    vec2 to_pointer = local_uv - pointer_local;
+                    float p_dist = length(to_pointer);
+                    float p_influence = (1.0 - smoothstep(0.0, 0.28, p_dist)) * LG_DISTORTION * 0.008;
+                    pointer_vec = normalize(to_pointer + vec2(0.001)) * p_influence;
+                }
+
+                // Radial chromatic split with bounded sampling.
+                vec2 ca = radial_dir * r * (ABERRATION * 0.0025);
+                vec2 shift = dist_vec + pointer_vec;
+                vec2 excursion = abs(shift) + abs(ca);
+                vec2 budget = max(min(v_coords, vec2(1.0) - v_coords) - UV_EPS, vec2(0.0));
+                float uv_scale = min(1.0, min(budget.x / max(excursion.x, 1e-5), budget.y / max(excursion.y, 1e-5)));
+                shift *= uv_scale;
+                ca *= uv_scale;
+                vec2 distorted = v_coords + shift;
+                float r_ch = sample(distorted + ca).r;
+                vec4 base = sample(distorted);
+                float b_ch = sample(distorted - ca).b;
+                vec4 color = vec4(r_ch, base.g, b_ch, base.a);
+
+                // Frosted appearance: slight desaturation + cool tint.
+                float luma = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
+                color.rgb = mix(vec3(luma), color.rgb, 0.94);
+                color.rgb *= TINT;
+                color.rgb += 0.02 * color.a;
+
+                // Apple-like glazing: fresnel edge lift + narrow specular + top sheen.
+                vec3 n = normalize(vec3(from_center * 2.0, 1.25));
+                vec3 v = vec3(0.0, 0.0, 1.0);
+                vec3 l = normalize(vec3(-0.45, -0.85, 0.35));
+                float fresnel = pow(1.0 - max(dot(n, v), 0.0), 3.5);
+                float specular = pow(max(dot(reflect(-l, n), v), 0.0), 22.0);
+                float top_sheen = exp(-pow((local_uv.y - 0.05) * 7.0, 2.0)) * 0.20;
+                float edge_lift = fresnel * 0.14;
+
+                float highlight = (specular * 0.45 + edge_lift + top_sheen) * HIGHLIGHT;
+
+                // Pointer proximity glow.
+                float p_glow = 0.0;
+                if (niri_pointer.x >= 0.0) {
+                    vec2 pointer_local = niri_pointer / max(niri_window_size, vec2(1.0));
+                    float pointer_dist = length(local_uv - pointer_local);
+                    p_glow = (1.0 - smoothstep(0.0, 0.16, pointer_dist)) * HIGHLIGHT * 0.23;
+                }
+
+                color.rgb += (highlight + p_glow) * color.a;
+
+                return color;
+                // Note: saturation, noise, bg_color blending, and rounding are applied
+                // by the template main() after this function returns — do not add them here.
+            }
+        "
+    }
+}
+// ========================
+
+animations {
+    // cursor-zoom stuff 2
+    // ========================
+    zoom-level-change {
+        duration-ms 100
+        curve "cubic-bezier" 0.05 0.7 0.1 1 // CSS cubic-bezier curve
+    }
+    zoom-focal-pan {
+        duration-ms 100
+        curve "cubic-bezier" 0.05 0.7 0.1 1 // CSS cubic-bezier curve
+    }
+    // ========================
+
+    // layer-anims stuff
+    // ========================
+    layer-open {
+        duration-ms 700
+        curve "cubic-bezier" 0.05 0.7 0.1 1 // CSS cubic-bezier curve
+
+        // fade in, no movement
+        custom-shader r"
+            vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+                vec3 coords_tex = niri_geo_to_tex * coords_geo;
+                vec4 color = texture2D(niri_tex, coords_tex.st);
+                color *= niri_clamped_progress;
+                return color;
+            }
+        "
+    }
+
+    layer-close {
+        // base fallback close (wallpaper, and any bucket without overrides)
+        duration-ms 900
+        curve "cubic-bezier" 0.05 0.7 0.1 1
+
+        // fade out, no movement
+        custom-shader r"
+            vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+                // Geometry-space y coordinate of output bottom edge.
+                float bottom_geo = (niri_input_to_geo * vec3(0.0, 1.0, 1.0)).y;
+                vec3 coords = coords_geo;
+                coords.y -= niri_clamped_progress * bottom_geo;
+                vec3 coords_tex = niri_geo_to_tex * coords;
+                vec4 color = texture2D(niri_tex, coords_tex.st);
+                if (coords_tex.x < 0.0 || coords_tex.x > 1.0 ||
+                    coords_tex.y < 0.0 || coords_tex.y > 1.0) {
+                    color = vec4(0.0);
+                }
+                return color;
+            }
+        "
+    }
+
+
+    layer-launcher-open {
+        // distinct long launcher open
+        duration-ms 2400
+        curve "cubic-bezier" 0.05 0.7 0.1 1
+
+        // slide in from left with fade
+        custom-shader r"
+            vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+                // Geometry-space x coordinate of output left edge.
+                float left_geo = (niri_input_to_geo * vec3(1.0, 0.0, 1.0)).x;
+                vec3 coords = coords_geo;
+                coords.x += (1.0 - niri_clamped_progress) * left_geo;
+                vec3 coords_tex = niri_geo_to_tex * coords;
+                vec4 color = texture2D(niri_tex, coords_tex.st);
+                if (coords_tex.x < 0.0 || coords_tex.x > 1.0 ||
+                    coords_tex.y < 0.0 || coords_tex.y > 1.0) {
+                    color = vec4(0.0);
+                }
+                color *= niri_clamped_progress;
+                return color;
+            }
+        "
+    }
+
+    layer-launcher-close {
+        // distinct long launcher close
+        duration-ms 2600
+        curve "cubic-bezier" 0.05 0.7 0.1 1
+        // slide out to right with fade
+        custom-shader r"
+            vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+                // Geometry-space x coordinate of output right edge.
+                float right_geo = (niri_input_to_geo * vec3(1.0, 0.0, 1.0)).x;
+                vec3 coords = coords_geo;
+                coords.x -= niri_clamped_progress * right_geo;
+                vec3 coords_tex = niri_geo_to_tex * coords;
+                vec4 color = texture2D(niri_tex, coords_tex.st);
+                if (coords_tex.x < 0.0 || coords_tex.x > 1.0 ||
+                    coords_tex.y < 0.0 || coords_tex.y > 1.0) {
+                    color = vec4(0.0);
+                }
+                color *= (1.0 - niri_clamped_progress);
+                return color;
+            }
+        "
+    }
+
+    layer-bar-open {
+        // bar open distinct but shorter than launcher
+        duration-ms 1800
+        curve "cubic-bezier" 0.05 0.7 0.1 1
+        // slide in from left
+        custom-shader r"
+            vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+                // Geometry-space x coordinate of output right edge.
+                float right_geo = (niri_input_to_geo * vec3(1.0, 0.0, 1.0)).x;
+                vec3 coords = coords_geo;
+                coords.x -= (1.0 - niri_clamped_progress) * right_geo;
+                vec3 coords_tex = niri_geo_to_tex * coords;
+                vec4 color = texture2D(niri_tex, coords_tex.st);
+                if (coords_tex.x < 0.0 || coords_tex.x > 1.0 ||
+                    coords_tex.y < 0.0 || coords_tex.y > 1.0) {
+                    color = vec4(0.0);
+                }
+                return color;
+            }
+        "
+    }
+
+    layer-bar-close {
+        duration-ms 3200
+        curve "cubic-bezier" 0.05 0.7 0.1 1
+
+        // slide out to right
+        custom-shader r"
+            vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+                float right_geo = (niri_input_to_geo * vec3(1.0, 0.0, 1.0)).x;
+                vec3 coords = coords_geo;
+                coords.x += niri_clamped_progress * right_geo;
+                vec3 coords_tex = niri_geo_to_tex * coords;
+                vec4 color = texture2D(niri_tex, coords_tex.st);
+                if (coords_tex.x < 0.0 || coords_tex.x > 1.0 ||
+                    coords_tex.y < 0.0 || coords_tex.y > 1.0) {
+                    color = vec4(0.0);
+                }
+                return color;
+            }
+        "
+    }
+
+    layer-wallpaper-open {
+        duration-ms 2000
+        curve "cubic-bezier" 0.05 0.7 0.1 1
+
+        // slide in from left
+        custom-shader r"
+            vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+                // Geometry-space x coordinate of output right edge.
+                float right_geo = (niri_input_to_geo * vec3(1.0, 0.0, 1.0)).x;
+                vec3 coords = coords_geo;
+                coords.x -= (1.0 - niri_clamped_progress) * right_geo;
+                vec3 coords_tex = niri_geo_to_tex * coords;
+                vec4 color = texture2D(niri_tex, coords_tex.st);
+                if (coords_tex.x < 0.0 || coords_tex.x > 1.0 ||
+                    coords_tex.y < 0.0 || coords_tex.y > 1.0) {
+                    color = vec4(0.0);
+                }
+                return color;
+            }
+        "
+    }
+
+    layer-wallpaper-close {
+        duration-ms 2000
+        curve "cubic-bezier" 0.05 0.7 0.1 1
+
+        // slide out to right
+        custom-shader r"
+            vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+                float right_geo = (niri_input_to_geo * vec3(1.0, 0.0, 1.0)).x;
+                vec3 coords = coords_geo;
+                coords.x += niri_clamped_progress * right_geo;
+                vec3 coords_tex = niri_geo_to_tex * coords;
+                vec4 color = texture2D(niri_tex, coords_tex.st);
+                if (coords_tex.x < 0.0 || coords_tex.x > 1.0 ||
+                    coords_tex.y < 0.0 || coords_tex.y > 1.0) {
+                    color = vec4(0.0);
+                }
+                return color;
+            }
+        "
+    }
+    // ========================
+
+    // transition-anims stuff
+    // ========================
+    screen-transition {
+        // off
+        // delay-ms 100
+        duration-ms 200
+        curve "ease-out-quad"
+
+        /-custom-shader r"
+            // Fade out the old workspace to reveal the new one underneath.
+            vec4 screen_transition_color(vec3 coords_curr_geo, vec3 size_curr_geo) {
+                vec3 coords_tex = niri_geo_to_tex * coords_curr_geo;
+                vec4 color = texture2D(niri_tex_from, coords_tex.st);
+                return color * (1.0 - niri_clamped_progress);
+            }
+        "
+
+        /-custom-shader r"
+            // Horizontal wipe from left to right revealing the new workspace.
+            vec4 screen_transition_color(vec3 coords_geo, vec3 size_geo) {
+                vec3 coords_tex = niri_geo_to_tex * coords_geo;
+                vec4 color = texture2D(niri_tex_from, coords_tex.st);
+
+                // The wipe edge moves from left (x=0) to right (x=1).
+                // Pixels left of the edge become transparent, revealing the
+                // new workspace underneath.
+                float alpha = smoothstep(niri_clamped_progress - 0.05,
+                                         niri_clamped_progress + 0.05,
+                                         coords_geo.x);
+
+                return color * alpha;
+            }
+        "
+
+        /-custom-shader r"
+            // Pixel dissolve transition using random seed.
+            // Randomly dissolves pixels to reveal the new workspace.
+            vec4 screen_transition_color(vec3 coords_geo, vec3 size_geo) {
+                vec3 coords_tex = niri_geo_to_tex * coords_geo;
+                vec4 color = texture2D(niri_tex_from, coords_tex.st);
+
+                // Pseudo-random value per pixel, seeded per transition.
+                vec2 seed = coords_geo.xy + vec2(niri_random_seed);
+                float random = fract(sin(dot(seed, vec2(12.9898, 78.233))) * 43758.5453);
+
+                // As progress increases, more pixels cross the threshold and
+                // become transparent, revealing the new workspace.
+                float threshold = niri_clamped_progress * 1.2;
+
+                // Radial bias: center dissolves first, edges later.
+                float center_dist = distance(coords_geo.xy, vec2(0.5));
+                float bias = center_dist * 0.3;
+
+                float alpha = step(threshold + bias, random);
+
+                return color * alpha;
+            }
+        "
+
+        custom-shader r"
+            // Circle reveal from the mouse cursor position.
+            // The new workspace expands as a circle from the cursor.
+            vec4 screen_transition_color(vec3 coords_geo, vec3 size_geo) {
+                vec3 coords_tex = niri_geo_to_tex * coords_geo;
+                vec4 color = texture2D(niri_tex_from, coords_tex.st);
+
+                // Use cursor as center, or screen center if off-output.
+                vec2 center = (niri_mouse_pos.x < 0.0)
+                    ? vec2(0.5)
+                    : niri_mouse_pos / size_geo.xy;
+
+                // Correct for aspect ratio so the reveal is a circle.
+                vec2 aspect = size_geo.xy / length(size_geo.xy);
+                vec2 delta = (coords_geo.xy - center) * aspect;
+                float dist = length(delta);
+
+                // Expanding circle: ~1.5 scale to cover corners.
+                float radius = niri_clamped_progress * 1.5;
+
+                // Inside circle = transparent (new workspace).
+                // Outside circle = opaque (old workspace).
+                float alpha = smoothstep(radius - 0.05, radius, dist);
+
+                return color * alpha;
+            }
+        "
+
+        /-custom-shader "
+            // Diagonal wipe from top-left to bottom-right.
+            vec4 screen_transition_color(vec3 coords_geo, vec3 size_geo) {
+                vec3 coords_tex = niri_geo_to_tex * coords_geo;
+                vec4 color = texture2D(niri_tex_from, coords_tex.st);
+
+                // Diagonal progress from top-left (0) to bottom-right (1).
+                float diag_progress = (coords_geo.x + coords_geo.y) / 2.0;
+
+                // Reveal the new workspace as the diagonal progresses.
+                float alpha = smoothstep(niri_clamped_progress - 0.05,
+                                         niri_clamped_progress + 0.05,
+                                         diag_progress);
+
+                return color * alpha;
+            }
+        "
+
+        /-custom-shader "
+            // Vertical blinds effect.
+            vec4 screen_transition_color(vec3 coords_geo, vec3 size_geo) {
+                vec3 coords_tex = niri_geo_to_tex * coords_geo;
+                vec4 color = texture2D(niri_tex_from, coords_tex.st);
+
+                // Number of blinds.
+                float blinds = 10.0;
+
+                // Calculate which blind we're in and the progress within it.
+                float blind_index = floor(coords_geo.x * blinds);
+                float blind_progress = fract(coords_geo.x * blinds);
+
+                // Each blind reveals the new workspace as it progresses.
+                float alpha = smoothstep(niri_clamped_progress - 0.05,
+                                         niri_clamped_progress + 0.05,
+                                         blind_progress);
+
+                return color * alpha;
+            }
+        "
+    }
+    // ========================
+}

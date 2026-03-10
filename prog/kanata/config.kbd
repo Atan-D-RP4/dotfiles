@@ -19,8 +19,8 @@
 )
 
 (defchordsv2
-	;; ([ \) (macro tab) $chord-time all-released ()
-  ([ ]) (macro esc) $chord-time all-released ()
+  ([ \) (macro tab)     $chord-time all-released ()
+  (j k) (macro esc esc) $chord-time all-released ()
 )
 
 (defalias
@@ -30,19 +30,19 @@
 
   grl   (tap-hold-release $tap-time $hold-time grv @lay)
 
-  a-lmt (tap-hold       $tap-time $hold-time  a              lmet)
-  s-lal (tap-hold       $tap-time $hold-time  s              lalt)
-  d-lct (tap-hold       $tap-time $hold-time  d              lctl)
-  f-lsh (tap-hold       $tap-time $hold-time  f              lsft)
+  a-lmt (tap-hold       $tap-time       $hold-time         a              lmet)
+  s-lal (tap-hold       $tap-time       $hold-time         s              lalt)
+  d-lct (tap-hold       $tap-time       $hold-time         d              lctl)
+  f-lsh (tap-hold       $tap-time       $hold-time         f              lsft)
 
-  j-rmt (tap-hold       $tap-time $hold-time  j              rsft)
-  k-rct (tap-hold       $tap-time $hold-time  k              rctl)
-  l-ral (tap-hold       $tap-time $hold-time  l              ralt)
-  ;-rsh (tap-hold       $tap-time $hold-time  ;              rmet)
+  j-rmt (tap-hold       $tap-time       $hold-time         j              rsft)
+  k-rct (tap-hold       $tap-time       $hold-time         k              rctl)
+  l-ral (tap-hold       $tap-time       $hold-time         l              ralt)
+  ;-rsh (tap-hold       $tap-time       $hold-time         ;              rmet)
 
   ret   (tap-hold-press $tap-time       $hold-time         ret            rctl)
   cap   (tap-hold-press $tap-time       $hold-time         esc            lctl)
-  esc   (tap-hold-press $tap-time       $hold-time         caps            esc)
+  esc   caps
 )
 
 (defsrc
@@ -72,6 +72,36 @@
   _       _       _                       _                       _       _       _       _       _       _
 )
 
+(deflayer numbers
+  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       1       2       3       _       _       _       _       _       _       _       _       _       _
+  _       4       5       6       _       _       _       _       _       _       _       _       _
+  _       7       8       9       _       _       _       _       _       _       _       _       _
+  _       _       0                       _                       _       _       _       _       _       _
+)
+
+(deflayer layers
+  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       @1bas   @2hrw   sldr    lrld    @5clk    _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _                       _                       _       _       _       _       _       _
+)
+
+(defalias
+  1bas   (multi
+    (layer-switch base-layer)
+    (push-msg "layer:base-layer:activated")
+  )
+
+  2hrw   (multi
+    (layer-switch homerow-kbd)
+    (push-msg "layer:homerow-kbd:activated")
+  )
+)
+
 ;; ============================================================================
 ;; Auto-clicker (cross-platform, pure kanata implementation)
 ;; ============================================================================
@@ -86,41 +116,23 @@
 )
 
 (defalias
-  1bas   (layer-switch base-layer)
-  2hrw   (layer-switch homerow-kbd)
-  ;; Toggle auto-clicker on/off
-  clk (switch
+  ;; Toggle auto-clicker on/off, with feedback messages
+  5clk (switch
     ((input virtual click-active))
       (multi
         (on-press release-virtualkey click-active)
         (on-press release-virtualkey click-action)
+        (push-msg "Auto-clicker deactivated")
       )
       break
     ()
       (multi
         (on-press press-virtualkey click-active)
         (on-press press-virtualkey click-action)
+        (push-msg "Auto-clicker activated")
       )
       break
   )
-)
-
-(deflayer layers
-  _       _       _       _       _       _       _       _       _       _       _       _       _
-  _       @1bas   @2hrw   sldr    lrld    @clk    _       _       _       _       _       _       _       _
-  _       _       _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _                       _                       _       _       _       _       _       _
-)
-
-(deflayer numbers
-  _       _       _       _       _       _       _       _       _       _       _       _       _
-  _       _       _       _       _       _       _       _       _       _       _       _       _       _
-  _       1       2       3       _       _       _       _       _       _       _       _       _       _
-  _       4       5       6       _       _       _       _       _       _       _       _       _
-  _       7       8       9       _       _       _       _       _       _       _       _       _
-  _       _       0                       _                       _       _       _       _       _       _
 )
 
 (deftemplate abbrev (vk-name input-keys output)
@@ -137,4 +149,5 @@
 	S-d u b a k u l a spc S-s a i spc S-v e n k a t a spc S-c h a i t a n y a
 ))
 
+;; ============================================================================
 ;; vim: set ft=lisp

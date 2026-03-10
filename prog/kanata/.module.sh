@@ -27,7 +27,8 @@ After=dev-uinput.device
 [Service]
 Nice=-20
 Type=simple
-ExecStart=/usr/bin/kanata --cfg ${HOME}/.config/kanata/config.kbd
+ExecStart=/usr/bin/sh -c 'exec $(which kanata) -p 7070 --cfg ${HOME}/.config/kanata/config.kbd'
+ExecReload=/bin/kill -HUP $MAINPID
 CapabilityBoundingSet=~CAP_SYS_* CAP_SET* CAP_NET_* CAP_DAC_* \
   CAP_CHOWN CAP_FSETID CAP_FOWNER CAP_IPC_OWNER CAP_LINUX_IMMUTABLE \
   CAP_IPC_LOCK CAP_BPF CAP_KILL CAP_BLOCK_SUSPEND CAP_LEASE
@@ -43,7 +44,9 @@ ProtectKernelLogs=yes
 ProtectKernelTunables=yes
 ProtectControlGroups=yes
 ProtectProc=invisible
-RestrictAddressFamilies=AF_UNIX
+RestrictAddressFamilies=AF_UNIX AF_INET
+IPAddressDeny=any
+IPAddressAllow=localhost
 RestrictNamespaces=yes
 RestrictSUIDSGID=yes
 RestrictRealtime=yes

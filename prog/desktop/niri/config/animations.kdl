@@ -1,0 +1,323 @@
+// Animation settings.
+// The wiki explains how to configure individual animations:
+// https://yalter.github.io/niri/Configuration:-Animations
+animations {
+    // slowdown 0.0 // Basically disable animations entirely
+    workspace-switch {
+        // duration-ms 300
+        // curve "cubic-bezier" 0.25 0.1 0.25 1 // CSS cubic-bezier curve
+        spring damping-ratio=0.80 stiffness=523 epsilon=0.0001
+    }
+
+    window-open {
+        duration-ms 200
+        curve "cubic-bezier" 0.05 0.7 0.1 1 // CSS cubic-bezier curve"
+        custom-shader r"
+            vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+                float progress = niri_clamped_progress;
+                float offset = (1.0 - progress) * size_geo.x * 0.3;
+
+                vec3 coords = coords_geo;
+                coords.y -= offset / size_geo.y;
+
+                vec3 coords_tex = niri_geo_to_tex * coords;
+                vec4 color = texture2D(niri_tex, coords_tex.st);
+
+                if (coords.y < 0.0 || coords.y > 1.0) {
+                    color = vec4(0.0);
+                }
+
+                // Add fade
+                color *= progress;
+
+                return color;
+            }
+        "
+    }
+
+    window-close {
+        duration-ms 150
+        curve "ease-out-quad"
+        custom-shader r"
+            vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+                float progress = niri_clamped_progress;
+                float offset = progress * size_geo.x * 0.3;
+
+                vec3 coords = coords_geo;
+                coords.y -= offset / size_geo.y;
+
+                vec3 coords_tex = niri_geo_to_tex * coords;
+                vec4 color = texture2D(niri_tex, coords_tex.st);
+
+                if (coords.y < 0.0 || coords.y > 1.0) {
+                    color = vec4(0.0);
+                }
+
+                // Add fade
+                color *= (1.0 - progress);
+
+                return color;
+            }
+        "
+    }
+
+    window-resize {
+        spring damping-ratio=0.85 stiffness=423 epsilon=0.0001
+        custom-shader "
+            vec4 resize_color(vec3 coords_geo, vec3 size_geo) {
+                // Convert coordinates into the texture space for sampling.
+                vec3 coords_tex_prev = niri_geo_to_tex_prev * coords_geo;
+                vec4 color_prev = texture2D(niri_tex_prev, coords_tex_prev.st);
+
+                // Convert coordinates into the texture space for sampling.
+                vec3 coords_tex_next = niri_geo_to_tex_next * coords_geo;
+                vec4 color_next = texture2D(niri_tex_next, coords_tex_next.st);
+
+                vec4 color = mix(color_prev, color_next, niri_clamped_progress);
+                return color;
+            }
+        "
+    }
+
+    horizontal-view-movement {
+        spring damping-ratio=0.85 stiffness=423 epsilon=0.0001
+    }
+
+    window-movement {
+        spring damping-ratio=0.75 stiffness=323 epsilon=0.0001
+    }
+
+    config-notification-open-close {
+        spring damping-ratio=0.65 stiffness=923 epsilon=0.001
+    }
+
+    screenshot-ui-open {
+        duration-ms 200
+        curve "ease-out-quad"
+    }
+
+    overview-open-close {
+        spring damping-ratio=0.85 stiffness=800 epsilon=0.0001
+    }
+
+}
+
+//
+// ### 1. FADE (fade-in / fade-out)
+//
+// **Window Open:**
+// ```kdl
+// window-open {
+//     duration-ms 200
+//     curve "ease-out-quad"
+//     custom-shader r"
+//         vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+//             vec3 coords_tex = niri_geo_to_tex * coords_geo;
+//             vec4 color = texture2D(niri_tex, coords_tex.st);
+//             color *= niri_clamped_progress;
+//             return color;
+//         }
+//     "
+// }
+// ```
+//
+// **Window Close:**
+// ```kdl
+// window-close {
+//     duration-ms 200
+//     curve "ease-out-quad"
+//     custom-shader r"
+//         vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+//             vec3 coords_tex = niri_geo_to_tex * coords_geo;
+//             vec4 color = texture2D(niri_tex, coords_tex.st);
+//             color *= (1.0 - niri_clamped_progress);
+//             return color;
+//         }
+//     "
+// }
+// ```
+//
+// ---
+//
+// ### 2. POPIN (scale + fade)
+//
+// **Window Open:**
+// ```kdl
+// window-open {
+//     duration-ms 250
+//     curve "ease-out-expo"
+//     custom-shader r"
+//         vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+//             float scale = max(0.0, (niri_progress / 2.0 + 0.5));
+//             coords_geo = vec3((coords_geo.xy - vec2(0.5)) / scale + vec2(0.5), 1.0);
+//             vec3 coords_tex = niri_geo_to_tex * coords_geo;
+//             vec4 color = texture2D(niri_tex, coords_tex.st);
+//             color *= niri_clamped_progress;
+//             return color;
+//         }
+//     "
+// }
+// ```
+//
+// **Window Close:**
+// ```kdl
+// window-close {
+//     duration-ms 250
+//     curve "ease-in-expo"
+//     custom-shader r"
+//         vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+//             float scale = max(0.0, ((1.0 - niri_clamped_progress) / 5.0 + 0.8));
+//             coords_geo = vec3((coords_geo.xy - vec2(0.5)) / scale + vec2(0.5), 1.0);
+//             vec3 coords_tex = niri_geo_to_tex * coords_geo;
+//             vec4 color = texture2D(niri_tex, coords_tex.st);
+//             color *= (1.0 - niri_clamped_progress);
+//             return color;
+//         }
+//     "
+// }
+// ```
+//
+// ---
+//
+// ### 3. SLIDE (position movement - enter from right)
+//
+// **Window Open:**
+// ```kdl
+// window-open {
+//     duration-ms 300
+//     curve "ease-out-expo"
+//     custom-shader r"
+//         vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+//             float offset = (1.0 - niri_clamped_progress) * size_geo.x;
+//             vec3 coords = coords_geo;
+//             coords.x -= offset / size_geo.x;
+//
+//             vec3 coords_tex = niri_geo_to_tex * coords;
+//             vec4 color = texture2D(niri_tex, coords_tex.st);
+//
+//             // Clip pixels that slid in from off-screen
+//             if (coords.x < 0.0 || coords.x > 1.0) {
+//                 color = vec4(0.0);
+//             }
+//
+//             return color;
+//         }
+//     "
+// }
+// ```
+//
+// **Window Close:**
+// ```kdl
+// window-close {
+//     duration-ms 300
+//     curve "ease-in-expo"
+//     custom-shader r"
+//         vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+//             float offset = niri_clamped_progress * size_geo.x;
+//             vec3 coords = coords_geo;
+//             coords.x -= offset / size_geo.x;
+//
+//             vec3 coords_tex = niri_geo_to_tex * coords;
+//             vec4 color = texture2D(niri_tex, coords_tex.st);
+//
+//             // Clip pixels that slid off-screen
+//             if (coords.x < 0.0 || coords.x > 1.0) {
+//                 color = vec4(0.0);
+//             }
+//
+//             return color;
+//         }
+//     "
+// }
+// ```
+//
+// ---
+//
+// ### 4. GNOME (slide + fade combo)
+//
+// **Window Open:**
+// ```kdl
+// window-open {
+//     duration-ms 250
+//     curve "ease-out-quad"
+//     custom-shader r"
+//         vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+//             float progress = niri_clamped_progress;
+//             float offset = (1.0 - progress) * size_geo.x * 0.3;
+//
+//             vec3 coords = coords_geo;
+//             coords.x -= offset / size_geo.x;
+//
+//             vec3 coords_tex = niri_geo_to_tex * coords;
+//             vec4 color = texture2D(niri_tex, coords_tex.st);
+//
+//             if (coords.x < 0.0 || coords.x > 1.0) {
+//                 color = vec4(0.0);
+//             }
+//
+//             // Add fade
+//             color *= progress;
+//
+//             return color;
+//         }
+//     "
+// }
+// ```
+//
+// **Window Close:**
+// ```kdl
+// window-close {
+//     duration-ms 250
+//     curve "ease-in-quad"
+//     custom-shader r"
+//         vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+//             float progress = niri_clamped_progress;
+//             float offset = progress * size_geo.x * 0.3;
+//
+//             vec3 coords = coords_geo;
+//             coords.x -= offset / size_geo.x;
+//
+//             vec3 coords_tex = niri_geo_to_tex * coords;
+//             vec4 color = texture2D(niri_tex, coords_tex.st);
+//
+//             if (coords.x < 0.0 || coords.x > 1.0) {
+//                 color = vec4(0.0);
+//             }
+//
+//             // Add fade
+//             color *= (1.0 - progress);
+//
+//             return color;
+//         }
+//     "
+// }
+// ```
+//
+// ---
+//
+// ### 5. SLIDE VERTICAL (slide up/down)
+//
+// **Window Open (slide from bottom):**
+// ```kdl
+// window-open {
+//     duration-ms 300
+//     curve "ease-out-expo"
+//     custom-shader r"
+//         vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+//             float offset = (1.0 - niri_clamped_progress) * size_geo.y;
+//             vec3 coords = coords_geo;
+//             coords.y -= offset / size_geo.y;
+//
+//             vec3 coords_tex = niri_geo_to_tex * coords;
+//             vec4 color = texture2D(niri_tex, coords_tex.st);
+//
+//             if (coords.y < 0.0 || coords.y > 1.0) {
+//                 color = vec4(0.0);
+//             }
+//
+//             return color;
+//         }
+//     "
+// }
+// ```
+//

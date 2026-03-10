@@ -5,7 +5,7 @@ pkgver=25.11.117r89978dd
 pkgrel=1
 pkgdesc="A scrollable-tiling Wayland compositor"
 arch=(x86_64)
-url="https://github.com/YaLTeR/niri"
+url="https://github.com/Atan-D-RP4/niri"
 license=(GPL-3.0-or-later)
 depends=(
 	cairo
@@ -45,6 +45,7 @@ provides=(wayland-compositor)
 source=(
 	"${pkgname}::git+https://github.com/Atan-D-RP4/niri.git#branch=personal"
 )
+conflicts=("${pkgname%-custom}-bin" "${pkgname%-git}")
 md5sums=('SKIP')
 # sha512sums=('88adbfc1b993d692e981d811dbfcb0898fefbc184c5659a14b4f61cf9e1dcf5c9eb100e68807710ed9ed89799277fafbecf9fc3057c41d93c19dbaf96350a697')
 # b2sums=('1ae432534044bbc4ab34d30d1c52e2f90e0391e5d04611c1b7ec60ccb1ba6fe87ff4c28f82de26d8eee2c839deb37c8096deec2ee7819884a23bfa4f3746c147')
@@ -71,7 +72,8 @@ build() {
 	export NIRI_BUILD_COMMIT="$(git rev-parse --short HEAD)"
 
 	# Make build smaller and faster for this CPU
-	export RUSTFLAGS="-C target-cpu=native"
+	export CC=clang
+	export RUSTFLAGS="-C target-cpu=native -L $(find target/release/build/libspa-*/out -maxdepth 0 2>/dev/null | head -1)"
 	export CARGO_PROFILE_RELEASE_CODEGEN_UNITS=1
 	export CARGO_PROFILE_RELEASE_LTO=thin
 
@@ -93,12 +95,14 @@ build() {
 
 package() {
 	cd "$pkgname"
-	install -vDm 755 {target/release/$pkgname,resources/$pkgname-session} -t "$pkgdir/usr/bin/"
-	install -vDm 644 resources/$pkgname{.service,-shutdown.target} -t "$pkgdir/usr/lib/systemd/user/"
-	install -vDm 644 resources/$pkgname.desktop -t "$pkgdir/usr/share/wayland-sessions/"
-	install -vDm 644 resources/$pkgname-portals.conf -t "$pkgdir/usr/share/xdg-desktop-portal/"
-	install -vDm 644 resources/default-config.kdl README.md -t "$pkgdir/usr/share/doc/$pkgname/"
+	install -Dm755 "target/release/${pkgname%-custom}" -t "${pkgdir}/usr/bin/"
+	install -Dm755 "resources/${pkgname%-custom}-session" -t "${pkgdir}/usr/bin/"
+	install -Dm644 resources/default-config.kdl -t "${pkgdir}/usr/share/doc/niri"
+	install -Dm644 "resources/${pkgname%-custom}.desktop" -t "${pkgdir}/usr/share/wayland-sessions/"
+	install -Dm644 "resources/${pkgname%-custom}-portals.conf" -t "${pkgdir}/usr/share/xdg-desktop-portal/"
+	install -Dm644 "resources/${pkgname%-custom}"{.service,-shutdown.target} -t "${pkgdir}/usr/lib/systemd/user/"
 	# shell auto-completions
-	install -vDm 644 fish-completions "$pkgdir/usr/share/fish/vendor_completions.d/niri.fish"
-	strip -s "$pkgdir/usr/bin/niri"
+	install -vDm 644 fish-completions "${pkgdir}/usr/share/fish/vendor_completions.d/niri.fish"
+	strip -s "${pkgdir}/usr/bin/niri"
+
 }

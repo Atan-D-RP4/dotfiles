@@ -1,14 +1,8 @@
-# -*- mode: conf-unix -*- [[https://wiki.archlinux.org/title/XDG_MIME_Applications#mimeapps.list][Mimetype]] application configuration.
 [Added Associations]
 inode/directory=org.kde.dolphin.desktop;ranger.desktop;
 application/x-cue=nvim.desktop;
 text/plain=nvim.desktop;
 application/x-wine-extension-ini=nvim.desktop;
-
-###############################################################################
-#                                Media Players                                #
-###############################################################################
-
 audio/flac=mpv.desktop;vlc.desktop;
 audio/mp4=mpv.desktop;vlc.desktop;
 audio/mpeg=mpv.desktop;vlc.desktop;
@@ -18,11 +12,6 @@ video/mp4=mpv.desktop;vlc.desktop;
 video/x-matroska=mpv.desktop;vlc.desktop;
 video/x-ms-wmv=mpv.desktop;vlc.desktop;
 video/x-msvideo=mpv.desktop;vlc.desktop;
-
-###############################################################################
-#                              Protocol Handlers                              #
-###############################################################################
-
 x-scheme-handler/http=zen.desktop;librewolf.desktop;brave-browser.desktop;
 x-scheme-handler/https=zen.desktop;librewolf.desktop;brave-browser.desktop;
 x-scheme-handler/mailto=emacsclient-mail.desktop;
@@ -35,22 +24,21 @@ application/x-extension-shtml=zen.desktop;
 application/xhtml+xml=zen.desktop;
 application/x-extension-xhtml=zen.desktop;
 application/x-extension-xht=zen.desktop;
+application/pdf=zen.desktop;
+image/png=satty.desktop;
 
 [Default Applications]
 application/x-cue=nvim.desktop;
 application/x-wine-extension-ini=nvim.desktop;
-
-application/pdf=org.pwmt.zathura.desktop
+application/pdf=org.pwmt.zathura.desktop;zen.desktop;
 application/vnd.comicbook+rar=sxcv.desktop
 application/vnd.comicbook+zip=sxcv.desktop
 application/x-cb7=sxcv.desktop;
-
 image/jp2=sxiv-ls.desktop
 image/jpeg=sxiv-ls.desktop
 image/png=sxiv-ls.desktop;
 image/svg+xml=sxiv-ls.desktop
 image/webp=sxiv-ls.desktop;
-
 inode/directory=thunar.desktop
 x-scheme-handler/mailto=emacsclient-mail.desktop;
 x-scheme-handler/http=zen.desktop

@@ -10,14 +10,39 @@ layer-rule {
     place-within-backdrop true
 }
 
+// Block out sensitive components from screencasts
+layer-rule {
+    match namespace="^dms:clipboard$"
+    block-out-from "screencast"
+}
+
+// Shadows for the bar and dock layers, which are otherwise ignored by the default shadow rules.
+layer-rule {
+    match namespace="^dms:bar$"
+    match namespace="^dms:dock$"
+
+    shadow {
+	// on
+	off
+	softness 40
+	spread 5
+	offset x=2 y=2
+	draw-behind-window true
+	color "#00000064"
+	// inactive-color "#00000064"
+    }
+}
+
 // ==========================================
 
 // ============== Window Rules ==============
+
 // Enable rounded corners for all windows
 // And disable border drawing with background by default
 window-rule {
-    geometry-corner-radius 8
+    geometry-corner-radius 12
     clip-to-geometry true
+    tiled-state true
     draw-border-with-background false
 }
 
@@ -47,6 +72,12 @@ window-rule {
     clip-to-geometry true
 }
 
+// Open browser windows as fullscreen by default.
+window-rule {
+    match app-id=r#"^(zen|[Ff]irefox|org\.mozilla\.firefox|[Cc]hromium|[Bb]rave)$"#
+    open-fullscreen true
+}
+
 // Open the Zen|Firefox picture-in-picture player as floating by default.
 window-rule {
     // This app-id regular expression will work for both:
@@ -62,11 +93,14 @@ window-rule {
 
 // Browser popups (Sign In, Sign Up, Extensions) - open as floating
 window-rule {
-    match app-id=r#"^(zen|firefox|org\.mozilla\.firefox)$"# title=r#"(?i)(Extension|Sign[ ]In|Log[ ]In|Sign[ ]Up)"# is-floating=true
-    opacity 0.5
+    match app-id=r#"^(zen|firefox|org\.mozilla\.firefox)$"#
+    match title=r#"(?i)([Ee]xtension|Sign[ ]In|Log[ ]In|Sign[ ]Up(?:))"#
+
+    opacity 0.8
+    open-floating true
     default-floating-position x=16 y=48 relative-to="top-right"
-    max-width 720
-    max-height 720
+    default-column-width { fixed 480; }
+    default-window-height { fixed 480; }
 }
 
 // Open satty as floating+focused by default.
@@ -81,7 +115,6 @@ window-rule {
     match app-id=r#"^org\.keepassxc\.KeePassXC$"#
     match app-id=r#"^org\.gnome\.World\.Secrets$"#
     match app-id=r#"^zen|zoom|firefox$"# title=r#"^Extension.*Bitwarder.*$"#
-
     block-out-from "screen-capture"
 
     // Use this instead if you want them visible on third-party screenshot tools.
@@ -108,24 +141,29 @@ window-rule {
     open-floating true
 }
 
-// Remove borders from certain terminal emulators.
+// Make all windows slightly transparent by default
 window-rule {
-    match app-id=r#"^org\.wezfurlong\.wezterm$"#
-    match app-id=r#"Alacritty|kitty"#
-    match app-id="com.mitchellh.ghostty"
-    draw-border-with-background false
+    opacity 0.90
 }
 
 // Make inactive windows slightly transparent
 window-rule {
     match is-active=false
-    opacity 0.9
+    opacity 0.7
 }
 
 // Open dms windows as floating by default
 window-rule {
     match app-id=r#"org.quickshell$"#
     open-floating true
+}
+
+// Remove borders from certain terminal emulators.
+window-rule {
+    match app-id=r#"^org\.wezfurlong\.wezterm$"#
+    match app-id=r#"Alacritty|kitty"#
+    match app-id="com.mitchellh.ghostty"
+    draw-border-with-background false
 }
 
 // Open Terminal windows as maximized by default
@@ -135,6 +173,34 @@ window-rule {
     match app-id=r#"Alacritty|kitty"#
     match app-id="com.mitchellh.ghostty"
     match is-focused=true
-    open-maximized true
+    open-maximized-to-edges true
 }
+
+// Enable on-demand VRR when mpv displays on the output.
+window-rule {
+    match app-id="^mpv$"
+
+    variable-refresh-rate true
+}
+
+// Indicate screencasted windows with urgent state and a custom border.
+// Make all is-urgent windows draw attention with a unique border.
+window-rule {
+    match is-window-cast-target=true
+    match is-urgent=true
+
+    border {
+	urgent-gradient from="#f38ba8" to="#7d0d2d70" angle=360 in="oklch longer hue"
+    }
+
+    shadow {
+        color "#7d0d2d70"
+    }
+
+    tab-indicator {
+        active-color "#f38ba8"
+        inactive-color "#7d0d2d"
+    }
+}
+
 // ==========================================

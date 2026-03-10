@@ -17,6 +17,7 @@ packages \
 # Link config files
 link -f \
 	config.kdl:"$XDG_CONFIG_HOME/niri/config.kdl" \
+	config:"$XDG_CONFIG_HOME/niri/config" \
 	binds.kdl:"$XDG_CONFIG_HOME/niri/binds.kdl" \
 	rules.kdl:"$XDG_CONFIG_HOME/niri/rules.kdl" \
 	dms:"$XDG_CONFIG_HOME/niri/dms" \

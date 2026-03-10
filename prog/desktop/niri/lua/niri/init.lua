@@ -329,11 +329,23 @@ function M.start()
 	end
 end
 
----@param events EventVariant[]
+---@param events EventVariant[]|EventVariant
 ---@param callback function
 ---@return nil
 function M.autocmd(events, callback)
 	M.config.dispatcher:on(events, callback)
+end
+
+function M.execute_action(action, success_msg, error_msg)
+	ipc.command({ Action = action }, function(ok, resp)
+		if ok then
+			if success_msg then
+				log.debug(success_msg, resp)
+			end
+		else
+			log.error(error_msg or "Command failed:", resp)
+		end
+	end, M.config.sockpath)
 end
 
 --- Execute a command with callback-based async result

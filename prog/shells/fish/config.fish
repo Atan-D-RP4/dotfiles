@@ -24,6 +24,9 @@ end
 set -x SHELL /usr/bin/fish
 
 abbr mkdir 'mkdir -p'
+abbr cdv 'cd $XDG_DEV_HOME/repos/'
+abbr cdc 'cd $XDG_CONFIG_HOME/'
+
 alias ll='ls -latr'
 
 if type -q deno
