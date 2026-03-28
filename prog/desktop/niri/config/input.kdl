@@ -34,8 +34,8 @@ input {
         tap
         // dwt
         // dwtp
-        drag true
-        drag-lock
+        // drag true
+        // drag-lock
         natural-scroll
         accel-speed 0.5
         accel-profile "adaptive"

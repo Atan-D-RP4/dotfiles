@@ -48,7 +48,7 @@
 	required = true
 
 [diff]
-	context = 0
+	context = 2
 	renames = true
 	mnemonicPrefix = true
 	colorMoved = plain

@@ -3,9 +3,13 @@ environment {
   DMS_DANKBAR_LAYER "overlay"
   DMS_POPOUT_LAYER "overlay"
   DMS_MODAL_LAYER "overlay"
+  DMS_OSD_LAYER "overlay"
   DMS_NOTIFICATION_LAYER "overlay"
+  DMS_SLIDEOUT_LAYER "overlay"
+
   XDG_CURRENT_DESKTOP "niri"
   XDG_SESSION_DESKTOP "niri"
+
   QT_QPA_PLATFORM "wayland" // prefer wayland, fall back to xcb
   ELECTRON_OZONE_PLATFORM_HINT "auto"
   QT_QPA_PLATFORMTHEME "gtk3"
@@ -17,6 +21,7 @@ environment {
 // which may be more convenient to use.
 // See the binds section below for more spawn examples.
 // spawn-at-startup "dms" "run" // This line starts Dank Material Shell
+
 // You should make dms session depend on the Niri session though; "systemctl --user add-wants niri.service dms"
 
 // Set up the environment for Wayland apps and systemd user services.
@@ -29,14 +34,20 @@ spawn-sh-at-startup "systemctl --user import-environment --all"
 spawn-at-startup "app2unit" "-s" "s" "-t" "service" "-C" "-p" "Restart=on-failure" "udiskie" "--no-automount" "--smart-tray"
 spawn-at-startup "app2unit" "-s" "s" "-t" "service" "-C" "-p" "Restart=on-failure" "kitty" "--single-instance" "--start-as=hidden"
 spawn-at-startup "app2unit" "-s" "s" "-t" "service" "-C" "-p" "Restart=on-failure" "dms" "run"
+spawn-at-startup "app2unit" "-s" "s" "-t" "service" "-C" "-p" "Restart=on-failure" "luajit" "$XDG_CONFIG_HOME/niri/init.lua"
 // spawn-at-startup "systemctl --user start dms.service"
+
+// Kill any existing instances of the portals to avoid conflicts, since they don't support multiple instances.
+spawn-at-startup "killall" "-e" "xdg-desktop-portal;"
+spawn-at-startup "killall" "-e" "xdg-desktop-portal-gtk;"
+spawn-at-startup "killall" "-e" "xdg-desktop-portal-gnome;"
+
+// Spawn them as services under systemd to have better lifecycle management.
+spawn-at-startup "app2unit" "-s" "s" "-t" "service" "-C" "-p" "Restart=on-failure" "/usr/lib/xdg-desktop-portal"
+spawn-at-startup "app2unit" "-s" "s" "-t" "service" "-C" "-p" "Restart=on-failure" "/usr/lib/xdg-desktop-portal-gtk"
+spawn-at-startup "app2unit" "-s" "s" "-t" "service" "-C" "-p" "Restart=on-failure" "/usr/lib/xdg-desktop-portal-gnome"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
-spawn-sh-at-startup "app2unit -s s -t service -C -p Restart=on-failure luajit $XDG_CONFIG_HOME/niri/init.lua"
 
-// Spawn them as services under systemd to have better lifecycle management.
-spawn-sh-at-startup "killall -e xdg-desktop-portal      ; app2unit -s s -t service -C -p Restart=on-failure /usr/lib/xdg-desktop-portal"
-spawn-sh-at-startup "killall -e xdg-desktop-portal-gtk  ; app2unit -s s -t service -C -p Restart=on-failure /usr/lib/xdg-desktop-portal-gtk"
-spawn-sh-at-startup "killall -e xdg-desktop-portal-gnome; app2unit -s s -t service -C -p Restart=on-failure /usr/lib/xdg-desktop-portal-gnome"
-
+spawn-at-startup "foot"

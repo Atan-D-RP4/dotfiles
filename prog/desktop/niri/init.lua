@@ -188,6 +188,26 @@ niri.autocmd({ "WindowOpenedOrChanged", "WindowClosed" }, function(_ctx)
 		timer:close()
 	end)
 end)
+--
+-- niri.autocmd({ "WorkspaceActivated" }, function(ctx)
+-- 	if niri.state.overview_open then
+-- 		log.info("Overview is open, skipping workspace change actions")
+-- 		return
+-- 	end
+-- 	log.info("Workspace activated:", ctx.data)
+--
+-- 	local actions = {
+-- 		{ "DoScreenTransition", { delay_ms = 500 } },
+-- 	}
+--
+-- 	for _, action in ipairs(actions) do
+-- 		niri.execute_action(
+-- 			{ [action[1]] = action[2] },
+-- 			"Successfully executed action" .. log.format_message(action),
+-- 			"Failed to execute action" .. log.format_message(action)
+-- 		)
+-- 	end
+-- end)
 
 --- Niri IPC Event Stream Start
 log.info(niri.request("Version", 500))

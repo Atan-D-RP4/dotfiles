@@ -3,6 +3,7 @@
 // https://yalter.github.io/niri/Configuration:-Animations
 animations {
     // slowdown 0.0 // Basically disable animations entirely
+    // off
     workspace-switch {
         // duration-ms 300
         // curve "cubic-bezier" 0.25 0.1 0.25 1 // CSS cubic-bezier curve

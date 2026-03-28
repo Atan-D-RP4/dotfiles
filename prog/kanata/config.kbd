@@ -15,7 +15,7 @@
 
 (defoverrides
   (ralt \) (tab)
-  ;; (ralt [) (esc)
+  (ralt ;) (esc)
 )
 
 (defchordsv2

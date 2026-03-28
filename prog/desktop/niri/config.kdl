@@ -18,28 +18,33 @@ include "dms/alttab.kdl"       // Includes DMS alt-tab settings
 
 // Use a custom build of xwayland-satellite.
 xwayland-satellite {
-    path "/usr/bin/xwayland-satellite"
+    // off
+    path "xwayland-satellite"
 }
 
 switch-events {
     tablet-mode-on {
         spawn \
         "sh" "-c" \
-        "notify-send 'Tablet Mode: On' ;
-        # niri msg output $(niri msg --json focused-output | jq -r '.name') transform 90 ;
-        niri msg action do-screen-transition --delay-ms 500 ;
-        dms ipc call bar manualHide index 0;
-        wvkbd-mobintl" \
+        "
+            notify-send 'Tablet Mode: On' ;
+            # niri msg output $(niri msg --json focused-output | jq -r '.name') transform 90 ;
+            niri msg action do-screen-transition --delay-ms 500 ;
+            dms ipc call bar manualHide index 0;
+            wvkbd-mobintl
+        " \
         ;
     }
     tablet-mode-off {
         spawn \
         "sh" "-c" \
-        "notify-send 'Tablet Mode: Off' ;
-        # niri msg output $(niri msg --json focused-output | jq -r '.name') transform normal ;
-        niri msg action do-screen-transition --delay-ms 500 ;
-        dms ipc call bar autoHide index 0;
-        pkill wvkbd-mobintl" \
+        "
+            notify-send 'Tablet Mode: Off' ;
+            # niri msg output $(niri msg --json focused-output | jq -r '.name') transform normal ;
+            niri msg action do-screen-transition --delay-ms 500 ;
+            dms ipc call bar autoHide index 0;
+            pkill wvkbd-mobintl
+        " \
         ;
     }
 }
@@ -96,7 +101,7 @@ gestures {
 }
 
 overview {
-    zoom 0.65
+    zoom 0.4
 
     workspace-shadow {
         // off
