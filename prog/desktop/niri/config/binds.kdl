@@ -91,8 +91,12 @@ binds {
     // but you need to manually put each argument in separate "" quotes.
     XF86MonBrightnessUp   allow-when-locked=true hotkey-overlay-title="Brightness Up" { spawn-sh "dms ipc call brightness increment 2.5 ''"; }
     XF86MonBrightnessDown allow-when-locked=true hotkey-overlay-title="Brightness Down" { spawn-sh "dms ipc call brightness decrement 2.5 ''"; }
-    Mod+XF86MonBrightnessDown hotkey-overlay-title="Disable Exponential Brightness" allow-when-locked=true { spawn-sh "dms ipc call brightness disableExponential ''"; }
-    Mod+XF86MonBrightnessUp hotkey-overlay-title="Enable Exponential Brightness" allow-when-locked=true { spawn-sh "dms ipc call brightness enableExponential ''"; }
+    Mod+XF86MonBrightnessUp hotkey-overlay-title="Enable Exponential Brightness" allow-when-locked=true {
+        spawn-sh "dms ipc call brightness enableExponential ''; notify-send 'Exponential Brightness enabled'";
+    }
+    Mod+XF86MonBrightnessDown hotkey-overlay-title="Disable Exponential Brightness" allow-when-locked=true {
+        spawn-sh "dms ipc call brightness disableExponential ''; notify-send 'Exponential Brightness disabled'";
+    }
 
     // === System & Overview ===
     // Open/close the Overview: a zoomed-out view of workspaces and windows.

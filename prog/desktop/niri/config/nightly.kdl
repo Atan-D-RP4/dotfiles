@@ -11,6 +11,13 @@ cursor {
     scale-with-zoom false
 }
 
+binds {
+    Mod+Alt+Equal   { set-zoom-level "+0.3"; }
+    Mod+Alt+Minus   { set-zoom-level "-0.3"; }
+    Mod+Z           { set-zoom-level "1.0"; }
+    Mod+Shift+Z     { toggle-zoom-lock; } // locks focal center, will also make it lock level
+}
+
 // ========================
 
 
