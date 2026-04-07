@@ -1,7 +1,7 @@
 (defcfg
   process-unmapped-keys yes
   concurrent-tap-hold yes
-  sequence-input-mode hidden-delay-type
+  sequence-input-mode hidden-suppressed
   override-release-on-activation yes
   delegate-to-first-layer yes
   alias-to-trigger-on-load 2hrw
@@ -24,11 +24,11 @@
 )
 
 (defalias
-  lay    (layer-toggle layers)
+  layl   (layer-toggle layers)
+  layn   (layer-toggle numbers)
 
-  num   (tap-hold-release $tap-time $hold-time ' (layer-toggle numbers))
-
-  grl   (tap-hold-release $tap-time $hold-time grv @lay)
+  num   (tap-hold-release $tap-time $hold-time '   @layn)
+  grl   (tap-hold-release $tap-time $hold-time grv @layl)
 
   a-lmt (tap-hold       $tap-time       $hold-time         a              lmet)
   s-lal (tap-hold       $tap-time       $hold-time         s              lalt)
@@ -45,6 +45,18 @@
   esc   caps
 )
 
+(defalias
+  mrgt-hold (multi
+    (on-press press-vkey vk-lmet)
+    (on-release release-vkey vk-lmet)
+  )
+  mrgt-meta (tap-hold-press $tap-time $hold-time mrgt @mrgt-hold)
+)
+
+(defvirtualkeys
+  vk-lmet lmet
+)
+
 (defsrc
   esc     f1      f2      f3      f4      f5      f6      f7      f8      f9      f10     f11     f12
   grv     1       2       3       4       5       6       7       8       9       0       -       =       bspc
@@ -52,6 +64,7 @@
   caps    a       s       d       f       g       h       j       k       l       ;       '       ret
   lsft    z       x       c       v       b       n       m       ,       .       /       rsft    up
   lctl    lmet    lalt                    spc                     ralt    rmet    rctl    left    down    right
+  mrgt
 )
 
 (deflayer base-layer
@@ -61,6 +74,7 @@
   @cap    _       _       _       _       _       _       _       _       _       _       @num    @ret
   _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _                       _                       _       _       _       _       _       _
+  @mrgt-meta
 )
 
 (deflayer homerow-kbd
@@ -70,6 +84,7 @@
   @cap    @a-lmt  @s-lal  @d-lct  @f-lsh  _       _       @j-rmt  @k-rct  @l-ral  @;-rsh  @num    @ret
   _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _                       _                       _       _       _       _       _       _
+  @mrgt-meta
 )
 
 (deflayer numbers
@@ -79,6 +94,7 @@
   _       4       5       6       _       _       _       _       _       _       _       _       _
   _       7       8       9       _       _       _       _       _       _       _       _       _
   _       _       0                       _                       _       _       _       _       _       _
+  _
 )
 
 (deflayer layers
@@ -88,6 +104,7 @@
   _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _                       _                       _       _       _       _       _       _
+  _
 )
 
 (defalias

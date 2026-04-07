@@ -280,7 +280,7 @@ binds {
     // === Sizing & Layout ===
     Mod+R { switch-preset-column-width; }
     // Cycling through the presets in reverse order is also possible.
-    // Mod+R { switch-preset-column-width-back; }
+    Mod+Alt+R { switch-preset-column-width-back; }
     Mod+Shift+R { switch-preset-window-height; }
     Mod+Ctrl+R { reset-window-height; }
     // Mod+Ctrl+Shift+R { reset-window-width; }
