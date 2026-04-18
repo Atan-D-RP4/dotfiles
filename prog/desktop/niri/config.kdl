@@ -146,6 +146,13 @@ recent-windows { // Override to disable super+tab
     }
 }
 
+blur {
+   passes 3        // more passes = stronger blur (default: 3)
+   offset 3.0      // samplc6d4965ae distance per pass (default: 3.0)
+   noise 0.02      // grain overlay (default: 0.02)
+   saturation 1.5  // color saturation boost (default: 1.5)
+}
+
 /-workspace "special" {
     open-on-output "eDP-1"
 }

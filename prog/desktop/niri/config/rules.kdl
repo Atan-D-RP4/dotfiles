@@ -33,6 +33,18 @@ layer-rule {
     }
 }
 
+layer-rule {
+    exclude namespace="dms:(bar|quickterm)"
+    exclude namespace="wayscriber"
+
+    background-effect {
+	xray true
+	blur true
+	noise 0.02      // grain overlay (default: 0.02)
+	saturation 1.0  // color saturation boost (default: 1.5)
+    }
+}
+
 // ==========================================
 
 // ============== Window Rules ==============
@@ -142,8 +154,15 @@ window-rule {
 }
 
 // Make all windows slightly transparent by default
+// And enable xray blur for them
 window-rule {
     opacity 0.90
+    background-effect {
+	xray true
+	blur true
+	noise 0.04      // grain overlay (default: 0.02)
+	saturation 1.5  // color saturation boost (default: 1.5)
+    }
 }
 
 // Make inactive windows slightly transparent
@@ -154,7 +173,7 @@ window-rule {
 
 // Open dms windows as floating by default
 window-rule {
-    match app-id=r#"org.quickshell$"#
+    match app-id=r#"^com.danklinux.dms$"#
     open-floating true
 }
 
