@@ -31,17 +31,26 @@ link -f \
 packages \
 	pacman:tlp,thermald
 
+# Printer
+packages \
+	pacman:cups,cups-pdf,cups-filters,cups-pk-helper
+
 # Audio
 packages \
 	pacman:pipewire,pipewire-alsa,pipewire-jack,pipewire-audio,pipewire-pulse,wireplumber,gst-plugin-pipewire
+packages \
+	pacman:easyeffects,lsp-plugins,calf,zam-plugins,mda.lv2,libebur128,zita-convolver,rubberband,rnnoise
 
 # File Manager
 packages \
 	pacman:thunar,thunar-archive-plugin,thunar-volman,thunar-media-tags-plugin,engrampa
+# For MTP (android) devices
+packages \
+	pacman:gvfs-mtp
 
 # Misc
 packages \
-	pacman:udiskie,libinput-tools,smartmontools
+	pacman:udiskie,smartmontools
 
 # Security
 import ../../apparmor/

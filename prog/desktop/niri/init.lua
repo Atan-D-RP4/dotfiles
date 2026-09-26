@@ -108,10 +108,9 @@ niri.autocmd("WindowOpenedOrChanged", function(ctx)
 	log.info("Detected browser pop-up window:", ctx.data.window.title)
 	local actions = {
 		{ "MoveWindowToFloating", { id = window_id } },
-		{ "MoveFloatingWindow", { id = window_id, x = { SetFixed = 100 }, y = { SetFixed = 100 } } },
+		{ "MoveFloatingWindow", { id = window_id, x = { SetFixed = 200 }, y = { SetFixed = 200 } } },
 		{ "SetWindowWidth", { id = window_id, change = { SetFixed = 635 } } },
 		{ "SetWindowHeight", { id = window_id, change = { SetFixed = 640 } } },
-		{ "ToggleWindowUrgent", { id = window_id } },
 	}
 
 	for _, action in ipairs(actions) do

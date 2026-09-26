@@ -1,6 +1,3 @@
-# -*- mode: conf-space -*-
-# vim:syntax=tmux filetype=tmux
-
 run 'tmux setenv -g TMUX_VERSION $(tmux -V | sed -En "s/^tmux[^0-9]*([.0-9]+).*/\1/p")'
 
 run '\
@@ -67,7 +64,7 @@ set -g activity-action  other
 set -g bell-action      other
 set -g silence-action   other
 
-# change leader to C-q
+# change leader to C-a
 unbind C-b
 set -g prefix C-a
 bind C-a send-prefix
@@ -438,3 +435,6 @@ run '$HOME/.tmux/plugins/tpm/tpm'
 if-shell '[ -e "$TMUX_HOME/tmux-local.conf" ]' {
   source $TMUX_HOME/tmux-local.conf
 }
+
+# -*- mode: conf-space -*-
+# vim:syntax=tmux filetype=tmux

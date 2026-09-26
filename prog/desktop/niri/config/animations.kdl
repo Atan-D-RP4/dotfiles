@@ -5,14 +5,20 @@ animations {
     // slowdown 0.0 // Basically disable animations entirely
     // off
     workspace-switch {
-        // duration-ms 300
-        // curve "cubic-bezier" 0.25 0.1 0.25 1 // CSS cubic-bezier curve
-        spring damping-ratio=0.80 stiffness=523 epsilon=0.0001
+        duration-ms 200
+        curve "cubic-bezier" 0.25 0.1 0.25 1 // CSS cubic-bezier curve
+        // spring damping-ratio=0.80 stiffness=523 epsilon=0.0001
+    }
+
+    screen-transition {
+        duration-ms 1000
+        curve "ease-out-quad"
+        custom-shader path="./shaders/screen-transition.frag"
     }
 
     window-open {
         duration-ms 200
-        curve "cubic-bezier" 0.05 0.7 0.1 1 // CSS cubic-bezier curve"
+        curve "ease-out-expo"
         custom-shader r"
             vec4 open_color(vec3 coords_geo, vec3 size_geo) {
                 float progress = niri_clamped_progress;
@@ -37,7 +43,7 @@ animations {
     }
 
     window-close {
-        duration-ms 150
+        duration-ms 200
         curve "ease-out-quad"
         custom-shader r"
             vec4 close_color(vec3 coords_geo, vec3 size_geo) {
@@ -101,6 +107,9 @@ animations {
         spring damping-ratio=0.85 stiffness=800 epsilon=0.0001
     }
 
+    recent-windows-close {
+        curve "ease-out-expo"
+    }
 }
 
 //

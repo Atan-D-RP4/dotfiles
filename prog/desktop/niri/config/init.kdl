@@ -5,7 +5,6 @@ environment {
   DMS_MODAL_LAYER "overlay"
   DMS_OSD_LAYER "overlay"
   DMS_NOTIFICATION_LAYER "overlay"
-  DMS_SLIDEOUT_LAYER "overlay"
 
   XDG_CURRENT_DESKTOP "niri"
   XDG_SESSION_DESKTOP "niri"
@@ -34,7 +33,9 @@ spawn-sh-at-startup "systemctl --user import-environment --all"
 spawn-at-startup "app2unit" "-s" "s" "-t" "service" "-C" "-p" "Restart=on-failure" "udiskie" "--no-automount" "--smart-tray"
 spawn-at-startup "app2unit" "-s" "s" "-t" "service" "-C" "-p" "Restart=on-failure" "kitty" "--single-instance" "--start-as=hidden"
 spawn-at-startup "app2unit" "-s" "s" "-t" "service" "-C" "-p" "Restart=on-failure" "dms" "run"
-spawn-at-startup "app2unit" "-s" "s" "-t" "service" "-C" "-p" "Restart=on-failure" "luajit" "$XDG_CONFIG_HOME/niri/init.lua"
+spawn-at-startup "app2unit" "-s" "s" "-t" "service" "-C" "-p" "Restart=on-failure" "luajit" "~/.config/niri/init.lua"
+spawn-at-startup "app2unit" "-s" "a" "-t" "service" "-u" "easyeffects.service" "--" "easyeffects" "--service-mode"
+
 // spawn-at-startup "systemctl --user start dms.service"
 
 // Kill any existing instances of the portals to avoid conflicts, since they don't support multiple instances.

@@ -48,7 +48,7 @@
 	required = true
 
 [diff]
-	context = 2
+	context = 1
 	renames = true
 	mnemonicPrefix = true
 	colorMoved = plain
@@ -91,6 +91,7 @@
 	merge = true
 	missingCommitsCheck = warn
 	autoupdate = true
+	updateRefs = true
 
 [merge]
 	conflictstyle = zdiff3

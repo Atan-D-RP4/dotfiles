@@ -6,20 +6,20 @@
 // Place quickshell in the backdrop layer
 // This gets DMS wallpaper as overview backdrop
 layer-rule {
-    match namespace="^quickshell$"
+    match namespace=r#"^quickshell$"#
     place-within-backdrop true
 }
 
 // Block out sensitive components from screencasts
 layer-rule {
-    match namespace="^dms:clipboard$"
+    match namespace=r#"^dms:clipboard$"#
     block-out-from "screencast"
 }
 
 // Shadows for the bar and dock layers, which are otherwise ignored by the default shadow rules.
 layer-rule {
-    match namespace="^dms:bar$"
-    match namespace="^dms:dock$"
+    match namespace=r#"^dms:bar$"#
+    match namespace=r#"^dms:dock$"#
 
     shadow {
 	// on
@@ -34,6 +34,7 @@ layer-rule {
 }
 
 layer-rule {
+    match namespace=r#"^dms:notification-popup$"#
     exclude namespace="dms:(bar|quickterm)"
     exclude namespace="wayscriber"
 
@@ -73,7 +74,9 @@ window-rule {
     // since this is the default config, and we want no false positives.
     // You can get away with just app-id="wezterm" if you want.
     match app-id=r#"^org\.wezfurlong\.wezterm$"#
-    default-column-width {}
+    default-column-width {
+
+    }
 }
 
 // Remove borders and rounded corners from GNOME apps.
@@ -96,7 +99,7 @@ window-rule {
     // - host Firefox (app-id is "firefox")
     // - Flatpak Firefox (app-id is "org.mozilla.firefox")
     // match app-id=r#"^zen|zoom|(org\.mozilla\.)?firefox$"#
-    match title=r#"^Picture-in-Picture$"#
+    match title="^Picture-in-Picture$"
     open-floating true
     default-floating-position x=16 y=48 relative-to="bottom-right"
     default-column-width { fixed 480; }
@@ -156,7 +159,7 @@ window-rule {
 // Make all windows slightly transparent by default
 // And enable xray blur for them
 window-rule {
-    opacity 0.90
+    opacity 0.925
     background-effect {
 	xray true
 	blur true
@@ -168,12 +171,15 @@ window-rule {
 // Make inactive windows slightly transparent
 window-rule {
     match is-active=false
+    exclude app-id=r#"^com.gabm.satty$"#
     opacity 0.7
 }
 
 // Open dms windows as floating by default
 window-rule {
     match app-id=r#"^com.danklinux.dms$"#
+    match app-id=r#"^org.quickshell$"#
+    opacity 0.8
     open-floating true
 }
 
@@ -197,7 +203,7 @@ window-rule {
 
 // Enable on-demand VRR when mpv displays on the output.
 window-rule {
-    match app-id="^mpv$"
+    match app-id=r#"^mpv$"#
 
     variable-refresh-rate true
 }

@@ -27,7 +27,7 @@ abbr mkdir 'mkdir -p'
 abbr cdv 'cd $XDG_DEV_HOME/repos/'
 abbr cdc 'cd $XDG_CONFIG_HOME/'
 
-alias ll='ls -latr'
+alias ls='ls -latr --hyperlink=auto --color=auto'
 
 if type -q deno
     function bw
@@ -43,6 +43,7 @@ end
 
 if type -q atuin
     atuin init fish | source
+    atuin gen-completions --shell fish | source
 end
 
 if type -q curl
@@ -66,13 +67,15 @@ if type -q nvim
     bind -M default  ctrl-o 'nvim +Oil' repaint
 end
 
-if type -q mpv && type -q uv
+if type -q mpv && type -q uv && type -q deno
     function ytplay
-        set url $(yt-dlp -g "ytsearch:$(read --prompt 'echo "Song Name: "')")
-        if test -n "$url"
-            mpv --no-video "$url"
-        else
-            echo "No results found."
-        end
+        read -P "Song Name: " song
+        test -z "$song"; and return
+
+        mpv \
+          --no-video \
+          --ytdl=yes \
+          --script-opts=ytdl_hook-ytdl_path="$HOME/.local/bin/yt-dlp" \
+          "ytdl://ytsearch1:$song"
     end
 end

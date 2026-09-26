@@ -54,7 +54,9 @@ config-notification {
 }
 
 cursor {
+    // scale-with-zoom true
     hide-when-typing
+    hide-after-inactive-ms 10000
 }
 
 // You can configure outputs by their name, which you can find
@@ -163,4 +165,28 @@ include "config/animations.kdl"
 include "config/input.kdl"
 include "config/binds.kdl"
 include "config/rules.kdl"
-include "config/nightly.kdl"
+// include optional=true "config/nightly.kdl"
+
+//
+// zoom {
+//     // movement-mode "cursor-follow"
+//     movement-mode "on-edge"
+//     // movement-mode "centered"
+//     zoom-filter-threshold 2.0
+//     increment-type "exponential"
+//     max-zoom 15.0
+//     pinch-sensitivity 1.5
+//     // use-fractional-scale true
+//     // scale-sensitivity 1.0
+// }
+//
+// binds {
+//     Mod+Alt+Equal { set-zoom-level "+0.1"; }
+//     Mod+Alt+Minus { set-zoom-level "-0.1"; }
+//     Mod+Alt+WheelScrollUp   { set-zoom-level "+0.1"; }
+//     Mod+Alt+WheelScrollDown { set-zoom-level "-0.1"; }
+//     Mod+Alt+TouchpadScrollDown  { set-zoom-level "+0.1"; }
+//     Mod+Alt+TouchpadScrollUp    { set-zoom-level "-0.1"; }
+//     Mod+Z { set-zoom-level "1.0"; }
+//     Mod+Shift+Z { toggle-zoom-lock; }    // Keys consist of modifiers separated by + signs, followed by an XKB key name
+// }

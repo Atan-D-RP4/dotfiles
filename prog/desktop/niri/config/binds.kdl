@@ -73,17 +73,22 @@ binds {
     // === Audio Controls ===
     // The allow-when-locked=true property makes them work even when the session is locked.
     // Using spawn-sh allows to pass multiple arguments together with the command.
-    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05+ -l 1.0"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05-"; }
-    XF86AudioMute        allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
-    XF86AudioMicMute     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+    // XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05+ -l 2.0"; }
+    // XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05- -l 2.0"; }
+    // XF86AudioMute        allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    // XF86AudioMicMute     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "increment" "5"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "decrement" "5"; }
+    XF86AudioMute        allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "mute"; }
+    Mod+XF86AudioMute    allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "micmute"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "micmute"; }
 
     // Example media keys mapping using playerctl.
     // Specific to DMS
     XF86AudioPause allow-when-locked=true { spawn "dms" "ipc" "call" "mpris" "playPause"; }
-    XF86AudioPlay allow-when-locked=true { spawn "dms" "ipc" "call" "mpris" "playPause"; }
-    XF86AudioPrev allow-when-locked=true { spawn "dms" "ipc" "call" "mpris" "previous"; }
-    XF86AudioNext allow-when-locked=true { spawn "dms" "ipc" "call" "mpris" "next"; }
+    XF86AudioPlay  allow-when-locked=true { spawn "dms" "ipc" "call" "mpris" "playPause"; }
+    XF86AudioPrev  allow-when-locked=true { spawn "dms" "ipc" "call" "mpris" "previous"; }
+    XF86AudioNext  allow-when-locked=true { spawn "dms" "ipc" "call" "mpris" "next"; }
 
 
     // === Brightness Controls ===
@@ -126,12 +131,12 @@ binds {
 
     // === Focus Navigation ===
     Mod+Left  { focus-column-left; }
-    Mod+Down  { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-window-or-workspace-down"; }
-    Mod+Up    { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-window-or-workspace-up"; }
+    Mod+Down  { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-window-or-workspace-down"; }
+    Mod+Up    { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-window-or-workspace-up"; }
     Mod+Right { focus-column-right; }
     Mod+H     { focus-column-left; }
-    Mod+J     { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-window-or-workspace-down"; }
-    Mod+K     { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-window-or-workspace-up"; }
+    Mod+J     { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-window-or-workspace-down"; }
+    Mod+K     { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-window-or-workspace-up"; }
     Mod+L     { focus-column-right; }
 
     // Alternative commands that move across workspaces when reaching
@@ -143,8 +148,8 @@ binds {
 
     // === Window Movement ===
     Mod+Ctrl+H     { move-column-left; }
-    Mod+Ctrl+J     { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action move-window-up-or-to-workspace-down"; }
-    Mod+Ctrl+K     { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action move-window-up-or-to-workspace-up"; }
+    Mod+Ctrl+J     { move-window-down-or-to-workspace-down; }
+    Mod+Ctrl+K     { move-window-up-or-to-workspace-up; }
     Mod+Ctrl+L     { move-column-right; }
 
     // === Column Navigation ===
@@ -180,10 +185,10 @@ binds {
     // ...
 
     // === Workspace Navigation ===
-    Mod+Page_Down      { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-workspace-down"; }
-    Mod+Page_Up        { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-workspace-up"; }
-    Mod+I              { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-workspace-down"; }
-    Mod+O              { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-workspace-up"; }
+    Mod+Page_Down      { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-workspace-down"; }
+    Mod+Page_Up        { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-workspace-up"; }
+    Mod+I              { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-workspace-down"; }
+    Mod+O              { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-workspace-up"; }
     Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
     Mod+Ctrl+Page_Up   { move-column-to-workspace-up; }
     Mod+Ctrl+I         { move-column-to-workspace-down; }
@@ -206,8 +211,8 @@ binds {
     // To avoid scrolling through workspaces really fast, you can use
     // the cooldown-ms property. The bind will be rate-limited to this value.
     // You can set a cooldown on any bind, but it's most useful for the wheel.
-    Mod+WheelScrollDown      cooldown-ms=150 { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-workspace-down"; }
-    Mod+WheelScrollUp        cooldown-ms=150 { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-workspace-up"; }
+    Mod+WheelScrollDown      cooldown-ms=150 { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-workspace-down"; }
+    Mod+WheelScrollUp        cooldown-ms=150 { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-workspace-up"; }
     Mod+Ctrl+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-down; }
     Mod+Ctrl+WheelScrollUp   cooldown-ms=150 { move-column-to-workspace-up; }
 
@@ -229,8 +234,8 @@ binds {
     // These binds are also affected by touchpad's natural-scroll, so these
     // example binds are "inverted", since we have natural-scroll enabled for
     // touchpads by default.
-    Mod+TouchpadScrollDown hotkey-overlay-title="Volume Down" { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.02+"; }
-    Mod+TouchpadScrollUp hotkey-overlay-title="Volume Up" { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.02-"; }
+    Mod+TouchpadScrollDown hotkey-overlay-title="Volume Down" { spawn "dms" "ipc" "call" "audio" "increment" "0.02"; }
+    Mod+TouchpadScrollUp hotkey-overlay-title="Volume Up" { spawn "dms" "ipc" "call" "audio" "decrement" "0.02"; }
 
     // === Numbered Workspaces ===
     // You can refer to workspaces by index. However, keep in mind that
@@ -241,15 +246,15 @@ binds {
 
     // For example, with 2 workspaces + 1 empty, indices 3, 4, 5 and so on
     // will all refer to the 3rd workspace.
-    Mod+1 { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-workspace 1"; }
-    Mod+2 { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-workspace 2"; }
-    Mod+3 { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-workspace 3"; }
-    Mod+4 { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-workspace 4"; }
-    Mod+5 { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-workspace 5"; }
-    Mod+6 { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-workspace 6"; }
-    Mod+7 { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-workspace 7"; }
-    Mod+8 { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-workspace 8"; }
-    Mod+9 { spawn-sh "niri msg action do-screen-transition --delay-ms 350; niri msg action focus-workspace 9"; }
+    Mod+1 { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-workspace 1"; }
+    Mod+2 { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-workspace 2"; }
+    Mod+3 { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-workspace 3"; }
+    Mod+4 { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-workspace 4"; }
+    Mod+5 { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-workspace 5"; }
+    Mod+6 { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-workspace 6"; }
+    Mod+7 { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-workspace 7"; }
+    Mod+8 { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-workspace 8"; }
+    Mod+9 { spawn-sh "niri msg action do-screen-transition --delay-ms 200; niri msg action focus-workspace 9"; }
 
     // === Move to Numbered Workspaces ===
     Mod+Ctrl+1 { move-column-to-workspace 1; }
@@ -335,5 +340,6 @@ binds {
 
     // The quit action will show a confirmation dialog to avoid accidental exits.
     Mod+Shift+E { quit; }
+    Mod+Shift+M { set-dynamic-cast-window; }
 }
 
