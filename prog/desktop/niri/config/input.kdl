@@ -51,6 +51,10 @@ input {
         scroll-button-lock
     }
 
+    tablet {
+        map-to-focused-output
+    }
+
     trackpoint {
         // off
         // natural-scroll

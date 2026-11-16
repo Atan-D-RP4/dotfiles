@@ -42,7 +42,9 @@ binds {
     Mod+E hotkey-overlay-title="File Manager" { spawn-sh "app2unit -s a thunar"; }
 
     // === Application Launchers ===
-    Mod+Space hotkey-overlay-title="Application Launcher" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
+    Mod {
+        release hotkey-overlay-title="Application Launcher" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
+    }
     Mod+Alt+L hotkey-overlay-title="Lock the Screen" { spawn "dms" "ipc" "call" "lock" "lock"; }
     Mod+Alt+T hotkey-overlay-title="Quick Terminal" { spawn "dms" "ipc" "call" "quickTerminal" "toggle"; }
     Mod+V hotkey-overlay-title="Clipboard Manager" { spawn "dms" "ipc" "call" "clipboard" "toggle"; }
@@ -57,6 +59,8 @@ binds {
     Ctrl+Alt+Delete hotkey-overlay-title="Task Manager" {
 	spawn "dms" "ipc" "call" "processlist" "focusOrToggle";
     }
+
+    Mod+Alt+M hotkey-overlay-title="Color Picker" { spawn-sh "notify-send \"Color under cursor: $(niri msg pick-color)\""; }
 
     // Powers off the monitors. To turn them back on, do any input like
     // moving the mouse or pressing any other key.

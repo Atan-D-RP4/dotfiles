@@ -20,7 +20,7 @@
 
 (defchordsv2
   ([ \) (macro tab)     $chord-time all-released ()
-  (j k) (macro esc esc) $chord-time all-released ()
+  (j k) (macro esc)     $chord-time all-released ()
 )
 
 (defalias
@@ -35,10 +35,10 @@
   d-lct (tap-hold       $tap-time       $hold-time         d              lctl)
   f-lsh (tap-hold       $tap-time       $hold-time         f              lsft)
 
-  j-rmt (tap-hold       $tap-time       $hold-time         j              rsft)
+  j-rsh (tap-hold       $tap-time       $hold-time         j              rsft)
   k-rct (tap-hold       $tap-time       $hold-time         k              rctl)
   l-ral (tap-hold       $tap-time       $hold-time         l              ralt)
-  ;-rsh (tap-hold       $tap-time       $hold-time         ;              rmet)
+  ;-rmt (tap-hold       $tap-time       $hold-time         ;              rmet)
 
   ret   (tap-hold-press $tap-time       $hold-time         ret            rctl)
   cap   (tap-hold-press $tap-time       $hold-time         esc            lctl)
@@ -68,7 +68,7 @@
   _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _       _       _       _       _       _       _       _       _       _       _       _
-  @cap    @a-lmt  @s-lal  @d-lct  @f-lsh  _       _       @j-rmt  @k-rct  @l-ral  @;-rsh  @num    @ret
+  @cap    @a-lmt  @s-lal  @d-lct  @f-lsh  _       _       @j-rsh  @k-rct  @l-ral  @;-rmt  @num    @ret
   _       _       _       _       _       _       _       _       _       _       _       _       _
   _       _       _                       _                       _       _       _       _       _       _
 )

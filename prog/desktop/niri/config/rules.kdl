@@ -39,8 +39,8 @@ layer-rule {
     exclude namespace="wayscriber"
 
     background-effect {
-	xray true
-	blur true
+	xray false
+	blur false
 	noise 0.02      // grain overlay (default: 0.02)
 	saturation 1.0  // color saturation boost (default: 1.5)
     }
@@ -161,8 +161,8 @@ window-rule {
 window-rule {
     opacity 0.925
     background-effect {
-	xray true
-	blur true
+	xray false
+	blur false
 	noise 0.04      // grain overlay (default: 0.02)
 	saturation 1.5  // color saturation boost (default: 1.5)
     }

@@ -10,6 +10,11 @@ packages \
 	paru:dms-shell-bin,quickshell-git,qt6-multimedia,matugen \
 	yay:dms-shell-bin,quickshell-git,qt6-multimedia,matugen
 
+# DMS Greeter
+packages \
+	paru:greetd-dms-greeter-bin
+	yay:greetd-dms-greeter-bin
+
 # Lua for Niri IPC event handlers
 packages \
 	pacman:luajit,lua52-dkjson,libluv
@@ -27,13 +32,26 @@ link -f \
 	wl-copy:"$XDG_BIN_DIR/wl-copy" \
 	wl-paste:"$XDG_BIN_DIR/wl-paste"
 
+packages: \
+	pacman:grub,grub-hook,snapper,snapper-support,grub-btrfs-support
+
 # Power and Thermal Management
 packages \
 	pacman:tlp,thermald
 
+systemctl enable --now tlp.service
+systemctl enable --now thermald.service
+
 # Printer
 packages \
 	pacman:cups,cups-pdf,cups-filters,cups-pk-helper
+systemctl enable --now cups.service
+
+# Fingerprint
+import ../../fingerprint/
+
+# Bluetooth
+import ../../bluetooth/
 
 # Audio
 packages \
@@ -41,9 +59,12 @@ packages \
 packages \
 	pacman:easyeffects,lsp-plugins,calf,zam-plugins,mda.lv2,libebur128,zita-convolver,rubberband,rnnoise
 
+systemctl enable --now pipewire.service wireplumber.service
+
 # File Manager
 packages \
 	pacman:thunar,thunar-archive-plugin,thunar-volman,thunar-media-tags-plugin,engrampa
+
 # For MTP (android) devices
 packages \
 	pacman:gvfs-mtp

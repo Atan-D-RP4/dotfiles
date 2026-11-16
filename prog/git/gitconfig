@@ -109,7 +109,7 @@
 	d  = diff
 	l  = log --oneline --pretty=format:'%C(bold blue)%h%Creset %C(bold green)(%ar)%Creset %C(bold red)%d%Creset %s %C(dim white)<%an>%Creset' --abbrev-commit
 	ch = checkout
-	b = blame -w -M -C -C -C
+	b  = blame -w -M -C -C -C
 
 	# Mini git scripts as shortcuts.
 	rcls    = config --list

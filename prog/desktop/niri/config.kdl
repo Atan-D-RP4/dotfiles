@@ -28,10 +28,10 @@ switch-events {
         "sh" "-c" \
         "
             notify-send 'Tablet Mode: On' ;
-            # niri msg output $(niri msg --json focused-output | jq -r '.name') transform 90 ;
             niri msg action do-screen-transition --delay-ms 500 ;
+            niri msg output $(niri msg --json focused-output | jq -r '.name') transform 90 ;
             dms ipc call bar manualHide index 0;
-            wvkbd-mobintl
+            dms ipc call inlinekeyboard open
         " \
         ;
     }
@@ -40,10 +40,10 @@ switch-events {
         "sh" "-c" \
         "
             notify-send 'Tablet Mode: Off' ;
-            # niri msg output $(niri msg --json focused-output | jq -r '.name') transform normal ;
             niri msg action do-screen-transition --delay-ms 500 ;
+            niri msg output $(niri msg --json focused-output | jq -r '.name') transform normal ;
             dms ipc call bar autoHide index 0;
-            pkill wvkbd-mobintl
+            dms ipc call inlinekeyboard close
         " \
         ;
     }
